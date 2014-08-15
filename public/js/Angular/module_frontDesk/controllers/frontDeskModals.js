@@ -130,8 +130,8 @@ app.controller('roomModalInstanceCtrl',function ($scope, $modalInstance, cusModa
                         return;
                     }
                 }
-         //       var temp = JSON.parse(JSON.stringify(room));
-         //       $scope.ConnRooms[0]= JSON.parse(JSON.stringify($scope.ConnRooms[i]));
+                var temp = JSON.parse(JSON.stringify(room));
+                $scope.ConnRooms[0]= JSON.parse(JSON.stringify($scope.ConnRooms[i]));
          //       $scope.ConnRooms[i] = temp;
          //       return;
          //       $scope.ConnRooms[0] = $scope.CurrentMaster

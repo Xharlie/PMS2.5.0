@@ -346,6 +346,8 @@ app.controller('merchandiseController', function($scope, $http, merchandiseFacto
                 $scope.notValidAmount = 0;
                 $scope.prodRoomTranId = 0;
                 $scope.prodRoomId = 0;
+                document.location.reload(true);
+              //  window.open('http://localhost/~Xharlie/Hotel_Dev0/public/#/merchandise/:');
             });
         }
 

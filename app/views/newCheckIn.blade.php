@@ -102,9 +102,9 @@
                    ng-style="singleRoom.depositStyle"/>
             <select  class="floatRightLabel" ng-model="singleRoom.payMethod"
                      ng-init="singleRoom.payMethod = 'cash'">
-                <option value="cash">现金</option>>
-                <option value="debit">银行卡</option>
-                <option value="credit">信用卡</option>
+                <option value="现金">现金</option>>
+                <option value="银行卡">银行卡</option>
+                <option value="信用卡">信用卡</option>
             </select>
             <label class="floatRightLabel" >押金:</label>
 
@@ -227,7 +227,7 @@
 
                     <button class="btn btn-default RemarkButton" ng-init="singleGuest.cusInfoCollapsed=true"
                             ng-click="singleGuest.cusInfoCollapsed = !singleGuest.cusInfoCollapsed; " onclick="event.preventDefault();
-                           this.innerHTML=((this.innerHTML=='顾客详细信息')?'收起顾客信息':'顾客详细信息') ">收起顾客信息</button>
+                           this.innerHTML=((this.innerHTML=='顾客详细信息')?'收起顾客信息':'展开详细信息') ">展开详细信息</button>
 
                     <button class="btn btn-default RemarkButton"
                             ng-click="RemarkisCollapsed = !RemarkisCollapsed; " onclick="event.preventDefault();

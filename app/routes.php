@@ -105,3 +105,7 @@ Route::get('/roomAccounting/{RM_TRAN_ID}', 'RoomStatusController@showAccounting'
 Route::get('/getConnect/{RM_TRAN_ID}', 'RoomStatusController@getConnect');
 
 Route::post('/checkOutGetInfo','NewCheckOutController@checkOutGetInfo');
+
+Route::get('/getProductNM', 'NewCheckOutController@getProductNM');
+
+Route::get('/getProductPrice/{NM}', 'NewCheckOutController@getProductPrice');
