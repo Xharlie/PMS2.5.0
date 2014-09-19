@@ -27,3 +27,16 @@ appCheckOut.factory('newCheckOutFactory',function($http){
         }
     }
 });
+
+appCheckOut.factory('checkOTModalFactory',function($http){
+    return{
+        checkOT: function(RoomNumArray,MASTER_RM_ID){
+            return $http({
+                method: 'POST',
+                heasders: {'content-Type':'application/json'},
+                url: 'checkOutSubmit',
+                data: [RoomNumArray,MASTER_RM_ID]
+            })
+        }
+    };
+});

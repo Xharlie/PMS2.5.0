@@ -26,11 +26,10 @@
                                ng-model="singleRoom.CHECK_IN_DT" is-open="opened1" min-date="minDate" max-date="'2020-06-22'"
                                datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
                                ng-required="true " close-text="Close" ng-change="dateChange($index)"
-                                ng-init="dateChange($index)"
                                 ng-style="singleRoom.CheckInStyle"/>
 
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-click="open1($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                            <button type="button" class="btn btn-default" ng-click=""><i class="glyphicon glyphicon-calendar"></i></button> <!-- open1($event) -->
                         </span>
                     </p>
                 </div>
@@ -40,7 +39,9 @@
                                ng-model="singleRoom.CHECK_OT_DT" is-open="opened2" min-date="singleRoom.CHECK_IN_DT" max-date="'2020-06-22'"
                                datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
                                ng-required="true" close-text="Close" ng-change="dateChange($index)"
-                               ng-style="singleRoom.CheckOTStyle"/>
+                               ng-style="singleRoom.CheckOTStyle"
+                               ng-init="dateChange($index)"
+                            />
 
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-default" ng-click="open2($event)"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -51,7 +52,7 @@
 
             <label for="roomTypeSelection" class="RoomCaption" >房型</label>
             <select name="roomTypeSelection" class="RoomTypeSelection" ng-model="singleRoom.roomType"
-                    ng-change="treatyChange(singleRoom);" >
+                    ng-change="treatyChange(singleRoom);singleRoom.Cards_num=cardNum(singleRoom.roomType)" >
                 <option value="">所有房型</option>>
                 <option value="Single">单人房</option>
                 <option value="Double">双人房</option>
@@ -86,12 +87,15 @@
                 <option value="2">普通预定</option>
                 <option value="3">协议</option>
             </select>
-
+            <label class="gustCaption">房卡数量</label>
+            <input ng-model="singleRoom.Cards_num"
+                   ng-init="singleRoom.Cards_num=cardNum(singleRoom.roomType)"
+                    style="margin-right: 3%;width: 10%;"/>
 
             <input class="floatRightInput"
                    ng-model="singleRoom.finalPrice"
                    placeholder="{{ID_SUGG_match[singleRoom.roomType]}}"
-                   ng-init="singleRoom.finalPrice = ID_SUGG_match[singleRoom.roomType]"
+                   ng-init="singleRoom.finalPrice = (singleRoom.finalPrice != '')? singleRoom.finalPrice:ID_SUGG_match[singleRoom.roomType]"
             />
             <label class="floatRightLabel" >房价:</label>
 
@@ -101,7 +105,7 @@
                    placeholder="300"
                    ng-style="singleRoom.depositStyle"/>
             <select  class="floatRightLabel" ng-model="singleRoom.payMethod"
-                     ng-init="singleRoom.payMethod = 'cash'">
+                     ng-init="singleRoom.payMethod = '现金'">
                 <option value="现金">现金</option>>
                 <option value="银行卡">银行卡</option>
                 <option value="信用卡">信用卡</option>
@@ -227,7 +231,7 @@
 
                     <button class="btn btn-default RemarkButton" ng-init="singleGuest.cusInfoCollapsed=true"
                             ng-click="singleGuest.cusInfoCollapsed = !singleGuest.cusInfoCollapsed; " onclick="event.preventDefault();
-                           this.innerHTML=((this.innerHTML=='顾客详细信息')?'收起顾客信息':'展开详细信息') ">展开详细信息</button>
+                           this.innerHTML=((this.innerHTML=='展开详细信息')?'收起顾客信息':'展开详细信息') ">展开详细信息</button>
 
                     <button class="btn btn-default RemarkButton"
                             ng-click="RemarkisCollapsed = !RemarkisCollapsed; " onclick="event.preventDefault();

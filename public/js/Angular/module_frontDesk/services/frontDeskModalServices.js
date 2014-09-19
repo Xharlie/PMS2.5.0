@@ -37,7 +37,6 @@ app.factory('cusModalFactory',function($http){
                 url: 'Change2Cleaned/'+RM_ID
             })
         },
-
         MendingShow: function(RM_ID){
             return $http({
                 method: 'GET',

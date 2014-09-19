@@ -1,4 +1,5 @@
-<link rel="stylesheet" type="text/css" href="css/newOut.css" xmlns="http://www.w3.org/1999/html">
+<link rel="stylesheet" type="text/css" href="css/newOut.css" xmlns="http://www.w3.org/1999/html"
+      xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <form xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html" >
     <div class="wholeInfoBlock" ng-repeat="singleRoom in BookRoom">
         <div class="headDiv">
@@ -18,10 +19,10 @@
                         <td>{{depo.DEPO_TSTMP}}</td>
                         <td>{{depo.RM_TRAN_ID}}</td>
                         <td>{{depo.PAY_METHOD}}</td>
-                        <td>{{depo.DEPO_AMNT}}元</td>
+                        <td>{{twoDigit(depo.DEPO_AMNT)}}元</td>
                     </tr>
                 </table>
-                <label class="floatRightLabel" style="color: #5bc0de">押金合计+{{singleRoom.DEPO_SUM}}元</label>
+                <label class="floatRightLabel" style="color: #5bc0de">押金合计{{twoDigit(singleRoom.DEPO_SUM)}}元</label>
             </div>
             <div class="CrossTab">
                 <h4>房费</h4>
@@ -38,8 +39,20 @@
                         <td>{{bill.RM_PAY_METHOD}}</td>
                         <td>{{bill.RM_PAY_AMNT}}元</td>
                     </tr>
+                    <tr>
+                        <td>{{singleRoom.extraTime.TSTMP}}</td>
+                        <td>{{singleRoom.extraTime.RM_TRAN_ID}}</td>
+                        <td>{{}}</td>
+                        <td>退房超时{{singleRoom.extraTime.timeExtra}}, 协商罚款为:
+                            <input  style="width: 80px"
+                                ng-model="singleRoom.extraTime.extrFine"
+                                ng-change="extrFineChange(singleRoom)"
+                                ng-init="singleRoom.extraTime.extrFine=singleRoom.AcctPay[singleRoom.AcctPay.length-1].RM_PAY_AMNT;
+                                singleRoom.Acct_SUM = singleRoom.Acct_SUM + toFloat(singleRoom.extraTime.extrFine) ;"/>元
+                        </td>
+                    </tr>
                 </table>
-                <label class="floatRightLabel" style="color: lightcoral">房费合计-{{singleRoom.Acct_SUM}}元</label>
+                <label class="floatRightLabel" style="color: lightcoral">房费合计-{{twoDigit(toFloat(singleRoom.Acct_SUM))}}元</label>
             </div>
             <div class="CrossTab">
                 <h4>商品帐</h4>
@@ -60,7 +73,7 @@
                         <td>{{store.PROD_NM}}</td>
                         <td>{{store.PROD_QUAN}}</td>
                         <td>{{store.STR_PAY_METHOD}}</td>
-                        <td>{{store.PROD_PRICE*store.PROD_QUAN}}元</td>
+                        <td>{{(store.PROD_PRICE!=undefined)?twoDigit(store.PROD_PRICE*store.PROD_QUAN):twoDigit(store.STR_PAY_AMNT)}}元</td>
                     </tr>
                     <tr  ng-repeat = "Rstore in singleRoom.RoomConsume">
                         <td><button ng-click="deleteNewRMProduct(singleRoom,Rstore)">-</button></td>
@@ -69,7 +82,7 @@
                         <td>{{Rstore.PROD_NM}}</td>
                         <td>{{Rstore.PROD_QUAN}}</td>
                         <td>{{Rstore.STR_PAY_METHOD}}</td>
-                        <td>{{Rstore.STR_PAY_AMNT}}</td>
+                        <td>{{twoDigit(Rstore.STR_PAY_AMNT)}}</td>
                     </tr>
                 </table>
             </div>
@@ -96,15 +109,18 @@
                                 <td><input type="text" ng-change="getPrice(singleRoom)"
                                         ng-model="singleRoom.newRMProduct.newRProductQUAN"
                                         style="width: 100px"/></td>
-                                <td><input type="text" ng-model="singleRoom.newRMProduct.newRProductPAYmethod"
-                                           style="width: 100px"/></td>
+                                <td>
+                                    <select ng-init ='singleRoom.newRMProduct.newRProductPAYmethod = RoomConsumePayMethod[0]' ng-options ='payMethod for payMethod in RoomConsumePayMethod' ng-model="singleRoom.newRMProduct.newRProductPAYmethod"
+                                           style="width: 100px">
+                                    </select>
+                                </td>
                                 <td>{{singleRoom.newRMProduct.newRProductPAY}}</td>
                             </tr>
                         </table>
                     </div>
                 </div>
                 <label  class="floatRightLabel" style="color: lightcoral">
-                    商品消费合计-{{singleRoom.Store_SUM+singleRoom.newConsumeSum}}元
+                    商品消费合计-{{twoDigit(singleRoom.Store_SUM+singleRoom.newConsumeSum)}}元
                 </label>
 
             </div>
@@ -114,8 +130,10 @@
                     <table>
                         <tr>
                             <th></th>
-                            <th>房单号</th>
+                            <th >房单号</th>
                             <th>损坏说明</th>
+                            <th>付款人姓名</th>
+                            <th>付款人电话</th>
                             <th>付费方式</th>
                             <th>应付金额</th>
                         </tr>
@@ -123,22 +141,35 @@
                             <td><button ng-click="deleteFee(singleRoom,fee)">-</button></td>
                             <td>{{fee.RM_TRAN_ID}}</td>
                             <td>{{fee.RMRK}}</td>
+                            <td>{{fee.NM}}</td>
+                            <td>{{fee.PHONE}}</td>
                             <td>{{fee.PAY_METHOD}}</td>
-                            <td>{{fee.PAY_AMNT}}元</td>
+                            <td>{{twoDigit(fee.PAY_AMNT)}}元</td>
                         </tr>
                         <tr>
                             <td><button ng-click="addNewFee(singleRoom)">+</button></td>
-                            <td>{{singleRoom.RM_TRAN_ID}}</td>
+                            <td style="width: 40px">{{singleRoom.RM_TRAN_ID}}</td>
                             <td><textarea class="" ng-model="singleRoom.newFee.RMRK"
-                                          rows="1" cols="40" ></textarea></td>
-                            <td><input type="text" ng-model="singleRoom.newFee.PAY_METHOD" style="width: 80px"/></td>
+                                          rows="1" cols="33" ></textarea></td>
+                            <td><input type="text" ng-model="singleRoom.newFee.PAYER" style="width: 80px"/</td>
+                            <td><input type="text" ng-model="singleRoom.newFee.PAYER_PHONE" style="width: 80px"/</td>
+                            <td >
+                                <select ng-init ='singleRoom.newRMProduct.newRProductPAYmethod = RoomConsumePayMethod[0]'
+                                        ng-options ='payMethod for payMethod in PenaltyPayMethod'
+                                        ng-model="singleRoom.newFee.PAY_METHOD"
+                                        style="width: 60px">
+                                </select>
+                            </td>
                             <td><input type="text" ng-model="singleRoom.newFee.PAY_AMNT" style="width: 80px"/></td>
                         </tr>
                     </table>
                 </div>
-                <label class="floatRightLabel" style="color: lightcoral; ">赔偿款-{{singleRoom.newFeeSum}}元</label>
+                <label class="floatRightLabel" style="color: lightcoral; ">赔偿款-{{twoDigit(singleRoom.newFeeSum)}}元</label>
             </div>
-            <label style=" margin-left: 516px; font-size: medium; color:darkorange;">总计{{singleRoom.Sumation}}元</label>
+            </br>
+            <div>
+                <label style="margin-left: 20px;font-size: medium; color:darkorange;">{{((singleRoom.Sumation>0)?'应退还客人':'应补交')+ Abs(singleRoom.Sumation)}}元</label>
+            </div>
         </div>
         <div class="checkInCustomer">
              <div>
@@ -222,6 +253,71 @@
                          </textarea>
                      </div>
                  </div>
-            </div>
+             </div>
+        </div>
     </div>
+    <input type="submit"
+           value = "确认办理"
+           ng-click="checkOTSubmit()"
+           style="margin-left: 90%"/>
+
+
+    <script type="text/ng-template" id="checkOTModalContent">
+        <div class="modal-header">
+            <h3 class="modal-title">退房结算确认</h3>
+        </div>
+        <div class="modal-body">
+            <div class="roomSmallBox"  ng-repeat = "singleRoom in BookRoom | orderBy: room.RM_TP " >
+                <h4 class="PerRoom">{{singleRoom.RM_ID}}号房</h4>
+                    <table>
+                        <col width="150px" />
+                        <col width="280px" />
+                        <col width="100px" />
+                        <tr>
+                            <td>
+                                <label style="margin-left: 20px;font-size: medium; ">{{(singleRoom.Sumation>0)?'应退还客人':'应补交'+ Abs(singleRoom.Sumation)}}元</label>
+                            </td>
+                            <td>
+                                <label class="gustCaption">{{(singleRoom.Sumation>0)?'实际退还客人':'实际补缴'}}</label>
+                                <input ng-model="singleRoom.realMoneyOut"
+                                       ng-change="checkAmount(singleRoom)"
+                                       type="text"
+                                       popover="{{singleRoom.err}}"
+                                       popover-trigger="focus"
+                                       ng-init="singleRoom.realMoneyOut=Abs(singleRoom.Sumation);singleRoom.err='请输入'"
+                                />元
+                            </td>
+                            <td>
+                                <select class="gustCaption" ng-model="singleRoom.payMethod"
+                                        ng-init="singleRoom.payMethod='现金'" >
+                                    <option value="现金">现金</option>
+                                    <option value="信用卡">信用卡</option>
+                                    <option value="银行卡">银行卡</option>
+                                    <option value="优惠券">优惠券</option>
+                                </select>
+                            </td>
+                            </tr>
+
+                         <tr>
+                             <td>
+                                <label style="margin-left: 20px;font-size: medium; color: #31b0d5"
+                                    ng-init="singleRoom.adjustInfo='平账,可顺利退房'">{{singleRoom.adjustInfo}}</label>
+                             </td>
+                             <td>
+                                <select class="gustCaption"
+                                        ng-model="singleRoom.postPayMethod"
+                                        ng-init="singleRoom.postPayOptions=['平账,可顺利退房']; singleRoom.postPayMethod = singleRoom.postPayOptions[0]"
+                                        ng-options="option for option in singleRoom.postPayOptions">
+                                </select>
+                             </td>
+                         </tr>
+                    </table>
+            </div>
+        </div>
+        {{BookRoom}}
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click = "confirm();">确认</button>
+            <button class="btn btn-warning" ng-click = "cancel();">取消</button>
+        </div>
+    </script>
 </form>

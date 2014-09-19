@@ -35,7 +35,7 @@
         <script src="Scripts/angularjs/angular.min.js"></script>
         <script src="Scripts/angularjs/ui-bootstrap-tpls-0.11.0.js"></script>
         <script src="Scripts/angularjs/angular-route.js"></script>
-        <script src="Scripts/angularjs/angular-animate.js"></script>
+        <script src="Scripts/angularjs/angular-animate-1.3.0.js"></script>
         <script src="Scripts/angularjs/angular-ui-0.4.0.min.js"></script>
 
 

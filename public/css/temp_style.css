@@ -37,7 +37,7 @@
     margin-top: 5%;
     margin-bottom: 5%;
     margin-right: auto;
-    width: 80%;
+    width: 95%;
     border: 1px solid dimgray;
 }
 
@@ -49,14 +49,14 @@
     margin-top: 1%;
 }
 
-.CrossTab table th{
+.CrossTab table th {
     background-color: #000000;
     color: #ffffff;
     font-family: arial, sans-serif;
     font-weight: 400;
 }
 
-.CrossTab table td{
+.CrossTab table td {
     background-color: #cccccc;
     color: #000000;
     border: 2px solid white;
@@ -229,4 +229,40 @@
 }
 .modal-body {
     overflow: scroll;
+}
+
+.leftPart {
+    margin-left: 5%;
+    margin-top: 10px;
+    width: 45%;
+    display: inline-block;
+    border: 1px solid grey;
+    position: relative;
+}
+
+
+.rightPart {
+    position: relative;
+    border: 1px solid brown;
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 10px;
+    width: 45%;
+}
+
+.datePicker {
+    display: inline-block;
+    width: 200px;
+    margin-right: 5%;
+    vertical-align: middle;
+}
+
+.datePick{
+    width: 700px;
+    margin-left: 70px;
+    margin-top: 20px;
+}
+.datePick label{
+    font-size: 18px;
+    color: gray;
 }

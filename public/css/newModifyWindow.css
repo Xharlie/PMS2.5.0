@@ -1,0 +1,24 @@
+.gustCaption{
+    font-size: medium;
+    margin-left: 10px;
+}
+
+.gustContent{
+    font-size: small;
+    color: dimgrey;
+    width: 90px;
+}
+
+.oldAcct {
+    border: 1px solid orange;
+    height: 100px;
+}
+
+.offsetAcct{
+    border: 1px solid #bce8f1;
+}
+.authorization {
+    float: right;
+    margin-right: 50px;
+    margin-top: 10px;
+}

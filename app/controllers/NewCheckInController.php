@@ -28,7 +28,7 @@ class NewCheckInController extends BaseController{
             ->select('Rooms.RM_ID as RM_ID','Rooms.RM_TRAN_ID as RM_TRAN_ID' ,
                 'Rooms.RM_CONDITION as RM_CONDITION', 'Rooms.RM_TP as RM_TP',
                 'RoomTran.CHECK_IN_DT as CHECK_IN_DT','RoomTran.CHECK_OT_DT as CHECK_OT_DT'
-                ,'RoomsTypes.SUGG_PRICE as SUGG_PRICE')
+                ,'RoomsTypes.SUGG_PRICE as SUGG_PRICE','RoomsTypes.CUS_QUAN as CUS_QUAN')
             ->get();
         return Response::json($roomUnAvail);
     }
@@ -48,7 +48,8 @@ class NewCheckInController extends BaseController{
             ->leftjoin('MemberType','MemberInfo.MEM_TP','=','MemberType.MEM_TP')
             ->select('MemberInfo.MEM_TP as MEM_TP','MemberInfo.MEM_ID as MEM_ID'
                 ,'MemberType.DISCOUNT_RATE as DISCOUNT_RATE','MemberInfo.SSN as SSN'
-                ,'MemberInfo.MEM_NM as MEM_NM')
+                ,'MemberInfo.MEM_NM as MEM_NM','MemberInfo.POINTS as POINTS',
+                'MemberInfo.TIMES as TIMES')
             ->get();
         return Response::json($memberBySSN);
     }
@@ -60,7 +61,8 @@ class NewCheckInController extends BaseController{
             ->select('MemberInfo.MEM_TP as MEM_TP','MemberInfo.MEM_ID as MEM_ID'
                 ,'MemberType.DISCOUNT_RATE as DISCOUNT_RATE','MemberInfo.SSN as SSN'
                 ,'MemberInfo.MEM_NM as MEM_NM','MemberInfo.PROV as PROV',
-                'MemberInfo.PHONE as PHONE','MemberInfo.POINTS as POINTS')
+                'MemberInfo.PHONE as PHONE','MemberInfo.POINTS as POINTS',
+                'MemberInfo.TIMES as TIMES')
             ->get();
         return Response::json($memberByID);
     }
@@ -88,6 +90,7 @@ class NewCheckInController extends BaseController{
     }
     public function submit(){
         $info = Input::all();
+        var_dump($info);
       //  $RoomTranTotal = array();
       //  $RoomsTotal = array();
         $CustomerArray = array();
@@ -102,6 +105,7 @@ class NewCheckInController extends BaseController{
                 "RM_AVE_PRCE" => $room["finalPrice"],
                 "DPST_RMN" => $room["deposit"],
                 "CHECK_TP" => $this->roomSourceWord($room["roomSource"]),
+                "CARDS_NUM" => $room["CARDS_NUM"]
             );
             if($CONN_RM_TRAN_ID != ""){
                 $RoomTranArray["CONN_RM_TRAN_ID"] = $CONN_RM_TRAN_ID;
@@ -148,6 +152,7 @@ class NewCheckInController extends BaseController{
             }
             $this->roomDepositIn($RM_TRAN,$room['deposit'],$room['payMethod']);
         }
+
         DB::table('Customers')->insert($CustomerArray);
         return Response::json($info);
     }
@@ -177,20 +182,9 @@ class NewCheckInController extends BaseController{
             "RM_TRAN_ID" => $RM_TRAN_ID,
             "DEPO_AMNT"=>$Amount,
             "PAY_METHOD" => $PayMethod,
-            "DEPO_TSTAMP"=> $date
+            "DEPO_TSTMP"=> $date
         );
         $RM_DEPO_ID = DB::table('RoomDepositAcct')->insertGetId($DepoArray);
     }
-    /*
-roomSelect:room.roomSelect, roomType:room.roomType, CHECK_IN_DT:$scope.dateFormat(room.CHECK_IN_DT)
-,CHECK_OT_DT:$scope.dateFormat(room.CHECK_OT_DT),finalPrice: room.finalPrice, roomSource:room.roomSource,
-GuestsInfo: room.GuestsInfo
-      <option value="0">散客</option>>
-                <option value="1">会员卡</option>
-                <option value="2">普通预定</option>
-                <option value="3">协议</option>
-
-
-    */
 
 }

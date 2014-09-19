@@ -88,7 +88,6 @@ class RoomStatusController extends BaseController{
 
     public function showAccounting($RM_TRAN_ID){
         $acctInfo = array();
-
         $acctInfo[0] = DB::table('RoomDepositAcct')->where('RM_TRAN_ID',$RM_TRAN_ID)
             ->select('RoomDepositAcct.RM_TRAN_ID as RM_TRAN_ID','RoomDepositAcct.DEPO_AMNT as DEPO_AMNT',
                 'RoomDepositAcct.PAY_METHOD as PAY_METHOD', 'RoomDepositAcct.DEPO_TSTMP as DEPO_TSTMP')
@@ -116,6 +115,7 @@ class RoomStatusController extends BaseController{
         }else{
             $connectRooms = DB::table('RoomTran')
                 ->where("CONN_RM_TRAN_ID",$ConnectSelf)
+                ->join("Rooms","Rooms.RM_TRAN_ID","=","RoomTran.RM_TRAN_ID")
                 ->select('RoomTran.RM_ID as RM_ID','RoomTran.RM_TRAN_ID as RM_TRAN_ID' ,
                     'RoomTran.CONN_RM_TRAN_ID as CONN_RM_TRAN_ID')
                 ->get();

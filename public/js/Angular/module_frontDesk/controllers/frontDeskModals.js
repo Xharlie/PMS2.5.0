@@ -80,8 +80,8 @@ app.controller('roomModalInstanceCtrl',function ($scope, $modalInstance, cusModa
         }else if(actionString == 'viewAccounting'){
             cusModalFactory.getAccounting($scope.roomST.RM_TRAN_ID).success(function(data){
                 $scope.AcctDepo = data[0];
-                $scope.AcctPay = data[1];
-                $scope.AcctStore = data[2];
+            //    $scope.AcctPay = data[1];
+            //    $scope.AcctStore = data[2];
                 $scope.RMviewClick = "infoAccounting";
             });
         }else if(actionString == 'basicInfo'){
@@ -93,7 +93,6 @@ app.controller('roomModalInstanceCtrl',function ($scope, $modalInstance, cusModa
                     window.open(location);
                 }else{
                     $scope.CurrentMaster = data[0];
-
                     $scope.ConnRooms = data;
                     $scope.RMviewClick = "connectCheckOut";
                 }
@@ -205,3 +204,41 @@ app.controller('connectRMModalInstanceCtrl',function ($scope, $modalInstance, cu
         $modalInstance.dismiss('cancel');
     }
 });
+
+
+//
+//$scope.BookRoom[i]['realMoneyOut'] = 0;
+//$scope.BookRoom[i]["DEPO_SUM"] = 0;
+//$scope.BookRoom[i]["Acct_SUM"] = 0;
+//$scope.BookRoom[i]["Store_SUM"] = 0;
+//$scope.BookRoom[i]["newRMProduct"] = {"newRProductNM":"",
+//    "newRProductQUAN":"",
+//    "newRProductPAY":"",
+//    "newRProductPAYmethod":"",
+//    "PROD_ID":""};
+//$scope.BookRoom[i]["RoomConsume"] = [];
+//$scope.BookRoom[i]["newConsumeSum"] = 0;
+//$scope.BookRoom[i]["newFee"] = {"RMRK":"","PAY_METHOD":"","PAY_AMNT":"", "PAYER":"","PAYER_PHONE":""};
+//$scope.BookRoom[i]["penalty"] = [];
+//$scope.BookRoom[i]["newFeeSum"] = 0;
+//$scope.BookRoom[i]["DAYS_STAY"] = Math.round( (new Date($scope.BookRoom[i]["CHECK_OT_DT"]).getTime()
+//    -new Date($scope.BookRoom[i]["CHECK_IN_DT"]).getTime())/86400000);
+//
+//
+//for (var j = 0; j < $scope.BookRoom[i]['AcctDepo'].length; j++){
+//    $scope.BookRoom[i]["DEPO_SUM"] += parseFloat($scope.BookRoom[i]['AcctDepo'][j]["DEPO_AMNT"]);
+//
+//}
+//for (var j = 0; j < $scope.BookRoom[i]['AcctPay'].length; j++){
+//    $scope.BookRoom[i]["Acct_SUM"] += parseFloat($scope.BookRoom[i]['AcctPay'][j]["RM_PAY_AMNT"]);
+//}
+//for (var j = 0; j < $scope.BookRoom[i]['AcctStore'].length; j++){
+//    $scope.BookRoom[i]["Store_SUM"] += (parseFloat($scope.BookRoom[i]['AcctStore'][j]["PROD_PRICE"])
+//        *parseFloat($scope.BookRoom[i]['AcctStore'][j]["PROD_QUAN"]));
+//}
+//
+//$scope.BookRoom[i]["Sumation"]= parseFloat($scope.BookRoom[i]["DEPO_SUM"] -
+//    $scope.BookRoom[i]["Acct_SUM"] -
+//    $scope.BookRoom[i]["Store_SUM"] -
+//    $scope.BookRoom[i]["newConsumeSum"] -
+//    $scope.BookRoom[i]["newFeeSum"]).toFixed(2) ;

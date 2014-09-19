@@ -6,8 +6,27 @@ app.controller('reservationController', function($scope, $http, resrvFactory){
         $scope.resvInfo =data;
     });
 
+    $scope.addNew = function(){
+        var location = "newResv";
+        window.open(location);
+    };
+
+    $scope.check = function(resv){
+        var location = "newCheckIn/"+ resv.RM_TP + "/" +  resv.RM_QUAN + "/" + resv.RESV_DAY_PAY + "/"+ resv.CHECK_IN_DT+
+            "/" + resv.CHECK_OT_DT;
+        window.open(location);
+    }
+
     /* static verion
-    $scope.resvInfo = resrvFactory.resvShowStatic(); */
+    $scope.resvInfo = resrvFactory.resvShowStatic();
+
+     'Reservations.RESV_DAY_PAY as RESV_DAY_PAY',
+     'Reservations.RESVER_PHONE as RESVER_PHONE', 'Reservations.RESVER_NAME as RESVER_NAME',
+     'Reservations.RESV_WAY as RESV_WAY','Reservations.RESV_TMESTMP as RESV_TMESTMP',
+     'Reservations.CHECK_IN_DT as CHECK_IN_DT','Reservations.CHECK_OT_DT as CHECK_OT_DT',
+     'ReservationRoom.RM_TP as RM_TP','ReservationRoom.RM_QUAN as RM_QUAN','Reservations.TREATY_ID as TREATY_ID',
+     'Reservations.MEMBER_ID as MEMBER_ID','Reservations.RMRK as RMRK'
+    */
 });
 
 
@@ -127,7 +146,6 @@ app.controller('roomStatusController', function($scope, $http, roomStatusFactory
                     return roomST;
                 }
             }
-
         });
 
     /*  modalInstance.result.then(function (selectedAction) {
@@ -203,6 +221,125 @@ app.controller('customerController', function($scope, $http, customerFactory){
 
 });
 
+app.controller('accountingController', function($scope, $http, accountingFactory){
+    $scope.Conaddup = 0;
+    $scope.Payaddup = 0;
+    $scope.collections = [];
+    accountingFactory.accountingGetAll().success(function(data){
+   //     alert(JSON.stringify(data));
+        $scope.acctInfo = data;
+    });
+
+    $scope.TypeFilter = function(acct){
+        if ($scope.Type == ""){
+            return true;
+        }else if($scope.Type == "CON"){
+            return acct['CON'];
+        }else if($scope.Type == "PAY"){
+            return acct['PAY'];
+        }
+    };
+
+    $scope.$watch('collections', function(newValue, oldValue) {
+        $scope.Conaddup = 0;
+        $scope.Payaddup = 0;
+        if (newValue == undefined){
+            return;
+        }
+        for(var i =0; i< newValue.length; i++){
+            $scope.Conaddup = $scope.Conaddup + ((newValue[i]['CONSUME_PAY_AMNT'] == '') ? 0 : parseFloat(newValue[i]['CONSUME_PAY_AMNT']));
+            $scope.Payaddup = $scope.Payaddup + ((newValue[i]['SUBMIT_PAY_AMNT'] == '' ) ? 0: parseFloat(newValue[i]['SUBMIT_PAY_AMNT']));
+        }
+    });
+
+
+    var reverse = function(CLASS){
+        switch (CLASS){
+            case '存入押金':
+                return 'RoomDepositAcct';
+                break;
+            case '现金支出':
+                return 'RoomDepositAcct';
+                break;
+            case '损坏罚金':
+                return 'PenaltyAcct';
+                break;
+            case '夜核房费':
+                return 'RoomAcct';
+                break;
+            case '商品':
+                return 'StoreTransaction';
+                break;
+            default :
+                return "error";
+        }
+    };
+
+    $scope.modify = function(acct){
+        var classTP = reverse(acct['CLASS']);
+        if(classTP!="error"){
+            var location = "newModifyWindow/"+classTP+"/"+acct['ACCT_ID'];
+            var v = window.open(location,"","menubar=no,scrollbars=no,resizable=no,width=500,height=300,top=200,left=300;");
+        }else{
+            alert("error");
+        }
+
+    }
+});
+
+
+
+app.controller('oneKeyShiftController', function($scope, $http, accountingFactory){
+
+    accountingFactory.summerize().success(function(data){
+        //     alert(JSON.stringify(data));
+        $scope.cashSum = data['cash'];
+        $scope.roomCardSum = data['cards'];
+        $scope.productSellSum=data['store'];
+    });
+
+});
+
+app.controller('Datepicker', function($scope){
+
+    $scope.dateFormat = function(date){
+        var yyyy = date.getFullYear().toString();
+        var mm = (date.getMonth()+1).toString();
+        var dd  = date.getDate().toString();
+        return yyyy+"/" + (mm[1]?mm:"0"+mm[0])+"/" + (dd[1]?dd:"0"+dd[0]);
+    }
+
+    $scope.toDay = new Date();
+
+    // Disable weekend selection
+    $scope.disabled = function(date, mode) {
+        return false; //( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+    };
+
+    $scope.dateChange = function(){};
+
+    $scope.open1 = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+        $scope.opened1 = true;
+    };
+
+    $scope.open2 = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+        $scope.opened2 = true;
+    };
+
+    $scope.dateOptions = {
+        formatYear: 'yy',
+        startingDay: 1
+    };
+
+    $scope.format = 'yyyy/MM/dd';
+
+});
+
+
 app.controller('merchandiseController', function($scope, $http, merchandiseFactory){
     /* Database version */
 
@@ -213,8 +350,8 @@ app.controller('merchandiseController', function($scope, $http, merchandiseFacto
     $scope.prodRoom = "";
     $scope.room = "";
     $scope.notValidAmount = 0;
-    $scope.prodRoomTranId = 0;
-    $scope.prodRoomId = 0;
+    $scope.prodRoomTranId = "";
+    $scope.prodRoomId = "";
     $scope.submitFlag=false;
 
 
@@ -238,7 +375,7 @@ app.controller('merchandiseController', function($scope, $http, merchandiseFacto
         $scope.prodRoomTranId = "";
         if(prodRoom == ""){
             $scope.room ="";
-            $scope.prodRoomTranId = 0;
+            $scope.prodRoomTranId = "";
         }else{
             $scope.room = "请输入正确房间号";
             for (var i =0; i< $scope.rooms.length; i++){
@@ -380,4 +517,5 @@ app.controller('merchandiseController', function($scope, $http, merchandiseFacto
      */
 
 });
+
 

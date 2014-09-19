@@ -10,6 +10,7 @@ appCheckIn.controller('newCheckInController', function($scope, $http, newCheckIn
     $scope.roomInType = [];
     $scope.ID_TP_match = {};
     $scope.ID_SUGG_match = {};
+    $scope.CusQuan = {};
     newCheckInFactory.RoomUnAvail().success(function(data){
             $scope.RoomAllinfo =data;
             for (var i = 0; i <$scope.RoomAllinfo.length; i++ ){
@@ -18,17 +19,32 @@ appCheckIn.controller('newCheckInController', function($scope, $http, newCheckIn
                     RM_CONDITION: $scope.RoomAllinfo[i]["RM_CONDITION"],
                     CHECK_OT_DT :   $scope.RoomAllinfo[i]["CHECK_OT_DT"]
                 });
+                $scope.CusQuan[$scope.RoomAllinfo[i]["RM_TP"]] = $scope.RoomAllinfo[i]["CUS_QUAN"];
                 $scope.ID_SUGG_match[$scope.RoomAllinfo[i]["RM_TP"]] = $scope.RoomAllinfo[i]["SUGG_PRICE"];
                 $scope.ID_TP_match[$scope.RoomAllinfo[i]["RM_ID"]] = $scope.RoomAllinfo[i]["RM_TP"];
             }
-            for (var i =0; i< $scope.RoomNumArray.length; i++){
-                var newRoom = {roomType:"",roomSelect:"",CHECK_IN_DT:new Date(),CHECK_OT_DT:new Date(Number(new Date())+86400000),
-                    sourceCollapsed:[true,true,true,true],finalPrice:"",deposit:"300",
-                    GuestsInfo:[{MEM_TP:"",Points:"",Phone:"",SSNinput:"",SSNType:"SSN18",NameInput:"",BirthInput:"", Gender:"",
-                        MemberId:"",Treaty:"",RemarkInput:"",Province:"",markStyle:"",Pass:false,TIMES:""}]};
-                $scope.BookRoom.push(newRoom);
-                $scope.BookRoom[i].roomSelect = $scope.RoomNumArray[i];
-                $scope.BookRoom[i].roomType = $scope.ID_TP_match[$scope.RoomNumArray[i]];
+            if (isNaN($scope.RoomNumArray[0][0])){
+                for(var i = 0; i< parseInt($scope.RoomNumArray[1]); i++){
+                    var newRoom = {roomType:"",roomSelect:"",sourceCollapsed:[true,true,true,true],finalPrice:"",deposit:"300",
+                        Cards_num:0,GuestsInfo:[{MEM_TP:"",Points:"",Phone:"",SSNinput:"",SSNType:"SSN18",NameInput:"",BirthInput:"", Gender:"",
+                            MemberId:"",Treaty:"",RemarkInput:"",Province:"",markStyle:"",Pass:false,TIMES:""}]};
+                    $scope.BookRoom.push(newRoom);
+                    $scope.BookRoom[i].roomSelect = $scope.RoomNumArray[i];
+                    $scope.BookRoom[i].roomType = $scope.RoomNumArray[0];
+                    $scope.BookRoom[i].finalPrice = $scope.RoomNumArray[2];
+                    $scope.BookRoom[i]['CHECK_IN_DT'] = new Date($scope.RoomNumArray[3]);
+                    $scope.BookRoom[i]['CHECK_OT_DT'] = new Date($scope.RoomNumArray[4]);
+                }
+            }else{
+                for (var i =0; i< $scope.RoomNumArray.length; i++){
+                    var newRoom = {roomType:"",roomSelect:"",CHECK_IN_DT:new Date(),CHECK_OT_DT:new Date(Number(new Date())+86400000),
+                        sourceCollapsed:[true,true,true,true],finalPrice:"",deposit:"300",Cards_num:0,
+                        GuestsInfo:[{MEM_TP:"",Points:"",Phone:"",SSNinput:"",SSNType:"SSN18",NameInput:"",BirthInput:"", Gender:"",
+                            MemberId:"",Treaty:"",RemarkInput:"",Province:"",markStyle:"",Pass:false,TIMES:""}]};
+                    $scope.BookRoom.push(newRoom);
+                    $scope.BookRoom[i].roomSelect = $scope.RoomNumArray[i];
+                    $scope.BookRoom[i].roomType = $scope.ID_TP_match[$scope.RoomNumArray[i]];
+                }
             }
             if($scope.RoomNumArray.length < 2){
                 $scope.MasterRoomDisplay = {"display":"none"};
@@ -89,6 +105,10 @@ appCheckIn.controller('newCheckInController', function($scope, $http, newCheckIn
         //room.roomType = $scope.ID_TP_match[room.roomSelect];
     }
 
+    $scope.cardNum = function(type){
+        return ($scope.CusQuan[type]== undefined)? 0: $scope.CusQuan[type];
+    };
+
     $scope.roomQuanOBJ = {};
     newCheckInFactory.RoomQuan().success(function(data){
         $scope.roomQuan =data;
@@ -128,7 +148,7 @@ appCheckIn.controller('newCheckInController', function($scope, $http, newCheckIn
                     var soldArray = [];
                     var dateOBJ ={};
                     var dt1num = Number(dt1);
-                    var dt2num = Number(dt2)+86400000;
+                    var dt2num = Number(dt2);
                     var counter = 0;
                     var AvailQuanFlag = {};
                     for (var i = dt1num; i<= dt2num; i+=86400000){
@@ -410,10 +430,10 @@ appCheckIn.controller('newCheckInController', function($scope, $http, newCheckIn
     $scope.checkInCheck = function(){
         $scope.err = function(){
               var roomDuplicateCheckOBJ = {};
-              var SSNDuplicateCheckOBJ={};
+              var SSNDuplicateCheckOBJ= {};
               for (var i = 0; i<$scope.BookRoom.length; i++){
                   //alert(JSON.stringify($scope.BookRoom[i].AvailQuanFlag));
-                  if($scope.BookRoom[i].roomSelect =="请选房号" || $scope.BookRoom[i].roomSelect == undefined){
+                  if($scope.BookRoom[i].styleMarked =="请选房号" || $scope.BookRoom[i].roomSelect == undefined){
                       $scope.BookRoom[i].roomNumStyle={border:"2px solid red"};
                       $scope.styleMarked = $scope.BookRoom[i].roomNumStyle;
                       return "请您选择第" + (i+1).toString()+"间房的房间号码!"
@@ -496,7 +516,7 @@ appCheckIn.controller('newCheckInController', function($scope, $http, newCheckIn
             }
             $scope.SubmitInfo.push({roomSelect:room.roomSelect, roomType:room.roomType, CHECK_IN_DT:$scope.dateFormat(room.CHECK_IN_DT)
                 ,CHECK_OT_DT:$scope.dateFormat(room.CHECK_OT_DT),finalPrice: room.finalPrice, roomSource:room.roomSource,
-                deposit:room.deposit, payMethod: room.payMethod, GuestsInfo: room.GuestsInfo});
+                deposit:room.deposit, payMethod: room.payMethod, GuestsInfo: room.GuestsInfo, CARDS_NUM: room.Cards_num});
             if (room.roomSource ==3 && room.treatyChoose != null){
                 $scope.SubmitInfo[i]["TREATY_ID"]= room.treatyChoose.TREATY_ID;
             }else if(room.roomSource ==1 && room.checkMEM_TP != undefined){
@@ -510,6 +530,8 @@ appCheckIn.controller('newCheckInController', function($scope, $http, newCheckIn
                     $scope.SubmitInfo[0]= JSON.parse(JSON.stringify($scope.SubmitInfo[i]));
                     $scope.SubmitInfo[i] = temp;
                 }
+            }else{
+                $scope.SubmitInfo[i]["Conn_RM_ID"]="";
             }
         }
 
@@ -559,7 +581,4 @@ appCheckIn.controller('Datepicker', function($scope){
 
     $scope.format = 'yyyy/MM/dd';
 
-
-
 });
-

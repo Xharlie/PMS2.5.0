@@ -26,8 +26,18 @@ app.config(['$routeProvider',function ($routeProvider){
             controller:'customerController',
             templateUrl: '../app/views/customer.blade.php'
         })
+        .when('/accounting',
+        {
+            controller:'accountingController',
+            templateUrl: '../app/views/accounting.blade.php'
+        })
+        .when('/oneKeyShift',{
+            controller:'oneKeyShiftController',
+            templateUrl: '../app/views/oneKeyShift.blade.php'
+        })
         .otherwise({redirectTo: '/roomStatus'})
     }
 ]);
+
 
 //angular.bootstrap(document, ['Operationer']);

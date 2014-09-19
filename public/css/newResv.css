@@ -63,16 +63,18 @@ body {
     display: inline-block;
 }
 
-.ChooseRoom {
+.RoomResidue {
     margin-left: 5%;
     margin-top: 10px;
     width: 45%;
     display: inline-block;
     border: 1px solid grey;
     position: relative;
+
+
 }
 
-.checkInCustomer {
+.addRoom {
     position: relative;
     border: 1px solid brown;
     display: inline-block;
@@ -80,6 +82,7 @@ body {
     margin-top: 10px;
     width: 45%;
 }
+
 
 .wholeInfoBlock {
     border: 1px solid #2ba6cb;
@@ -104,10 +107,12 @@ body {
 .RoomTypeSelection {
     margin-left: 2%;
     font-size: medium;
+    margin-bottom: 10px;
 }
 .RoomCaption {
     margin-left: 3%;
     font-size: medium;
+    margin-bottom: 10px;
 
 }
 .RoomSelection  {
@@ -135,12 +140,18 @@ body {
     padding-bottom: 10px;
     border-bottom: 1px solid gainsboro;
 }
-
+.guestSource{
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-bottom: 0px;
+    border-bottom: 1px solid gainsboro;
+}
 .checkButton {
     margin-left: 77px;
 }
 .RemarkButton {
-    margin-left: 30px;
+    margin-right: 30px;
+    float: right;
 }
 .treatyButton {
     margin-left: 45px;
@@ -171,7 +182,6 @@ body {
 .timesCaption {
     margin-left: 10px;
     margin-bottom: 0px;
-    margin-top: 10px;
     margin-right: -22px;
     font-size: 15px;
     color: #2ba6cb;
@@ -183,45 +193,58 @@ body {
     margin-right: 5%;
     margin-bottom: 30px;
 }
+
 .sourceCollap {
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
-.CrossTab {
+.CrossTab table {
     margin-left: auto;
     margin-right: auto;
     width: 95%;
     font-size: small;
     margin-top: 1%;
+    align-content: center;
+    table-layout: fixed;
+    overflow: scroll;
 }
 
-.CrossTab th {
+.CrossTab table th {
     background-color: #000000;
     color: #ffffff;
     font-family: arial, sans-serif;
     font-weight: 400;
+
 }
 
-.CrossTab td {
+.CrossTab table td {
     background-color: #cccccc;
     color: #000000;
+    align-content: center;
+    border: 2px solid white;
+    overflow: scroll;
 }
 
 .RoomSourceSelection {
-    margin-left: 4%;
+    float: right;
+    margin-right: 65%;
     margin-top: 1%;
     font-size: medium;
 }
 
 .floatRightInput {
     float: right;
-    margin-right: 3%;
+    margin-right: 30px;
     width: 10%;
 }
 
 .floatRightLabel {
+    font-size: medium;
     float: right;
     margin-right: 1%;
 }
 
+.hugeCaption{
+    font-size: large;
+}

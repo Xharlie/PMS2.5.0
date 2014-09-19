@@ -86,6 +86,31 @@ app.factory('customerFactory',function($http){
     }
  });
 
+app.factory('accountingFactory',function($http){
+    return{
+        accountingGetAll: function(){
+            return $http({
+                method: 'GET',
+                heasders: {'content-Type':'application/json'},
+                url: 'accountingGetAll'
+            })
+        },
+        summerize:function(){
+            return $http({
+                method: 'GET',
+                heasders: {'content-Type':'application/json'},
+                url: 'summerize'
+            })
+        }
+
+    };
+});
+
+
+
+
+
+
 
 app.factory('merchandiseFactory',function($http){
     return{

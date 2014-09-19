@@ -37,14 +37,14 @@ class MerchandiseController extends BaseController{
 
         $STR_TRAN_ID = DB::table('StoreTransaction')->insertGetId($storeTransactionArray);
 
-
-        DB::table('RoomStoreTran')->insert(
-            array(
-                "RM_TRAN_ID" => $info["RM_TRAN_ID"],
-                "STR_TRAN_ID" => $STR_TRAN_ID,
-                "RM_ID" => $info["RM_ID"],
-            ));
-
+        if (($info["RM_TRAN_ID"])==""){
+            DB::table('RoomStoreTran')->insert(
+                array(
+                    "RM_TRAN_ID" => $info["RM_TRAN_ID"],
+                    "STR_TRAN_ID" => $STR_TRAN_ID,
+                    "RM_ID" => $info["RM_ID"],
+                ));
+        }
 
         $productsArray = array();
         foreach($info["products"] as $product){

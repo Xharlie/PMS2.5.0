@@ -19,6 +19,11 @@ Route::get('/', function()
 	return View::make('full');
 });
 
+Route::get('/newResv', function()
+{
+    return View::make('new',array( 'pageType' => 'newResv'));
+});
+
 Route::post('/newCheckIn/',function(){
             $data['pageType']='newCheckIn';
             $rooms = Input::all();
@@ -42,6 +47,13 @@ Route::group(array('prefix' => 'newCheckOut'), function()
     })->where('all', '.*');
 });
 
+Route::group(array('prefix' => 'newModifyWindow'), function()
+{
+    Route::get('{all}', function()
+    {
+        return View::make('new',array( 'pageType' => 'newModifyWindow'));
+    })->where('all', '.*');
+});
 
 /* for Database */
 Route::get('/showReservation', 'ReservationController@showResv');
@@ -109,3 +121,22 @@ Route::post('/checkOutGetInfo','NewCheckOutController@checkOutGetInfo');
 Route::get('/getProductNM', 'NewCheckOutController@getProductNM');
 
 Route::get('/getProductPrice/{NM}', 'NewCheckOutController@getProductPrice');
+
+Route::post('/checkOutSubmit', 'NewCheckOutController@checkOutSubmit');
+
+
+
+Route::post('/submitResv','ReservationController@submitResv');
+
+
+Route::get('/accountingGetAll','AccountingController@accountingGetAll');
+
+
+Route::get('/getTargetAcct/{DB}/{ACCT_ID}', 'AccountingController@getTargetAcct');
+
+Route::post('/submitModifyAcct','AccountingController@submitModifyAcct');
+
+Route::get('/summerize','AccountingController@Summerize');
+
+
+
