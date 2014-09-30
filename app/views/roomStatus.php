@@ -1,18 +1,23 @@
 <!doctype html >
 <div class="hotelStatus">
-	当前入住 10/70 	今日欲达 5
+    <div class="container-fluid">
+	   <div class="col-md-4">当前入住 10/70</div> 	
+       <div class="col-md-4">今日欲达 5</div>
+       <div class="col-md-4"></div>
+    </div>
 </div>
-<div ng-switch on="connectClick" >
-    <div ng-switch-when ="toStart">
-        <button ng-click="connectStart()">办理连房入住</button>
+<div class="roomCtrl" ng-switch on="connectClick" >
+    <div class="ctrlLeft">
+        <div ng-switch-when ="toStart">
+            <button ng-click="connectStart()" class="btn btn-default">办理连房入住</button>
+        </div>
+        <div ng-switch-when ="toEnd">
+            <button ng-click="connectEnd('confirm')" class="btn btn-default">确认选择</button>
+            <button ng-click="connectEnd('cancel')" class="btn btn-default">取消选择</button>
+        </div>
     </div>
-    <div ng-switch-when ="toEnd">
-        <button ng-click="connectEnd('confirm')">确认选择</button>
-        <button ng-click="connectEnd('cancel')">取消选择</button>
-    </div>
-<div id="roomStatusFrame" class="roomStatus">
-    <div class="goRight">
-        <input class="intellSearchBox" type="text"  ng-model = "overall" placeholder="智能算法搜索">
+    <div class="ctrlRight">
+        <input class="searchBox intellSearchBox input-sm" type="text"  ng-model = "overall" placeholder="智能算法搜索">
         <!-- old search by categories
         <input type="text"  ng-model = "roomNM" placeholder="房间号码">
         <select ng-model="roomType">
@@ -37,6 +42,8 @@
         </select>
         -->
     </div>
+</div>
+<div id="roomStatusFrame" class="roomStatus">
     <div class="roomStatusFull">
         <!-- define shape, just for fun    <div class="roomBox" ng-class ="shape(roomST.RM_TP)" ng-repeat = "roomST in roomStatusInfo | filter: ngFloorFilter  | filter: {RM_TP: roomType ,RM_ID: roomNM, RM_CONDITION: roomStatus} | orderBy:roomST.RM_ID " ng-style="ngSetRoomBoxColor(roomST)">  -->
         <!-- old search by categories

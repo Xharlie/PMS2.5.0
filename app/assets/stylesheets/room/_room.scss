@@ -1,0 +1,106 @@
+//
+// Rooms
+// --------------------------------------------------
+
+
+// Base styles
+// --------------------------------------------------
+
+.room{
+	display: inline-block;
+	width: $room-size;
+	height: $room-size;
+	border-radius: $room-border-radius;
+	border-style: solid;
+	border-width: 1px;
+	padding: 20px;
+
+	margin: $room-margin;
+
+	text-align: center;
+	vertical-align: center;
+
+}
+
+// Hotel Status
+// --------------------------------------------------
+.hotelStatus{
+	height: $sideNav-profile-height - 5px;
+	border-bottom: $content-border-style $content-border-width $content-border-color;
+	.col-md-4:nth-child(1){
+		height: $sideNav-profile-height - 5px;
+		border-right: $content-border-style $content-border-width $content-border-color;
+	}
+	.col-md-4:nth-child(2){
+		height: $sideNav-profile-height - 5px;
+		border-right: $content-border-style $content-border-width $content-border-color;
+	}
+	.col-md-4:nth-child(3){
+		height: $sideNav-profile-height - 5px;
+	}
+}
+
+
+// Room Status
+// --------------------------------------------------
+.roomStatus{
+	.room{
+		float:left;
+	}
+}
+
+// Empty rooms
+// --------------------------------------------------
+
+.room-empty{
+	color: $room-empty-color;
+	border-color: $room-empty-border;
+	@include gradient-directional($room-empty-bg,$room-empty-border,160deg);
+	
+
+	&:hover{
+		@include gradient-directional(darken($room-empty-bg,10%),darken($room-empty-border,10%),160deg);
+		cursor: pointer;
+	}
+}
+
+// Full rooms
+// --------------------------------------------------
+
+.room-full{
+	color: $room-full-color;
+	border-color: $room-full-border;
+	@include gradient-directional($room-full-bg,$room-full-border,20deg);
+
+	&:hover{
+		@include gradient-directional(darken($room-full-bg,10%),darken($room-full-border,10%),20deg);
+		cursor: pointer;
+	}
+}
+
+// Diabled rooms
+// --------------------------------------------------
+
+.room-disabled{
+	color: $room-disabled-color;
+	border-color: $room-disabled-border;
+	@include gradient-directional($room-disabled-bg,$room-disabled-border,160deg);
+
+	&:hover{
+		@include gradient-directional(darken($room-disabled-bg,10%),darken($room-disabled-border,10%),160deg);
+	}
+}
+
+// Dirty rooms
+// --------------------------------------------------
+
+.room-dirty{
+	color: $room-dirty-color;
+	border-color: $room-dirty-border;
+	@include gradient-directional($room-dirty-bg,$room-dirty-border,160deg);
+
+	&:hover{
+		@include gradient-directional(darken($room-dirty-bg,10%),darken($room-dirty-border,10%),160deg);
+		cursor: pointer;
+	}
+}

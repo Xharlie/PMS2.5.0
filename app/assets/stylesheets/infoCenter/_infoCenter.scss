@@ -1,0 +1,19 @@
+//
+// InfoCenter
+// --------------------------------------------------
+
+
+// Base styles
+// --------------------------------------------------
+
+.infoCenterArea{
+	box-shadow: $content-shadow;
+	background-color: $content-bg;
+	text-align: left;
+	border-radius: $content-corner-radius;
+	z-index: 10;
+}
+
+.infoCenter{
+	padding: 18px 20%;
+}

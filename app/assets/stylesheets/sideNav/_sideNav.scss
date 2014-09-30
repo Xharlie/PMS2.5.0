@@ -1,0 +1,60 @@
+//
+// SideNav
+// --------------------------------------------------
+
+
+// Base styles
+// --------------------------------------------------
+
+
+.sideNavArea{
+	text-align: center;
+	color: $sideNav-color;
+	background-color: $sideNav-bg;
+}
+
+.sideNav{
+	position: fixed;
+	width: $sideNav-width;
+}
+
+.sideNav-title{
+	height: $sideNav-title-height;
+}
+
+.sideNav-profile{
+	height: $sideNav-profile-height;
+	width: 100%;
+	background-color: lighten($sideNav-bg,10%);
+}
+
+.sideNav-menu{
+
+	padding-top: 40px;
+
+	a{
+		color: $sideNav-color;
+		text-decoration: none;
+		width: 100%;
+		&:hover{
+			color: $sideNav-color;
+			text-decoration: none;
+		}
+	}
+
+	ul{
+		width: 100%;
+		padding: 0;
+
+		li{
+			list-style: none;
+			width: 100%;
+			padding: 12px;
+			&:hover{
+				background-color: darken($sideNav-bg,10%);
+				cursor: pointer;
+			}
+		}
+	}
+
+}

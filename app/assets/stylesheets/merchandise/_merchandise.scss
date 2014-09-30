@@ -1,0 +1,44 @@
+//
+// Merchandise
+// --------------------------------------------------
+// Defines system layout
+
+
+// Base styles
+// --------------------------------------------------
+
+.mode{
+	overflow: hidden;
+	width: 100%;
+}
+
+.productBoard{
+	margin-top: 20px;
+	overflow: hidden;
+	padding: 0 5%;
+
+	th{
+		padding-left: 20px;
+	}
+
+	.prodSearch{
+	}
+	.merchandiseList{
+		width: 100%;
+		overflow: hidden;
+	}
+}
+
+.purchaseBoard{
+	margin-top: 20px;
+	overflow: hidden;
+	padding: 0 5%;
+
+	th{
+		padding-left: 20px;
+	}
+
+	.searchBox{
+		width: 100%;
+	}
+}

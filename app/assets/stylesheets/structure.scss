@@ -1,0 +1,58 @@
+//
+// Structure
+// --------------------------------------------------
+// Defines system layout
+
+
+// Base styles
+// --------------------------------------------------
+
+
+.sideNavArea{
+	height: 1000px; //Temporary
+	top:0;
+	left: 0;
+	width: $sideNav-width;
+}
+
+.main{
+	position: absolute;
+	top: 0;
+	left: $sideNav-width;
+	width: 100% - $sideNav-width;
+
+
+	.infoCenterArea{
+		width: 0.9 * (100% - $sideNav-width);
+		margin: 0 auto;
+		position: fixed;
+		top: 5px;
+		left: $sideNav-width + 0.05 * (100% - $sideNav-width);
+		height: $sideNav-title-height - 10px;
+	}
+
+	.contentArea{
+		width: 90%;
+		margin: 0 auto;
+		margin-top: $sideNav-title-height;
+	}
+}
+
+.searchBox{
+	border:$searchBox-border;
+	border-radius:$searchBox-radius;
+	width: $searchBox-width;
+}
+
+
+.ctrlRight{
+	float: right;
+	@include clearfix();
+	margin-top: 10px;
+}
+
+.ctrlLeft{
+	float: left;
+	@include clearfix();
+	margin-top: 10px;
+}

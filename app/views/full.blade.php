@@ -16,16 +16,14 @@
             <script src="assets/javascripts/application.js"></script>
 	</head>
 	<body >
-		<div class="sideNavArea" >
+		<div class="sideNavArea">
 			@include('sideNav')
 		</div>
 		<div class="main">
 			<div class="infoCenterArea">
 				@include('infoCenter')
 			</div>
-
 			<div class="contentArea" ng-view ng-style="contentNgStyle = {'min-height': '500px'}">
-
 			</div>
 		</div>
 

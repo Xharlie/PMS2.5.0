@@ -1,0 +1,15 @@
+//
+// Content
+// --------------------------------------------------
+
+
+// Base styles
+// --------------------------------------------------
+
+.contentArea{
+	box-shadow: $content-shadow;
+	background-color: $content-bg;
+	text-align: left;
+	border-radius: $content-corner-radius;
+	padding: 18px 32px;
+}
