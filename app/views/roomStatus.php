@@ -49,7 +49,10 @@
         <!-- old search by categories
         <div ng-click="open(roomST)" class="roomBox" ng-repeat = "roomST in roomStatusInfo | filter: ngFloorFilter  | filter: {RM_TP: roomType ,RM_ID: roomNM, RM_CONDITION: roomStatus} | orderBy: roomST.RM_ID " ng-style="ngSetRoomBoxColor(roomST)">
         -->
-        <div ng-click="open(roomST)" class="roomBox" ng-init="ngSetRoomBoxColor(roomST)" ng-repeat = "roomST in roomStatusInfo | filter: customerizeFilter | orderBy: roomST.RM_ID " ng-style="roomST.boxStyle">
+        <div ng-click="open(roomST)"
+             class="room" ng-class="ngSetRoomBoxColor(roomST)"
+             ng-init=""
+             ng-repeat = "roomST in roomStatusInfo | filter: customerizeFilter | orderBy: roomST.RM_ID " >
         <table>
                 <tr>
                     <td>{{roomST.RM_ID}}</td>

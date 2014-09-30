@@ -84,19 +84,14 @@ app.controller('roomStatusController', function($scope, $http, roomStatusFactory
         var color = "";
             switch(roomST.RM_CONDITION){
                 case 'Empty':
-                    color = '#FFFFF1';
-                    break;
+                    return "room-empty";
                 case 'Occupied':
-                    color = '#D4D4CD';
-                    break;
+                    return "room-full";
                 case 'Preparing':
-                    color = '#CAFFCA';
-                    break;
+                    return "room-dirty";
                 case 'Mending':
-                    color = '#FF6600';
-                    break;
+                    return"room-disabled";
             }
-        roomST.boxStyle['backgroundColor'] = color;
     };
     /* shape for fun
     $scope.shape = function(RM_TP){
