@@ -3,6 +3,13 @@
  */
 appCheckOut.factory('newCheckOutFactory',function($http){
     return{
+        productShow: function(){
+            return $http({
+                method: 'GET',
+                heasders: {'content-Type':'application/json'},
+                url: 'showProduct'
+            })
+        },
         getAllInfo: function(Room_Array){
             return $http({
                 method: 'POST',

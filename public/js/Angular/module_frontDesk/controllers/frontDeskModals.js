@@ -1,10 +1,22 @@
 app.controller('roomModalInstanceCtrl',function ($scope, $modalInstance, cusModalFactory, $http, roomST) {
+    $scope.ngSetRoomClass = function(roomST){
 
+        switch(roomST.RM_CONDITION){
+            case '空房':
+                return "room-empty";
+            case '有人':
+                return "room-full";
+            case '脏房':
+                return "room-dirty";
+            case '维修':
+                return"room-disabled";
+        }
+    };
     $scope.roomST =roomST;
     $scope.RMviewClick = "infoAction";
     $scope.nametogether = '';
     $scope.roomNumString="暂无";
-    if ($scope.roomST.RM_CONDITION =="Occupied"){
+    if ($scope.roomST.RM_CONDITION =="有人"){
 
         cusModalFactory.OccupiedShow($scope.roomST.RM_TRAN_ID).success(function(data){
             $scope.RoomCustomers = data;
@@ -29,7 +41,7 @@ app.controller('roomModalInstanceCtrl',function ($scope, $modalInstance, cusModa
         });
         $scope.roomAction = [['基本信息','basicInfo'],["账单查看",'viewAccounting'],["叫醒服务",'wakeUp'],["退房办理",'checkOut'],
             ["商品购买",'shopping']];
-    }else if ($scope.roomST.RM_CONDITION =="Empty"){
+    }else if ($scope.roomST.RM_CONDITION =="空房"){
         cusModalFactory.EmptyShow($scope.roomST.RM_TP).success(function(data){
             $scope.RoomTP = data;
             $scope.roomInfo = [
@@ -38,7 +50,7 @@ app.controller('roomModalInstanceCtrl',function ($scope, $modalInstance, cusModa
             ];
         });
         $scope.roomAction = [["入住办理",'checkIn'],["房间维修",'mending']];
-    }else if ($scope.roomST.RM_CONDITION =="Mending"){
+    }else if ($scope.roomST.RM_CONDITION =="维修"){
         cusModalFactory.EmptyShow($scope.roomST.RM_TP).success(function(data){
             $scope.RoomTP = data;
             $scope.roomInfo = [
@@ -47,7 +59,7 @@ app.controller('roomModalInstanceCtrl',function ($scope, $modalInstance, cusModa
             ];
         });
         $scope.roomAction = [["入住办理",'checkIn'],["维修完毕",'mended']];
-    }else if ($scope.roomST.RM_CONDITION =="Preparing"){
+    }else if ($scope.roomST.RM_CONDITION =="脏房"){
         cusModalFactory.EmptyShow($scope.roomST.RM_TP).success(function(data){
             $scope.RoomTP = data;
             $scope.roomInfo = [
@@ -60,8 +72,9 @@ app.controller('roomModalInstanceCtrl',function ($scope, $modalInstance, cusModa
 
     $scope.excAction = function(actionString){
         if(actionString == 'checkIn'){
-            var location = "newCheckIn/"+$scope.roomST.RM_ID;
-            window.open(location);
+            var location = "newCheckIn/checkIn/"+$scope.roomST.RM_ID;
+//            window.open(location);
+            util.openTab(location,"","",util.closeCallback);
         }else if(actionString == 'shopping'){
             var location = "#/merchandise/"+$scope.roomST.RM_ID;
             window.open(location);
@@ -80,26 +93,28 @@ app.controller('roomModalInstanceCtrl',function ($scope, $modalInstance, cusModa
         }else if(actionString == 'viewAccounting'){
             cusModalFactory.getAccounting($scope.roomST.RM_TRAN_ID).success(function(data){
                 $scope.AcctDepo = data[0];
-            //    $scope.AcctPay = data[1];
-            //    $scope.AcctStore = data[2];
+                $scope.AcctPay = data[1];
+                $scope.AcctStore = data[2];
                 $scope.RMviewClick = "infoAccounting";
             });
         }else if(actionString == 'basicInfo'){
             $scope.RMviewClick = "infoAction";
+            var location = "newCheckIn/modify/"+$scope.roomST.RM_ID;
+//            window.open(location);
+            util.openTab(location,"","",util.closeCallback);
         }else if(actionString == 'checkOut'){
             cusModalFactory.getConnect($scope.roomST.RM_TRAN_ID).success(function(data){
-                if(data == "null"){
-                    var location = "newCheckOut/"+$scope.roomST.RM_TRAN_ID;
-                    window.open(location);
-                }else{
+                if(data != "null"){
                     $scope.CurrentMaster = data[0];
                     $scope.ConnRooms = data;
                     $scope.RMviewClick = "connectCheckOut";
                 }
-
-            //var location = "newCheckIn/"+$scope.roomST.RM_ID;
-            //window.open(location);
             });
+            if ($scope.roomST.CONN_RM_TRAN_ID == null){
+                var location = "newCheckOut/"+$scope.roomST.RM_TRAN_ID;
+//                window.open(location);
+                util.openTab(location,"","",util.closeCallback);
+            }
         }
 
     }
@@ -129,8 +144,8 @@ app.controller('roomModalInstanceCtrl',function ($scope, $modalInstance, cusModa
                         return;
                     }
                 }
-                var temp = JSON.parse(JSON.stringify(room));
-                $scope.ConnRooms[0]= JSON.parse(JSON.stringify($scope.ConnRooms[i]));
+//                var temp = JSON.parse(JSON.stringify(room));
+//                $scope.ConnRooms[0]= JSON.parse(JSON.stringify($scope.ConnRooms[i]));
          //       $scope.ConnRooms[i] = temp;
          //       return;
          //       $scope.ConnRooms[0] = $scope.CurrentMaster
@@ -183,7 +198,8 @@ app.controller('roomModalInstanceCtrl',function ($scope, $modalInstance, cusModa
             roomsString += "/M" + $scope.ConnRooms[0].RM_TRAN_ID;
         }
         var location = "newCheckOut"+roomsString;
-        window.open(location);
+//        window.open(location);
+        util.openTab(location,"","",util.closeCallback);
     };
 
 });
@@ -196,8 +212,9 @@ app.controller('connectRMModalInstanceCtrl',function ($scope, $modalInstance, cu
         for (var i = 0; i < connectRooms.length; i++){
             roomsString += ("/"+connectRooms[i].RM_ID);
         }
-        var location = "newCheckIn"+roomsString;
-        window.open(location);
+        var location = "newCheckIn/checkIn"+roomsString;
+//        window.open(location);
+        openTab(location,"","",util.closeCallback);
     };
 
     $scope.cancelConn = function(){

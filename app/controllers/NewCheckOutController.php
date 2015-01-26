@@ -80,7 +80,6 @@ class NewCheckOutController extends BaseController{
                 $StoreTransaction = array(
                     'STR_TRAN_ID' => $STR_TRAN_ID,
                     'STR_TRAN_TSTAMP' => new DateTime(),
-                    'STR_PAY_METHOD' => $room['RoomConsume'][0]['STR_PAY_METHOD'],
                     'STR_PAY_AMNT' => $STR_PAY_AMNT
                 );
                 DB::table('StoreTransaction')->insert($StoreTransaction);
@@ -92,13 +91,16 @@ class NewCheckOutController extends BaseController{
                         "RM_TRAN_ID" => $room['RM_TRAN_ID'],
                         "BRK_EQPMT_RMRK" => $penalty['RMRK'],
                         "PNLTY_PAY_AMNT" => $penalty['PAY_AMNT'],
-                        "PNLTY_PAY_METHOD" => $penalty['PAY_METHOD'],
                         "BILL_TSTMP" => new DateTime(),
                         "PAYER_NM" => $penalty['PAYER'],
                         "PAYER_PHONE" => $penalty['PAYER_PHONE']
                     );
+                    DB::table('PenaltyAcct')->insert($PenaltyAcct);
                 }
             }
+
+
+
 
             $realPay = array(
                 "DEPO_AMNT" => -1*$room['Sumation'],
@@ -157,7 +159,7 @@ class NewCheckOutController extends BaseController{
             }
 
             DB::table('Rooms')->where('RM_ID',$room["RM_ID"])
-                ->update(array("RM_CONDITION"=>'Preparing','RM_TRAN_ID'=>null));
+                ->update(array("RM_CONDITION"=>'脏房','RM_TRAN_ID'=>null));
         }
 
 

@@ -1,21 +1,30 @@
 <!doctype html>
-<div class="sideNav">
+<div class="sideNav shadow-z-1">
 	<div class="sideNav-title">
-	</div>
-	<div class="sideNav-profile">
-		<div class="img-container">
-			</img src="">
+		<div class="ctrlArea">
+			<span class="ctrlLeft"><img src="assets/dummy/logo.png" style="height:38px;"/></span>
+			<span class="ctrlRight"><div class="sideNav-profile"></div>早上好！</span>
 		</div>
 	</div>
-	<div class="sideNav-menu">
+	<div class="sideNav-menu"   ng-controller="sideBarController" >
 		<ul>
-			<li><a href="#/roomStatus">房态信息</a></li>
-			<li><a href="#/reservation">预订信息</a></li>
-		    <li><a href="#/merchandise/:">商品管理</a></li>
-		    <li><a href="#/customer">客户管理</a></li>
-		    <li><a >问题汇报</a></li>
-		    <li><a href="#/accounting">账目管理</a></li>
-		    <li><a href="#/oneKeyShift">一键交班</a></li>
-		</ul>
+			<li ng-class="tabClassObj.room"><a href="#/roomStatus"  ng-click="emphasize('room')"><span class="glyphicon glyphicon-home" ></span>房态信息</a></li>
+			<li ng-class="tabClassObj.rese"><a href="#/reservation" ng-click="emphasize('rese')"><span class="glyphicon glyphicon-time"></span>预订信息</a></li>
+		    <li ng-class="tabClassObj.merc"><a href="#/merchandise/:" ng-click="emphasize('merc')"><span class="glyphicon glyphicon-tag"></span>商品管理</a></li>
+		    <li ng-class="tabClassObj.cust"><a href="#/customer" ng-click="emphasize('cust')"><span class="glyphicon glyphicon-user"></span>客户管理</a></li>
+		    <li ng-class="tabClassObj.acco"><a href="#/accounting" ng-click="emphasize('acco')"><span class="glyphicon glyphicon-usd"></span>账目管理</a></li>
+		    <li ng-class="tabClassObj.prob"><a ng-click="emphasize('prob')"><span class="glyphicon glyphicon-warning-sign"></span>问题汇报</a></li>
+		    <li ng-class="tabClassObj.oneK"><a href="#/oneKeyShift" ng-click="emphasize('oneK')"><span class="glyphicon glyphicon-transfer"></span>一键交班</a></li>
+            <div class="btn-group" dropdown is-open="status.isopen" ng-mouseover="status.isopen = true" ng-mouseleave="status.isopen = false">
+                <li ng-class="tabClassObj.sett" class=" dropdown-toggle" >
+                    <span class="glyphicon glyphicon-tower"></span> 客房设置<span class="caret" ></span>
+                </li>
+                <ul class="dropdown-menu" role="menu"  ng-mouseover="status.isopen = true" ng-mouseleave="status.isopen = false">
+                    <li><a href="#/settingRoomTp">房型设置</a></li>
+                    <li><a href="#/settingRooms">房间设置</a></li>
+                    <li><a href="#/settingTempRoom">钟点房设置</a></li>
+                </ul>
+            </div>
+        </ul>
 	</div>
 </div>

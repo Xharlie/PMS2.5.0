@@ -11,32 +11,64 @@
 	width: $room-size;
 	height: $room-size;
 	border-radius: $room-border-radius;
-	border-style: solid;
+	border-style: none;
 	border-width: 1px;
-	padding: 20px;
+	overflow: hidden;
+	font-weight: 300;
+
+	box-shadow: $room-shadow;
 
 	margin: $room-margin;
 
 	text-align: center;
 	vertical-align: center;
 
+	table{
+		margin: 20px auto;
+		
+		tr:first-child{
+			td{
+			padding-bottom: 30px;
+			}
+		}
+		tr:last-child{
+			display: none;
+		}
+	}
+
+	span{
+			color: #fff;
+			padding: 2px 20px;
+			border-radius: 20px;
+		}
+
 }
 
 // Hotel Status
 // --------------------------------------------------
 .hotelStatus{
-	height: $sideNav-profile-height - 5px;
+	height: $sideNav-profile-height;
 	border-bottom: $content-border-style $content-border-width $content-border-color;
 	.col-md-4:nth-child(1){
-		height: $sideNav-profile-height - 5px;
+		overflow-y:scroll;
+		height: $sideNav-profile-height;
 		border-right: $content-border-style $content-border-width $content-border-color;
+		padding: $content-padding;
 	}
 	.col-md-4:nth-child(2){
-		height: $sideNav-profile-height - 5px;
+		overflow-y:scroll;
+		height: $sideNav-profile-height;
 		border-right: $content-border-style $content-border-width $content-border-color;
+		padding: $content-padding;
 	}
 	.col-md-4:nth-child(3){
-		height: $sideNav-profile-height - 5px;
+		overflow-y:scroll;
+		height: $sideNav-profile-height;
+		padding: $content-padding;
+	}
+
+	table{
+		width: 100%;
 	}
 }
 
@@ -44,63 +76,41 @@
 // Room Status
 // --------------------------------------------------
 .roomStatus{
-	.room{
-		float:left;
-	}
+	padding: 0 $content-padding-horizontal $content-padding-vertical $content-padding-horizontal;
+	
+}
+
+.roomStatusFull{
+	overflow: hidden;
+	max-width: ($room-size + ($room-margin*2))*8;
+	margin: 0 auto;
+	position: relative;
 }
 
 // Empty rooms
 // --------------------------------------------------
 
 .room-empty{
-	color: $room-empty-color;
-	border-color: $room-empty-border;
-	@include gradient-directional($room-empty-bg,$room-empty-border,160deg);
-	
-
-	&:hover{
-		@include gradient-directional(darken($room-empty-bg,10%),darken($room-empty-border,10%),160deg);
-		cursor: pointer;
-	}
+	@include room-style($room-empty-color,$room-empty-bg,$room-empty-badge);
 }
 
 // Full rooms
 // --------------------------------------------------
 
 .room-full{
-	color: $room-full-color;
-	border-color: $room-full-border;
-	@include gradient-directional($room-full-bg,$room-full-border,20deg);
-
-	&:hover{
-		@include gradient-directional(darken($room-full-bg,10%),darken($room-full-border,10%),20deg);
-		cursor: pointer;
-	}
+	@include room-style($room-full-color,$room-full-bg,$room-full-badge);
 }
 
 // Diabled rooms
 // --------------------------------------------------
 
 .room-disabled{
-	color: $room-disabled-color;
-	border-color: $room-disabled-border;
-	@include gradient-directional($room-disabled-bg,$room-disabled-border,160deg);
-
-	&:hover{
-		@include gradient-directional(darken($room-disabled-bg,10%),darken($room-disabled-border,10%),160deg);
-	}
+	@include room-style($room-disabled-color,$room-disabled-bg,$room-disabled-badge);
 }
 
 // Dirty rooms
 // --------------------------------------------------
 
 .room-dirty{
-	color: $room-dirty-color;
-	border-color: $room-dirty-border;
-	@include gradient-directional($room-dirty-bg,$room-dirty-border,160deg);
-
-	&:hover{
-		@include gradient-directional(darken($room-dirty-bg,10%),darken($room-dirty-border,10%),160deg);
-		cursor: pointer;
-	}
+	@include room-style($room-dirty-color,$room-dirty-bg,$room-dirty-badge);
 }

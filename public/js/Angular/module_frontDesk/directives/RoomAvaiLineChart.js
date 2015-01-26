@@ -2,6 +2,7 @@
  * Created by Xharlie on 6/30/14.*/
 
 
+
 appCheckIn.directive('roomAvilinechart', function(){
 
     return {

@@ -46,7 +46,7 @@ class AccountingController extends BaseController{
     }
 
     public function cardsNumSumGet(){
-        $today = (new DateTime())->getTimeStamp();
+        $today = (new DateTime("+1 days"))->getTimeStamp();
         $twoDaysAgo = (new DateTime("-100 days"))->getTimeStamp();
         $cardSum =  DB::table('RoomTran')
             ->whereRaw("UNIX_TIMESTAMP(RoomTran.CHECK_IN_DT) BETWEEN ".$twoDaysAgo." AND ".$today)
@@ -55,7 +55,7 @@ class AccountingController extends BaseController{
     }
 
     public function accountingGetAll(){
-        $today = (new DateTime())->getTimeStamp();
+        $today = (new DateTime("+1 days"))->getTimeStamp();
         $twoDaysAgo = (new DateTime("-100 days"))->getTimeStamp();
         $DepoAcct =  DB::table('RoomDepositAcct')
             ->whereRaw("UNIX_TIMESTAMP(RoomDepositAcct.DEPO_TSTMP) BETWEEN ".$twoDaysAgo." AND ".$today)

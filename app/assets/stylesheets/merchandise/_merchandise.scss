@@ -7,38 +7,22 @@
 // Base styles
 // --------------------------------------------------
 
-.mode{
-	overflow: hidden;
-	width: 100%;
-}
-
 .productBoard{
-	margin-top: 20px;
 	overflow: hidden;
-	padding: 0 5%;
+	border-right: $content-border-style $content-border-width $content-border-color;
 
-	th{
-		padding-left: 20px;
-	}
-
-	.prodSearch{
-	}
-	.merchandiseList{
-		width: 100%;
-		overflow: hidden;
-	}
 }
 
 .purchaseBoard{
-	margin-top: 20px;
-	overflow: hidden;
-	padding: 0 5%;
-
-	th{
-		padding-left: 20px;
-	}
+	position: aboslute;
 
 	.searchBox{
 		width: 100%;
 	}
+
+}
+
+.buyButton{
+	width: 100%;
+	margin: 20px 0;
 }

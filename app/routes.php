@@ -14,10 +14,52 @@
 Blade::setContentTags('<%', '%>'); 		// for variables and all things Blade
 Blade::setEscapedContentTags('<%%', '%%>'); 	// for escaped data
 
-Route::get('/', function()
+
+
+/*------------------------------------Auth--------------------------------------------*/
+
+
+
+Route::get('/', array('before' => 'authen',function()
 {
-	return View::make('full');
+    return View::make('full');
+}));
+
+Route::group(array('prefix' => 'directiveViews'), function()
+{
+    Route::get('{all}', function($all)
+    {
+        return View::make("directiveViews".".".$all);
+    });
 });
+
+
+Route::get('/', array('before' => 'authen',function()
+{
+    return View::make('full');
+}));
+
+Route::get('/logon', function()
+{
+    return View::make('logon',array('err' => Session::get("err")));
+});
+
+Route::get('/dialog', function()
+{
+    return View::make('dialog');
+});
+
+
+
+Route::post('/logonPost', 'UserController@logon');
+
+
+Route::get('logout', function()
+{
+    Auth::logout();
+    return Redirect::to('/');
+});
+
 
 Route::get('/newResv', function()
 {
@@ -30,6 +72,9 @@ Route::post('/newCheckIn/',function(){
             return View::make('new', array( 'data'=> $data, 'roomsID'=> $rooms ));
         }
 );
+
+
+
 
 Route::group(array('prefix' => 'newCheckIn'), function()
 {
@@ -56,11 +101,17 @@ Route::group(array('prefix' => 'newModifyWindow'), function()
 });
 
 /* for Database */
+
+// get room and roomTypes info by rm_condition;
+Route::get('/getRoomAndRoomType/{RM_CONDITION}', 'RoomStatusController@getRoomAndRoomType');
+
 Route::get('/showReservation', 'ReservationController@showResv');
 
 Route::get('/showRoomStatus', 'RoomStatusController@showRoom');
 
 Route::get('/showOccupied/{RM_TRAN_ID}', 'RoomStatusController@showOccupied');
+
+Route::get('/showCusInRoom/{RM_ID}', 'NewCheckInController@showCusInRoom');
 
 Route::get('/showEmpty/{RM_TP}', 'RoomStatusController@showEmpty');
 
@@ -75,23 +126,42 @@ Route::filter('checkInFilter', function($RM_ID,$RM_TP){
     }
 );
 
+// get clicked room's  info in single check in;
+Route::get('/getSingleRoomInfo/{RM_ID}', 'NewCheckInController@getSingleRoomInfo');
+// get  all rooms  info in  check in;
+Route::get('/getRoomInfo', 'NewCheckInController@getRoomInfo');
+// get  all rooms info with availability;
+Route::post('/getRMInfoWithAvail', 'NewCheckInController@getRMInfoWithAvail');
+
+
+
 Route::get('/showSoldOut/{checkInDt}/{checkOtDt}', 'NewCheckInController@showSoldOut');
+
 
 Route::get('/showRoomQuan', 'NewCheckInController@showRoomQuan');
 
-Route::get('/showRoomUnAvail', 'NewCheckInController@showRoomUnAvail');
+// Route::get('/showRoomUnAvail', 'NewCheckInController@showRoomUnAvail');
 
 Route::get('/showHistoCustomer/{SSN}', 'NewCheckInController@showHistoCustomer');
+
+// check in search members
+Route::post('/searchMembers', 'NewCheckInController@searchMembers');
+
 
 Route::get('/showMemberBySSN/{SSN}', 'NewCheckInController@showMemberBySSN');
 
 Route::get('/showMemberByID/{MEM_ID}', 'NewCheckInController@showMemberByID');
 
+// check in search treaties
+Route::post('/searchTreaties', 'NewCheckInController@searchTreaties');
+
 Route::get('/showTreatyByID/{TREATY_ID}', 'NewCheckInController@showTreatyByID');
 
 Route::get('/showTreatyByCorp/{CORP_NM}', 'NewCheckInController@showTreatyByCorp');
 
-Route::post('/submitCheckIn','NewCheckInController@submit');
+Route::post('/submitCheckIn','NewCheckInController@submitCheckIn');
+
+Route::post('/submitModify','NewCheckInController@submitModify');
 
 
 
@@ -140,3 +210,57 @@ Route::get('/summerize','AccountingController@Summerize');
 
 
 
+Route::get('/roomTpGet','SettingRoomController@getRoomTp');
+Route::get('/roomsGet','SettingRoomController@getRooms');
+Route::get('/tempPlanGet','SettingRoomController@getTempPlan');
+
+
+
+Route::group(array('prefix' => 'roomTpDelete'), function()
+{
+    Route::get('{all}','SettingRoomController@deleteRoomTp');
+});
+
+
+
+Route::group(array('prefix' => 'roomsDelete'), function()
+{
+    Route::get('{all}','SettingRoomController@deleteRooms');
+});
+
+Route::group(array('prefix' => 'floorsDelete'), function()
+{
+    Route::get('{all}','SettingRoomController@deleteFloors');
+});
+
+Route::post('/roomTpAdd','SettingRoomController@addRoomTp');
+
+Route::post('/roomTpEdit','SettingRoomController@editRoomTp');
+
+Route::post('/roomsEdit','SettingRoomController@editRooms');
+
+Route::post('/roomsAdd','SettingRoomController@addRooms');
+
+Route::post('/floorsEdit','SettingRoomController@editFloors');
+
+Route::post('/floorsAdd','SettingRoomController@addFloors');
+
+Route::post('/planEdit','SettingRoomController@editPlan');
+
+Route::get('/planDelete/{PLAN_ID}','SettingRoomController@deletePlan');
+
+Route::post('/planAdd','SettingRoomController@addPlan');
+
+/*------------------------------------------Filter---------------------------------------------*/
+
+Route::filter('authen', function()
+{
+    if (!Auth::check())
+    {
+        return Redirect::to('/logon');
+    }
+});
+
+
+
+/*-----------------------------------------Resource--------------------------------------------*/

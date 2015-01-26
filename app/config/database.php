@@ -52,16 +52,38 @@ return array(
 			'prefix'   => '',
 		),
 
-		'mysql' => array(
-			'driver'    => 'mysql',
-			'host'      => 'localhost',
-			'database'  => 'BI',
-			'username'  => 'root',
-			'password'  => 'kongzi33',
-			'charset'   => 'utf8',
-			'collation' => 'utf8_general_ci',
-			'prefix'    => '',
-		),
+    		'mysql' => array(
+    			'driver'    => 'mysql',
+    			'host'      => 'localhost',
+    			'database'  => 'BI',
+    			'username'  => 'root',
+    			'password'  => 'kongzi33',
+    			'charset'   => 'utf8',
+    			'collation' => 'utf8_general_ci',
+    			'prefix'    => '',
+    		),
+////
+//        'mysql' => array(
+//            'driver'    => 'mysql',
+//            'host'      => '23.229.206.41',
+//            'database'  => 'xharlie_Hotel_Dev_1011',
+//            'username'  => 'xharlie_benShi',
+//            'password'  => 'benShi',
+//            'charset'   => 'utf8',
+//            'collation' => 'utf8_general_ci',
+//            'prefix'    => '',
+//        ),
+
+        'mysql_emply' => array(
+            'driver'    => 'mysql',
+            'host'      => 'localhost',
+            'database'  => 'EMP_LGN',
+            'username'  => 'root',
+            'password'  => 'kongzi33',
+            'charset'   => 'utf8',
+            'collation' => 'utf8_general_ci',
+            'prefix'    => '',
+        ),
 
 		'pgsql' => array(
 			'driver'   => 'pgsql',

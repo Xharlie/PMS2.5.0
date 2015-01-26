@@ -4,6 +4,10 @@
 var appResv = angular.module('newResvModule',['ngRoute','ngAnimate','ui.bootstrap']);
 
 
+appResv.config(['$tooltipProvider', function($tooltipProvider){
+    $tooltipProvider.setTriggers({'wrong': 'right'});
+}]);
+
 appResv.directive('roomAvilinechart', function(){
 
     return {

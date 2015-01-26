@@ -11,9 +11,44 @@
 	background-color: $content-bg;
 	text-align: left;
 	border-radius: $content-corner-radius;
-	z-index: 10;
+	z-index: 0;
+	background-color: $infoCenter-bg;
 }
 
 .infoCenter{
-	padding: 18px 20%;
+	color: darken($infoCenter-color,30%);
+	font-size: 11px;
+
+	.infoContainer{
+	padding: 0 $infoCenter-padding-horizontal;
+		.infoItem{
+			font-weight: 300;
+			border-bottom: $content-border-width $content-border-style #777;
+			padding: $content-padding-vertical*0.5 0;
+
+			.infoTitle{
+				min-height: 20px;
+			}
+
+			.infoTime{
+				font-size: 10px;
+				font-weight: bold;
+				text-align: right;
+			}
+
+			&:hover{
+				color: $infoCenter-color;
+				text-decoration: line-through;
+				cursor: pointer;
+			}
+
+		}
+	}
+
+	.infoHeader{
+		height: $sideNav-title-height;
+		padding: $infoCenter-padding;
+	}
+
+
 }

@@ -11,5 +11,7 @@
 	background-color: $content-bg;
 	text-align: left;
 	border-radius: $content-corner-radius;
-	padding: 18px 32px;
+	overflow: hidden;
+	width: 100%;
+	position: relative;
 }

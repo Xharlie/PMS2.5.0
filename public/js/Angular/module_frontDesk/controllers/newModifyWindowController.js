@@ -6,7 +6,8 @@ appModify.controller('newModifyWindowController', function($scope, $http, newMod
     $scope.InfoArray = pathArray.slice(pathArray.indexOf('newModifyWindow')+1);
     newModifyWindowFactory.getTargetAcct($scope.InfoArray).success(function(data){
         $scope.oldTarget =data[0];
-        $scope.oldTarget["PAY_AMNT"]=($scope.oldTarget["CONSUME_PAY_AMNT"]== undefined)? $scope.oldTarget["SUBMIT_PAY_AMNT"]:$scope.oldTarget["CONSUME_PAY_AMNT"];
+        $scope.oldTarget["PAY_AMNT"]=($scope.oldTarget["CONSUME_PAY_AMNT"] == ""
+            || $scope.oldTarget["CONSUME_PAY_AMNT"]== undefined)? $scope.oldTarget["SUBMIT_PAY_AMNT"]:$scope.oldTarget["CONSUME_PAY_AMNT"];
         $scope.CLASS = reverse($scope.oldTarget["CLASS"]);
     });
 

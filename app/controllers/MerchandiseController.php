@@ -37,7 +37,7 @@ class MerchandiseController extends BaseController{
 
         $STR_TRAN_ID = DB::table('StoreTransaction')->insertGetId($storeTransactionArray);
 
-        if (($info["RM_TRAN_ID"])==""){
+        if (($info["RM_TRAN_ID"])!=""){
             DB::table('RoomStoreTran')->insert(
                 array(
                     "RM_TRAN_ID" => $info["RM_TRAN_ID"],

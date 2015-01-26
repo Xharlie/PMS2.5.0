@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 	<head>
-	    <base href="http://localhost/~Xharlie/Hotel_Dev0/public/">
+	    <base href="http://localhost/~Xharlie/PMS.2.5.0/public/">
 		<meta charset="UTF-8">
 		<title></title>
         <!--   <link rel="stylesheet" type="text/css" href="css/temp_style.css">
@@ -9,30 +9,39 @@
               <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
         -->
 
-        <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet">
+                    <!-- Bootstrap -->
+            <link href="assets/stylesheets/application.css" rel="stylesheet">
+         
+            <!-- Javascript -->
+            <script src="assets/javascripts/application.js"></script>
 
 
     </head>
 	<body>
 		<div class="main">
-                <?php if($pageType =='newCheckIn'){?>
-            <div class="formArea" ng-app="newCheckInModule" ng-controller="newCheckInController">
-				@include('newCheckIn')
+            <div class="content container-fluid">
+                <div class="contentArea formArea">
+                    <?php if($pageType =='newCheckIn'){?>
+                        <div class="formArea" ng-app="newCheckInModule" ng-controller="newCheckInController">
+                            @include('newCheckIn')
+                        </div>
+                    <?php } elseif($pageType =='newResv'){?>
+                        <div class="formArea" ng-app="newResvModule" ng-controller="newResvController">
+                            @include('newReservation')
+                        </div>
+                    <?php } elseif($pageType =='newCheckOut'){?>
+                        <div class="formArea" ng-app="newCheckOutModule"  ng-controller="newCheckOutController">
+                            @include('newCheckOut')
+                        </div>
+                    <?php } elseif($pageType =='newModifyWindow'){?>
+                        <div class="formArea" ng-app="newModifyWindowModule"  ng-controller="newModifyWindowController">
+                            @include('newModifyWindow')
+                        </div>
+                    <?php } ?>
+                </div>
             </div>
-                <?php } elseif($pageType =='newResv'){?>
-            <div class="formArea" ng-app="newResvModule" ng-controller="newResvController">
-                @include('newReservation')
-            </div>
-                <?php } elseif($pageType =='newCheckOut'){?>
-            <div class="formArea" ng-app="newCheckOutModule"  ng-controller="newCheckOutController">
-                @include('newCheckOut')
-            </div>
-                <?php } elseif($pageType =='newModifyWindow'){?>
-            <div class="formArea" ng-app="newModifyWindowModule"  ng-controller="newModifyWindowController">
-                @include('newModifyWindow')
-            </div>
-                <?php } ?>
-		</div>
+        </div>
+	</div>
 
 
         <!-- JS third party libraries-->
@@ -45,16 +54,13 @@
              <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
              <script src="http://d3js.org/d3.v3.js"></script>
              -->
-        <script src="Scripts/angularjs/angular.min.1.2.js"></script>
-        <script src="Scripts/angularjs/ui-bootstrap-tpls-0.11.0.js"></script>
-        <script src="Scripts/angularjs/angular-route.js"></script>
-        <script src="Scripts/angularjs/angular-animate.js"></script>
-        <script src="Scripts/jquery/jquery-1.11.1.js"></script>
-        <script src="Scripts/d3/d3.v3.js"></script>
-        <!--
 
-
-                      -->
+                <script src="Scripts/angularjs/angular.min.1.2.js"></script>
+                <script src="Scripts/angularjs/ui-bootstrap-tpls-0.11.0.js"></script>
+                <script src="Scripts/angularjs/angular-route.js"></script>
+                <script src="Scripts/angularjs/angular-animate.js"></script>
+                <script src="Scripts/jquery/jquery-1.11.1.js"></script>
+                <script src="Scripts/d3/d3.v3.js"></script>
 
 
 
@@ -83,6 +89,9 @@
         <script src="js/Angular/module_frontDesk/module.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/frontDeskModals.js"></script>
         <script src="js/Angular/module_frontDesk/services/frontDeskModalServices.js"></script>
+
+        <script src="js/Angular/module_frontDesk/pan_lib/util.js"></script>
+
 
 	</body>
 

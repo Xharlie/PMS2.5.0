@@ -6,14 +6,15 @@ appCheckOut.controller('newCheckOutController', function($scope, $http, newCheck
     $scope.MASTER_RM_ID = "";
     $scope.currentDate = new Date();
     var pathArray = window.location.href.split("/");
-    $scope.RoomConsumePayMethod = ['现金','储蓄卡','信用卡'];
     $scope.PenaltyPayMethod = ['现金','储蓄卡','信用卡'];
     $scope.RoomNumArray = pathArray.slice(pathArray.indexOf('newCheckOut')+1);
     if ($scope.RoomNumArray[$scope.RoomNumArray.length-1][0] == 'M'){
         $scope.MASTER_RM_ID = $scope.RoomNumArray[$scope.RoomNumArray.length-1].slice(1);
         $scope.RoomNumArray = $scope.RoomNumArray.slice(0,$scope.RoomNumArray.length-1);
     }
-
+    newCheckOutFactory.productShow().success(function(data){
+        $scope.prodInfo = data;
+    });
     newCheckOutFactory.getAllInfo($scope.RoomNumArray).success(function(data){
         $scope.test = JSON.stringify(data);
         $scope.BookRoom = data;
@@ -25,19 +26,17 @@ appCheckOut.controller('newCheckOutController', function($scope, $http, newCheck
             $scope.BookRoom[i]["newRMProduct"] = {"newRProductNM":"",
                                                   "newRProductQUAN":"",
                                                   "newRProductPAY":"",
-                                                  "newRProductPAYmethod":"",
                                                   "PROD_ID":""};
             $scope.BookRoom[i]["RoomConsume"] = [];
             $scope.BookRoom[i]["newConsumeSum"] = 0;
-            $scope.BookRoom[i]["newFee"] = {"RMRK":"","PAY_METHOD":"","PAY_AMNT":"", "PAYER":"","PAYER_PHONE":""};
+            $scope.BookRoom[i]["newFee"] = {"RMRK":"","PAY_AMNT":"", "PAYER":"","PAYER_PHONE":""};
             $scope.BookRoom[i]["penalty"] = [];
-            $scope.BookRoom[i]["newFeeSum"] = 0;
+            $scope.BookRoom[i]["newFeeSum"] = 0.00;
             $scope.BookRoom[i]["DAYS_STAY"] = Math.round( (new Date($scope.BookRoom[i]["CHECK_OT_DT"]).getTime()
                                              -new Date($scope.BookRoom[i]["CHECK_IN_DT"]).getTime())/86400000);
 
             var now = new Date();
-            var diff = new Date(new Date($scope.dateFormat(now)+"T"+"13:00:00")-now);
-
+            var diff = new Date(Number(now) - Number(new Date($scope.dateFormat(now)+" 13:00:00"))+18000000);
             if (now.getHours()>13){
                 $scope.BookRoom[i]["extraTime"] = {"TSTMP":$scope.dateTimeFormat(now),"RM_TRAN_ID":$scope.BookRoom[i]["RM_TRAN_ID"],
                     "extrFine":"","timeExtra":$scope.timeFormat(diff)};
@@ -104,11 +103,10 @@ appCheckOut.controller('newCheckOutController', function($scope, $http, newCheck
         var ss = time.getSeconds().toString();
         return (hh[1]?hh:"0"+hh[0])+":"+(mm[1]?mm:"0"+mm[0])+":"+(ss[1]?ss:"0"+ss[0]);
     }
-
-    newCheckOutFactory.getProductNM().success(function(data){
-        $scope.prodNM = data;
-  //      alert(data);
-    });
+//   get all product name
+//    newCheckOutFactory.getProductNM().success(function(data){
+//        $scope.prodNM = data;
+//    });
 
     for (var i = 0; i < $scope.RoomNumArray.length; i++){
 
@@ -125,14 +123,13 @@ appCheckOut.controller('newCheckOutController', function($scope, $http, newCheck
     $scope.addNewRMProduct = function(singleRoom){
         if(!isNaN(singleRoom.newRMProduct.newRProductQUAN) && parseFloat(singleRoom.newRMProduct.newRProductQUAN) % 1 === 0
             && parseFloat(singleRoom.newRMProduct.newRProductQUAN) > 0 && singleRoom.newRMProduct.newRProductNM.trim() != "" &&
-            singleRoom.newRMProduct.newRProductPAY != undefined){
+            singleRoom.newRMProduct.newRProductPAY != ""){
             singleRoom.RoomConsume.push({
                 "PROD_NM": singleRoom.newRMProduct.newRProductNM.trim(),
                 "PROD_QUAN":singleRoom.newRMProduct.newRProductQUAN,
                 "STR_PAY_AMNT":singleRoom.newRMProduct.newRProductPAY,
                 "STR_TRAN_TSTAMP":"新添加" ,
                 "RM_TRAN_ID":singleRoom.RM_TRAN_ID,
-                "STR_PAY_METHOD":singleRoom.newRMProduct.newRProductPAYmethod,
                 "PROD_ID":singleRoom.newRMProduct.newRProductID
                 });
             singleRoom.newConsumeSum += parseFloat(singleRoom.newRMProduct.newRProductPAY);
@@ -140,7 +137,6 @@ appCheckOut.controller('newCheckOutController', function($scope, $http, newCheck
             singleRoom.newRMProduct["newRProductNM"]="";
             singleRoom.newRMProduct["newRProductQUAN"]="";
             singleRoom.newRMProduct["newRProductPAY"]="";
-            $scope.RoomConsumePayMethod = [singleRoom.newRMProduct.newRProductPAYmethod];
         }
     }
 
@@ -148,41 +144,47 @@ appCheckOut.controller('newCheckOutController', function($scope, $http, newCheck
             singleRoom.RoomConsume.splice(singleRoom.RoomConsume.indexOf(Rstore),1);
             singleRoom.newConsumeSum -= parseFloat(Rstore.STR_PAY_AMNT);
             $scope.calculateSum(singleRoom);
-            if (singleRoom.RoomConsume.length == 0){
-                $scope.RoomConsumePayMethod = ['现金','储蓄卡','信用卡'];
-            }
+
     }
 
-    $scope.getPrice = function(singleRoom){
+    $scope.getPrice = function(singleRoom,product){
         if(!isNaN(singleRoom.newRMProduct.newRProductQUAN) && parseFloat(singleRoom.newRMProduct.newRProductQUAN) % 1 === 0
             && parseFloat(singleRoom.newRMProduct.newRProductQUAN) > 0 && singleRoom.newRMProduct.newRProductNM.trim() != "" ){
-            if($scope.prodNM.indexOf(singleRoom.newRMProduct.newRProductNM.trim())>-1){
-                newCheckOutFactory.getProductPrice(singleRoom.newRMProduct.newRProductNM.trim()).success(function(data){
-                    var price = parseFloat(data[0]["PROD_PRICE"]);
-                    singleRoom.newRMProduct.newRProductPAY = (price * parseFloat(singleRoom.newRMProduct.newRProductQUAN)).toFixed(2)+"元";
-                    singleRoom.newRMProduct.newRProductID = data[0]["PROD_ID"];
-                    return;
-                });
-            }
+//            if($scope.prodNM.indexOf(singleRoom.newRMProduct.newRProductNM.trim())>-1){
+//                newCheckOutFactory.getProductPrice(singleRoom.newRMProduct.newRProductNM.trim()).success(function(data){
+//                    var price = parseFloat(data[0]["PROD_PRICE"]);
+//                    singleRoom.newRMProduct.newRProductPAY = (price * parseFloat(singleRoom.newRMProduct.newRProductQUAN)).toFixed(2)+"元";
+//                    singleRoom.newRMProduct.newRProductID = data[0]["PROD_ID"];
+//                    return;
+//                });
+//            }
+              for (var i =0; i< $scope.prodInfo.length; i++){
+                  if (singleRoom.newRMProduct.newRProductNM == $scope.prodInfo[i]["PROD_NM"]){
+                      var price = parseFloat($scope.prodInfo[i]["PROD_PRICE"]);
+                      singleRoom.newRMProduct.newRProductPAY = (price * parseFloat(singleRoom.newRMProduct.newRProductQUAN)).toFixed(2)+"元";
+                      singleRoom.newRMProduct.newRProductID = $scope.prodInfo[i]["PROD_ID"];
+                      return ;
+                  }
+              }
         }
         singleRoom.newRMProduct.newRProductPAY = "";
+
     }
 
     $scope.addNewFee = function(singleRoom){
-        if( singleRoom.newFee.RMRK!= "" && singleRoom.newFee.PAY_METHOD!= "" &&
-            singleRoom.newFee.PAY_METHOD != "" ){
+        if( singleRoom.newFee.RMRK!= "" && singleRoom.newFee.PAYER!= ""
+            && !isNaN(singleRoom.newFee.PAY_AMNT) && $scope.twoDigit(parseFloat(singleRoom.newFee.PAY_AMNT))>0 ){
             singleRoom.penalty.push({
                 "RM_TRAN_ID": singleRoom.RM_TRAN_ID,
                 "RMRK":singleRoom.newFee.RMRK,
-                "PAY_METHOD":singleRoom.newFee.PAY_METHOD,
-                "PAY_AMNT":singleRoom.newFee.PAY_AMNT,
+                "PAY_AMNT":$scope.twoDigit(parseFloat(singleRoom.newFee.PAY_AMNT)),
                 "PAYER": singleRoom.newFee.PAYER,
                 "PAYER_PHONE":singleRoom.newFee.PAYER_PHONE
             });
-            singleRoom.newFeeSum += parseFloat(singleRoom.newFee.PAY_AMNT);
+            singleRoom.newFeeSum = $scope.twoDigit(singleRoom.newFeeSum + parseFloat(singleRoom.newFee.PAY_AMNT));
+//            alert(singleRoom.newFeeSum);
             $scope.calculateSum(singleRoom);
-            singleRoom.newFee= {"RMRK":"","PAY_METHOD":"","PAY_AMNT":"", "PAYER":"","PAYER_PHONE":""};
-            $scope.PenaltyPayMethod = [singleRoom.newFee.PAY_METHOD];
+            singleRoom.newFee= {"RMRK":"","PAY_AMNT":"", "PAYER":"","PAYER_PHONE":""};
         }
     }
 
@@ -276,7 +278,9 @@ appCheckOut.controller('checkOTModalInstanceCtrl',function ($scope, $modalInstan
     };
     $scope.confirm = function(){
         checkOTModalFactory.checkOT($scope.BookRoom,$scope.MASTER_RM_ID).success(function(data){
-            $modalInstance.dismiss('cancel');
+            alert("退房成功'~'");
+//            $modalInstance.dismiss('cancel');
+            window.close();
         });
     };
 

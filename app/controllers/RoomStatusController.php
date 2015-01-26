@@ -8,6 +8,16 @@
 
 class RoomStatusController extends BaseController{
 
+    public function getRoomAndRoomType($RM_CONDITION){
+        $roomAndRoomType = DB::table('RoomsTypes')
+            ->leftjoin('Rooms','Rooms.RM_TP','=','RoomsTypes.RM_TP')
+            ->where('Rooms.RM_CONDITION','=',$RM_CONDITION)
+            ->select('Rooms.RM_ID as RM_ID','Rooms.RM_CONDITION as RM_CONDITION', 'Rooms.RM_TP as RM_TP',
+                'RoomsTypes.SUGG_PRICE as SUGG_PRICE')
+            ->get();
+        return Response::json($roomAndRoomType);
+    }
+
     public function showRoom(){
         $roomShow = DB::table('Rooms')
             ->leftjoin('RoomTran', 'Rooms.RM_TRAN_ID','=','RoomTran.RM_TRAN_ID')
@@ -16,7 +26,7 @@ class RoomStatusController extends BaseController{
                 'Rooms.RM_CONDITION as RM_CONDITION', 'Rooms.RM_TP as RM_TP',
                 'RoomTran.CHECK_IN_DT as CHECK_IN_DT','RoomTran.CHECK_OT_DT as CHECK_OT_DT',
                 'RoomTran.RM_AVE_PRCE as RM_AVE_PRCE','RoomTran.DPST_RMN as DPST_RMN',
-                'RoomTran.RSRV_PAID_DYS as RSRV_PAID_DYS')
+                'RoomTran.RSRV_PAID_DYS as RSRV_PAID_DYS','RoomTran.CONN_RM_TRAN_ID as CONN_RM_TRAN_ID')
             ->get();
         return Response::json($roomShow);
     }
@@ -30,7 +40,7 @@ class RoomStatusController extends BaseController{
 
     public function showEmpty($RM_TP){
         $emptyShow = DB::table('RoomsTypes')
-            ->where('RoomsTypes.RM_TP',$RM_TP)
+            ->where('RoomsTypes.RM_TP','=',$RM_TP)
             ->get();
         return Response::json($emptyShow);
     }
@@ -68,21 +78,21 @@ class RoomStatusController extends BaseController{
     public function change2Mending($RM_ID){
         DB::table('Rooms')->where('RM_ID',$RM_ID)
             ->update(array(
-                "RM_CONDITION" => "Mending"
+                "RM_CONDITION" => "维修"
             ));
     }
 
     public function change2Mended($RM_ID){
         DB::table('Rooms')->where('RM_ID',$RM_ID)
             ->update(array(
-                "RM_CONDITION" => "Preparing"
+                "RM_CONDITION" => "脏房"
             ));
     }
 
     public function Change2Cleaned($RM_ID){
         DB::table('Rooms')->where('RM_ID',$RM_ID)
             ->update(array(
-                "RM_CONDITION" => "Empty"
+                "RM_CONDITION" => "空房"
             ));
     }
 
