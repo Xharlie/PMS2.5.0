@@ -45,8 +45,8 @@ app.controller('reservationController', function($scope, $http, resrvFactory,$mo
             templateUrl: 'directiveViews/reserveModal',
             controller: 'reservationModalController',
             resolve: {
-                roomST: function () {
-                    return [$scope.owner];
+                roomTPs: function () {
+                    return null;
                 },
                 initialString: function () {
                     return "newReservation";
@@ -77,7 +77,7 @@ app.controller('reservationController', function($scope, $http, resrvFactory,$mo
                 },
                 RESV: function (){
                     return {RESV_ID:reserve.RESV_ID, CHECK_IN_DT:reserve.CHECK_IN_DT,
-                        CHECK_OT_DT:reserve.CHECK_OT_DT, roomSource:'预定'};
+                        CHECK_OT_DT:reserve.CHECK_OT_DT, roomSource:'预订'};
                 }
             }
         });
@@ -157,9 +157,9 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
             if($scope.roomStatusInfo[i]['CONN_RM_TRAN_ID'] != null){
                  $scope.roomStatusInfo[i]['connLightUp'] = [];
                  if($scope.roomStatusInfo[i]['CONN_RM_TRAN_ID'] in $scope.master2Branch){
-                     $scope.master2Branch[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']].push($scope.roomStatusInfo[i]);
+                     $scope.master2Branch[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']].push($scope.roomStatusInfo[i].blockClass);
                  }else{
-                     $scope.master2Branch[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']] = [$scope.roomStatusInfo[i]];
+                     $scope.master2Branch[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']] = [$scope.roomStatusInfo[i].blockClass];
                  }
             }
         }
@@ -171,10 +171,10 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
         $scope.ready=true;
     });
 
-    $scope.connLightUp = function(roomST){
+   $scope.connLightUp = function(roomST){
         if(roomST['connLightUp'] != undefined){
             for (var i=0; i< roomST['connLightUp'].length; i++){
-                roomST['connLightUp'][i].blockClass.push("connRoomBlock");
+                roomST['connLightUp'][i].push("connRoomBlock");
             }
         }
     }
@@ -182,8 +182,8 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
     $scope.connLightback = function(roomST){
         if(roomST['connLightUp'] != undefined){
             for (var i=0; i< roomST['connLightUp'].length; i++){
-                roomST['connLightUp'][i].blockClass.
-                    splice(roomST['connLightUp'][i].blockClass.indexOf('connRoomBlock'),1);
+                roomST['connLightUp'][i].
+                    splice(roomST['connLightUp'][i].indexOf('connRoomBlock'),1);
             }
         }
     }
@@ -297,9 +297,22 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
             });
         }else if($scope.connectFlag == false && roomST.RM_CONDITION == "有人"){
             if (roomST.CONN_RM_TRAN_ID == null || roomST.CONN_RM_TRAN_ID==''){
-                var location = "newCheckOut/"+roomST.RM_TRAN_ID;
-//                window.open(location);
-                util.openTab(location,"","",util.closeCallback);
+                var modalInstance = $modal.open({
+                    windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+                    templateUrl: 'directiveViews/singleCheckInModal',
+                    controller: 'checkInModalController',
+                    resolve: {
+                        roomST: function () {
+                            return [roomInfo];          // leave flexibility to have multiple parameters or rooms
+                        },
+                        initialString: function () {
+                            return "editRoom";
+                        }
+                    }
+                });
+//                var location = "newCheckOut/"+roomST.RM_TRAN_ID;
+////  legacy code               window.open(location);
+//                util.openTab(location,"","",util.closeCallback);
             }else{
                 cusModalFactory.getConnect(roomST.RM_TRAN_ID).success(function(data){
                     if(data != null){

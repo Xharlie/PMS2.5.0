@@ -49,6 +49,22 @@ app.factory('newCheckInFactory',function($http){
                 data: {comparer:comparer, columns:columns}
             });
         },
+        modify: function(ModifyInfo){
+            return $http({
+                method: 'POST',
+                heasders: {'content-Type':'application/json'},
+                url: 'submitModify',
+                data: ModifyInfo
+            });
+        },
+        submit: function(SubmitInfo){
+            return $http({
+                method: 'POST',
+                heasders: {'content-Type':'application/json'},
+                url: 'submitCheckIn',
+                data: SubmitInfo
+            });
+        },
 
 /******************************** obselete ***********************************************/
         RoomSoldOut: function(checkInDt,checkOtDt){
@@ -100,22 +116,8 @@ app.factory('newCheckInFactory',function($http){
                 url: 'showTreatyByCorp/'+CORP_NM
             });
         },
-        submit: function(SubmitInfo){
-            return $http({
-                method: 'POST',
-                heasders: {'content-Type':'application/json'},
-                url: 'submitCheckIn',
-                data: SubmitInfo
-            });
-        },
-        modify: function(ModifyInfo){
-            return $http({
-                method: 'POST',
-                heasders: {'content-Type':'application/json'},
-                url: 'submitModify',
-                data: ModifyInfo
-            });
-        },
+
+
         cusInRoom: function(RM_ID){
             return $http({
                 method: 'GET',

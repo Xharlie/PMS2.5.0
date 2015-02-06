@@ -1,7 +1,7 @@
 <div>
     <div class="modal-header">
         <span class="glyphicon glyphicon-send"></span>
-        <label style="font-size: 15px;">新入住</label> {{BookRoom[0]}}
+        <label style="font-size: 15px;">新入住</label>
         <span class="pull-right btn" ng-click="cancel()">&#x2715</span>
     </div>
     <div class="col-sm-12" style="padding: 30px 20px 45px 25px;">
@@ -45,7 +45,7 @@
                         <option value="会员">会员</option>
                         <option value="协议">协议</option>
                         <option value="活动码">活动码</option>
-                        <option value="预定">预定</option>
+                        <option value="预订">预订</option>
                     </select>
                 </div>
                 <div class="col-sm-4" style="margin-top: 10px;">
@@ -98,7 +98,7 @@
                 </div>
             </div>
             <div class="col-sm-12 " style="padding:10px 25px 0px 10px; border-top:1px solid #D3D6DE; ">
-                <div class="col-sm-12 form-group" ng-repeat="(TP,singleTP) in BookRoomByTP " ng-controller="singleTPCtrl">
+                <div class="col-sm-12 form-group" ng-repeat="(TP,singleTP) in BookRoomByTP " ng-controller="multiSingleTPCtrl">
                     <div class="col-sm-3 ">
                         <label>房型</label>
                         <label class="form-control" >{{TP}}</label>
@@ -126,7 +126,7 @@
 
         <form ng-show ="viewClick=='roomInfo'" class="col-sm-12">
             <div class="col-sm-12 form-group" style="padding:10px 25px 0px 10px; border-bottom:1px solid #D3D6DE; "
-                 ng-repeat="singleRoom in BookRoom | filter: {check:'true'}" ng-controller="singleRoomCtrl">
+                 ng-repeat="singleRoom in BookRoom | filter: {check:'true'}" ng-controller="multiSingleRoomCtrl">
                 <div class="col-sm-4 ">
                     <label>房间号</label>
                     <select class="form-control" ng-model="singleRoom.RM_ID" ng-disabled="initialString=='multiWalkIn'">
@@ -196,7 +196,7 @@
         </form>
         <div ng-show ="viewClick=='Pay'" class="col-sm-12">
             <div class="col-sm-12" style="border-bottom: 1px solid #D3D6DE; margin-bottom: 20px;"
-                 ng-show ="(!Connected)" ng-repeat="singleRoom in BookRoom | filter: {check:'true'}" ng-controller="singleRoomPayCtrl">
+                 ng-show ="(!Connected)" ng-repeat="singleRoom in BookRoom | filter: {check:'true'}" ng-controller="multiSingleRoomPayCtrl">
                 <h4>{{singleRoom.RM_ID}}号房</h4></br>
                 <div class="col-sm-12 form-group" style="padding-right:25px; padding-left: 25px; padding-bottom:20px; ">
                     <div class="col-sm-4 ">
@@ -216,7 +216,7 @@
                     <!--                </div>-->
                 </div>
                 <div class="col-sm-12 form-group" style="padding-right:25px; padding-left: 25px;"
-                     ng-repeat="singlePay in singleRoom.payment.payByMethods" ng-controller="singlePayCtrl" >
+                     ng-repeat="singlePay in singleRoom.payment.payByMethods" ng-controller="multiSinglePayCtrl" >
                     <div class="col-sm-4 ">
                         <label>实收数目</label>
                         <input class="form-control" ng-model="singlePay.payAmount" />
@@ -257,7 +257,7 @@
                     <!--                </div>-->
                 </div>
                 <div class="col-sm-12 form-group" style="padding-right:25px; padding-left: 25px;"
-                     ng-repeat="singlePay in BookCommonInfo.Master.payment.payByMethods" ng-controller="singleMasterPayCtrl" >
+                     ng-repeat="singlePay in BookCommonInfo.Master.payment.payByMethods" ng-controller="multiSingleMasterPayCtrl" >
                     <div class="col-sm-4 ">
                         <label>实收数目</label>
                         <input class="form-control" ng-model="singlePay.payAmount" />

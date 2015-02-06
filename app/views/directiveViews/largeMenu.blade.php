@@ -18,17 +18,24 @@
             <table class="roomInfo">
                     <tr>
                         <td>客人</td>
-                        <td><label>{{owner.nametogether}}</label></td>
+                        <td><label>{{nametogether}}</label></td>
                     </tr>
                     <tr>
-                        <td>入住时间</td>
+                        <td>入住日期</td>
                         <td><label>{{owner.CHECK_IN_DT}}</label></td>
+                    </tr>
+                    <tr>
+                        <td>预离日期</td>
+                        <td>
+                            <label>{{owner.CHECK_OT_DT}}</label>
+                            <a class="pull-right" style="cursor: pointer; ">续住</a>
+                        </td>
                     </tr>
                     <tr>
                         <td>预离时间</td>
                         <td>
-                            <label>{{owner.CHECK_OT_DT}}</label>
-                            <a>续住</a>
+                            <label>{{owner.LEAVE_TM}}</label>
+                            <a class="pull-right " style="cursor: pointer; ">更改</a>
                         </td>
                     </tr>
                     <tr>
@@ -41,42 +48,42 @@
                     </tr>
                     <tr>
                         <td>日均价</td>
-                        <td><label>{{owner.RM_AVE_PRCE}}</label></td>
+                        <td><label>{{owner.RM_AVE_PRCE}}元</label></td>
                     </tr>
                     <tr>
                         <td>押金余额</td>
-                        <td><label>{{owner.DPST_RMN}}</label></td>
+                        <td><label>{{owner.DPST_RMN}}元</label></td>
                     </tr>
             </table>
         </div>
 
 
 
-        <div ng-switch-when ="connectCheckOut">
-            <h4>点击选则联房中进行退房的房间</h4>
-            <lable >主房:{{ConnRooms[0]["RM_ID"]}}</lable>
-            <div ui-sortable ng-model="ConnRooms" class="MasterRoom">
-                <div class="room room-full"
-                     ng-init ="room.checkRoom = {}"
-                     ng-style="room.checkRoom"
-                     ng-click="checkItOut(room)"
-                     ng-repeat = "room in ConnRooms | orderBy: room.RM_ID " >
-                    <table>
-                        <tr>
-                            <td>{{room.RM_ID}}</td>
-                        </tr>
-                        <tr>
-                            <td>房单号: {{room.RM_TRAN_ID}}</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div>
-                <label>选中号房间: {{roomNumString}}</label>
-                <button class="btn btn-primary" ng-click = "confirmConnCheckOut()">办理退房</button>
-                <button class="btn btn-warning" ng-click = "cancelConnCheckOut()">取消</button>
-            </div>
-        </div>
+<!--        <div ng-switch-when ="connectCheckOut">-->
+<!--            <h4>点击选则联房中进行退房的房间</h4>-->
+<!--            <lable >主房:{{ConnRooms[0]["RM_ID"]}}</lable>-->
+<!--            <div ui-sortable ng-model="ConnRooms" class="MasterRoom">-->
+<!--                <div class="room room-full"-->
+<!--                     ng-init ="room.checkRoom = {}"-->
+<!--                     ng-style="room.checkRoom"-->
+<!--                     ng-click="checkItOut(room)"-->
+<!--                     ng-repeat = "room in ConnRooms | orderBy: room.RM_ID " >-->
+<!--                    <table>-->
+<!--                        <tr>-->
+<!--                            <td>{{room.RM_ID}}</td>-->
+<!--                        </tr>-->
+<!--                        <tr>-->
+<!--                            <td>房单号: {{room.RM_TRAN_ID}}</td>-->
+<!--                        </tr>-->
+<!--                    </table>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <label>选中号房间: {{roomNumString}}</label>-->
+<!--                <button class="btn btn-primary" ng-click = "confirmConnCheckOut()">办理退房</button>-->
+<!--                <button class="btn btn-warning" ng-click = "cancelConnCheckOut()">取消</button>-->
+<!--            </div>-->
+<!--        </div>-->
 
 
         <div ng-switch-when ="infoAccounting">

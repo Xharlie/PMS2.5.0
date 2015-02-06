@@ -5704,7 +5704,7 @@ button.close {
   .roomAction table, .infoAction table {
     width: 100%;
     border-style: none;
-    margin: 15px 0px; }
+    margin: 10px 0px; }
     .roomAction table td, .infoAction table td {
       width: auto;
       padding-left: 1px;
@@ -6013,9 +6013,9 @@ form .sectionArea {
     float: left;
     width: auto;
     min-width: 300px;
-    height: 200px;
-    padding: 5px 5px;
-    margin: 2px 0 0;
+    height: 210px;
+    padding: 0px 5px;
+    margin: 0px 0 0;
     list-style: none;
     font-size: 14px;
     background-color: #fff;

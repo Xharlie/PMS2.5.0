@@ -34,8 +34,40 @@ var util = {
         var dd  = date.getDate().toString();
         return (mm[1]?mm:"0"+mm[0])+"-" + (dd[1]?dd:"0"+dd[0]);
     },
+    tstmpFormat: function(date){
+        var YYYY = (date.getFullYear()).toString();
+        var MM = (date.getMonth()+1).toString();
+        var DD  = date.getDate().toString();
+        var hh = (date.getHours()).toString();
+        var mm = (date.getMinutes()).toString();
+        var ss = (date.getSeconds()).toString();
+        return (YYYY+"-"+(MM[1]?MM:"0"+MM[0])+"-" + (DD[1]?DD:"0"+DD[0])+" "+(hh[1]?hh:"0"+hh[0])+":"+(mm[1]?mm:"0"+mm[0])+":"+(ss[1]?ss:"0"+ss[0]));
+    },
+    timeFormat: function(date){
+        if(typeof(date) == 'number')date = new Date(date);
+        var hh = (date.getHours()).toString();
+        var mm = (date.getMinutes()).toString();
+        var ss = (date.getSeconds()).toString();
+        return (hh[1]?hh:"0"+hh[0])+":"+(mm[1]?mm:"0"+mm[0])+":"+(ss[1]?ss:"0"+ss[0]);
+    },
+    time2DateTime: function(date,time){
+        if(!(typeof time === 'string') || time.length != 8) {
+            alert("invalid arrive time "+ time )
+            return null;
+        }
+        var hh = time.substring(0,2);
+        var mm = time.substring(3,5);
+        var ss = time.substring(7,9);
+        return date.setHours(hh,mm,ss);
+    },
     Limit : function(num){
-        return parseFloat(num).toFixed(2);
+        return Number(parseFloat(num).toFixed(2));
+    },
+    isNum : function(testee){
+        return (!isNaN(testee) && testee!=null && testee.toString().trim()!="" );
+    },
+    deepCopy: function(copyee){
+        return  JSON.parse(JSON.stringify(copyee));
     },
     VarMaxSize : 15,
     VarItemPerPage : 10,

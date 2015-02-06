@@ -2,13 +2,15 @@
  * Created by Xharlie on 12/19/14.
  */
 
-app.controller('largeMenuController',function ($scope, $http, cusModalFactory) {
+app.controller('largeMenuController',function ($scope, $http, $modal, cusModalFactory) {
     $scope.RMviewClick = "infoAction";
     $scope.nametogether = '';
     $scope.roomNumString="暂无";
 
+    var roomInfo = {};
     cusModalFactory.OccupiedShow($scope.owner.RM_TRAN_ID).success(function(data){
         $scope.RoomCustomers = data;
+        $scope.nametogether="";
 
         angular.forEach($scope.RoomCustomers, function(value,index){
             $scope.nametogether +=(' '+ value.CUS_NAME);
@@ -26,31 +28,63 @@ app.controller('largeMenuController',function ($scope, $http, cusModalFactory) {
         if ($scope.owner.RSRV_PAID_DYS !=0 ){
             $scope.roomInfo.push(["预付天数",$scope.owner.RSRV_PAID_DYS]);
         }
-
+        roomInfo = util.deepCopy($scope.owner);
+        roomInfo["customer"]=$scope.RoomCustomers;
     });
 
 
 
     $scope.excAction = function(actionString){
-        if(actionString == '入住办理'){
-            var location = "newCheckIn/checkIn/"+$scope.owner.RM_ID;
-            util.openTab(location,"","",util.closeCallback);
-        }else if(actionString == '房间维修'){
-            cusModalFactory.Change2Mending($scope.owner.RM_ID).success(function(data){
-                $scope.owner.RM_CONDITION = "维修";
-                $scope.owner.menuIconAction = mendIconAction;
+        if(actionString == '客人修改'){
+            var modalInstance = $modal.open({
+                windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+                templateUrl: 'directiveViews/singleCheckInModal',
+                controller: 'checkInModalController',
+                resolve: {
+                    roomST: function () {
+                        return [roomInfo];          // leave flexibility to have multiple parameters or rooms
+                    },
+                    initialString: function () {
+                        return "editRoom";
+                    }
+                }
             });
-        }else if(actionString == '维修完毕'){
-            cusModalFactory.Change2Mended($scope.owner.RM_ID).success(function(data){
-                $scope.owner.RM_CONDITION = "脏房";
-                $scope.owner.menuIconAction = dirtIconAction;
-            });
-        }else if(actionString == '清洁完毕'){
-            cusModalFactory.Change2Cleaned($scope.owner.RM_ID).success(function(data){
-                $scope.owner.RM_CONDITION = "空房";
-                $scope.owner.menuIconAction = avaIconAction;
+        }else if(actionString == '退房办理'){
+            var modalInstance = $modal.open({
+                windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+                templateUrl: 'directiveViews/singleCheckInModal',
+                controller: 'checkInModalController',
+                resolve: {
+                    roomST: function () {
+                        return [roomInfo];          // leave flexibility to have multiple parameters or rooms
+                    },
+                    initialString: function () {
+                        return "editRoom";
+                    }
+                }
             });
         }
+//        }else if(actionString == '商品购买'){
+//            cusModalFactory.Change2Mending($scope.owner.RM_ID).success(function(data){
+//                $scope.owner.RM_CONDITION = "维修";
+//                $scope.owner.menuIconAction = mendIconAction;
+//            });
+//        }else if(actionString == '房间更改'){
+//            cusModalFactory.Change2Mended($scope.owner.RM_ID).success(function(data){
+//                $scope.owner.RM_CONDITION = "脏房";
+//                $scope.owner.menuIconAction = dirtIconAction;
+//            });
+//        }else if(actionString == '房价调整'){
+//            cusModalFactory.Change2Cleaned($scope.owner.RM_ID).success(function(data){
+//                $scope.owner.RM_CONDITION = "空房";
+//                $scope.owner.menuIconAction = avaIconAction;
+//            });
+//        }else if(actionString == '制门卡'){
+//            cusModalFactory.Change2Cleaned($scope.owner.RM_ID).success(function(data){
+//                $scope.owner.RM_CONDITION = "空房";
+//                $scope.owner.menuIconAction = avaIconAction;
+//            });
+//        }
     }
 
     $scope.close = function(owner){

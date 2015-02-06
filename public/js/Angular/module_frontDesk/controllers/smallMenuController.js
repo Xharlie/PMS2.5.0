@@ -61,7 +61,43 @@ app.controller('smallMenuController',function ($scope, $http,cusModalFactory,$mo
                     },
                     RESV: function (){
                         return {RESV_ID:$scope.owner.RESV_ID, CHECK_IN_DT:$scope.owner.CHECK_IN_DT,
-                            CHECK_OT_DT:$scope.owner.CHECK_OT_DT, roomSource:'预定'};
+                            CHECK_OT_DT:$scope.owner.CHECK_OT_DT, roomSource:'预订'};
+                    }
+                }
+            });
+        }else if(actionString == '预定修改'){
+            var sameID = $scope.$parent.$parent.sameID[$scope.owner.RESV_ID];
+            var roomTPs = [];
+            for (var i = 0; i < sameID.length; i++){
+                var TP = {RESV_DAY_PAY:   util.Limit(sameID[i].RESV_DAY_PAY),
+                            RESV_ID:        sameID[i].RESV_ID,
+                            RESVER_PHONE:   sameID[i].RESVER_PHONE,
+                            RESVER_NAME:    sameID[i].RESVER_NAME,
+                            RESV_WAY:       sameID[i].RESV_WAY,
+                            RESV_TMESTMP:   sameID[i].RESV_TMESTMP,
+                            CHECK_IN_DT:    sameID[i].CHECK_IN_DT,
+                            CHECK_OT_DT:    sameID[i].CHECK_OT_DT,
+                            RESV_LATEST_TIME:sameID[i].RESV_LATEST_TIME,
+                            RM_TP:          sameID[i].RM_TP,
+                            RM_QUAN:        sameID[i].RM_QUAN,
+                            TREATY_ID:      sameID[i].TREATY_ID,
+                            MEMBER_ID:      sameID[i].MEMBER_ID,
+                            RMRK:           sameID[i].RMRK,
+                            STATUS:         sameID[i].STATUS,
+                            PRE_PAID:       util.Limit(sameID[i].PRE_PAID)
+                };
+                roomTPs.push(TP);
+            }
+            var modalInstance = $modal.open({
+                windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+                templateUrl: 'directiveViews/reserveModal',
+                controller: 'reservationModalController',
+                resolve: {
+                    roomTPs: function () {
+                        return roomTPs;
+                    },
+                    initialString: function () {
+                        return "editReservation";
                     }
                 }
             });

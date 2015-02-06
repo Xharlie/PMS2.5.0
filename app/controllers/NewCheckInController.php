@@ -33,7 +33,9 @@ class NewCheckInController extends BaseController{
                     $join->on('mostOccupied.RM_TP', '=', 'Rooms.RM_TP');
                 }
             )
-            ->select(DB::raw('Rooms.RM_ID as RM_ID,Rooms.RM_CONDITION as RM_CONDITION,Rooms.RM_TP as RM_TP,RoomsTypes.SUGG_PRICE as SUGG_PRICE,IFNULL(RoomsTypes.RM_QUAN - mostOccupied.QUAN,RoomsTypes.RM_QUAN) AS AVAIL_QUAN '))
+            ->select(DB::raw('Rooms.RM_ID as RM_ID,Rooms.RM_CONDITION as RM_CONDITION,
+                              Rooms.RM_TP as RM_TP,RoomsTypes.SUGG_PRICE as SUGG_PRICE,
+                              IFNULL(RoomsTypes.RM_QUAN - mostOccupied.QUAN,RoomsTypes.RM_QUAN) AS AVAIL_QUAN '))
             ->get();
         return Response::json($RoomInfo);
     }
@@ -155,50 +157,113 @@ class NewCheckInController extends BaseController{
 
 **************/
     public function submitModify(){
-        $info = Input::all();
-        $cusArray = array();
-        $deleteArray = array();
-        foreach($info as $room){
-            $RoomTranArray = array(
-                "CHECK_IN_DT" => $room["CHECK_IN_DT"],
-                "CHECK_OT_DT" => $room["CHECK_OT_DT"]
-            );
-            $RMTRANID = DB::table('Rooms')
-                ->where('Rooms.RM_ID',$room["roomSelect"])
-                ->take(1)
-                ->lists('RM_TRAN_ID');
-            $RM_TRAN_ID = $RMTRANID[0];
-            DB::table('RoomTran')->where('RM_TRAN_ID',$RM_TRAN_ID)
-                ->update($RoomTranArray);
+        $info = Input::get('SubmitInfo');
+        $RM_TRAN_ID = Input::get('RM_TRAN_ID');
+        $ori_RM_TRAN_ID = $RM_TRAN_ID;
+        $initialString = Input::get('initialString');
+        $moneyInvolved = Input::get('moneyInvolved');
+        $CustomerArray = array();
+        $DepositArray = array();
+        try {
+            DB::beginTransaction();
+            foreach($info as $room){
 
-            array_push($deleteArray, $RM_TRAN_ID);
-            foreach($room["GuestsInfo"] as $guest){
-                $guestArray = array(
-                    "SSN" => $guest["SSN"],
-                    "CUS_NAME" => $guest["NameInput"],
-                    "RM_ID" => $room["roomSelect"],
-                    "RM_TRAN_ID" => $RM_TRAN_ID,
-//                    "PROVNCE" =>  $guest["Province"],
-                    "PHONE"=>$guest["Phone"],
-                    "RMRK" =>$guest["RemarkInput"],
-                    "MEM_TP"=>$guest["MEM_TP"]
-                );
-                if($guest["MemberId"] != ""){
-                    $guestArray["MEM_ID"]=$guest["MemberId"];
-                }else{
-                    $guestArray["MEM_ID"]=null;
+                $oriRec = DB::table('RoomTran')
+                    ->join('Rooms', function($join) use ($RM_TRAN_ID)
+                    {
+                        $join->where('Rooms.RM_TRAN_ID', '=', $RM_TRAN_ID);
+                        $join->on('Rooms.RM_TRAN_ID', '=', 'RoomTran.RM_TRAN_ID');
+                    })
+                    ->select("Rooms.RM_TRAN_ID as RM_TRAN_ID","Rooms.RM_ID as RM_ID","Rooms.RM_TP as RM_TP",
+                            "RoomTran.CHECK_IN_DT as CHECK_IN_DT","RoomTran.DPST_RMN as DPST_RMN",
+                             "RoomTran.CHECK_OT_DT as CHECK_OT_DT","RoomTran.CONN_RM_TRAN_ID as CONN_RM_TRAN_ID")
+                    ->take(1)
+                    ->get();
+                $ori = $oriRec[0];
+
+                $RoomTranArray = $this->roomTranPrepare($room,$ori->CONN_RM_TRAN_ID);
+                // if add more money,
+                if ($moneyInvolved){
+                    $RoomTranArray["DPST_RMN"] = $RoomTranArray["DPST_RMN"] + $ori->DPST_RMN;
                 }
-                if($guest["Points"] != ""){
-                    $guestArray["POINTS"]=$guest["Points"];
+                // if just today's then change the record
+
+                /*-------------------------     change OR insert RoomTran     -------------------------------*/
+                if($ori->CHECK_IN_DT == (new DateTime())->format('Y-m-d')){
+                    DB::table('RoomTran')
+                        ->where('RM_TRAN_ID',$room["RM_TRAN_ID"])
+                        ->update($RoomTranArray);
                 }else{
-                    $guestArray["POINTS"]=null;
+                    // update the original roomTran to terminate
+                    DB::table('RoomTran')
+                        ->where('RM_TRAN_ID',$RM_TRAN_ID)
+                        ->update(array("CHECK_OT_DT"=>$room["CHECK_IN_DT"],
+                                       "DPST_RMN"=>0));
+                    // insert new roomTran and change to the new RM_TRAN_ID to be used everywhere
+                    $RM_TRAN_ID = $this->roomTranIn($room,$RoomTranArray);
+                    // update Rooms Info
+                    DB::table('Rooms')
+                        ->where('RM_TRAN_ID',$room["roomSelect"])
+                        ->update(array("RM_TRAN_ID"=>$RM_TRAN_ID));
+                    // update Customers Info
+                    DB::table('Customers')
+                        ->where('RM_TRAN_ID',$ori_RM_TRAN_ID)
+                        ->update(array("RM_TRAN_ID"=>$RM_TRAN_ID));
                 }
-                array_push($cusArray, $guestArray);
+                /*-------------------------     if RM_ID has been changed     -------------------------------*/
+                if($ori->RM_ID!=$room["roomSelect"]){
+                    // update old room to empty
+                    DB::table('Rooms')
+                        ->where('RM_ID',$ori->RM_ID)
+                        ->update(array("RM_TRAN_ID"=>null,
+                                       "RM_CONDITION"=>"空房"));
+                    // update new room to be occupied
+                    DB::table('Rooms')
+                        ->where('RM_ID',$room["roomSelect"])
+                        ->update(array("RM_TRAN_ID"=>$RM_TRAN_ID,
+                                       "RM_CONDITION"=>"有人"));
+                }
+                /*-------------------------     if CUSTOMER has been changed prepare Customer    -------------------------------*/
+                if($initialString="editRoom"){  //condition under development
+                    // delete the old customers
+                    DB::table('Customers')
+                        ->where('RM_TRAN_ID',$RM_TRAN_ID)
+                        ->delete();
+                    // prepare new customers
+                    $this->customerIn($room,$CustomerArray,$RM_TRAN_ID);
+                }
+                /*-------------------------     if moneyInvolved add them to DepositArray    -------------------------------*/
+                if ($moneyInvolved){
+                    // perpare the roomDeposit
+                    $this->roomDepositIn($room,$RM_TRAN_ID,$DepositArray);
+                }
+                /*-------------------------     if date or room Type has been changed       -------------------------------*/
+                if($initialString="editRoom"){  //condition under development
+                    // delete the origin room to be occupied from today to the old expected check out date
+                    DB::update('update RoomOccupation set CHECK_QUAN = CHECK_QUAN - ? where RM_TP = ? and DATE between ? and ?  ',
+                        array(1,$ori->RM_TP,$room["CHECK_IN_DT"], $ori->CHECK_OT_DT) );
+                    // increase the new room from today to new expected check out date
+                    $this->roomOccupationCheckChange($room);
+                }
+
             }
+            // if CUSTOMER has been changed insert new them
+            if($initialString="editRoom"){ //condition under development
+                DB::table('Customers')->insert($CustomerArray);
+            }
+            // if money involved
+            if ($moneyInvolved){
+                DB::table('RoomDepositAcct')->insert($DepositArray);
+            }
+        }catch (Exception $e){
+            DB::rollback();
+            $message=($e->getLine())."&&".$e->getMessage();
+            throw new Exception($message);
+            return Response::json($message);
+        }finally{
+            DB::commit();
+            return Response::json("success!");
         }
-
-        DB::table('Customers')->whereIn('RM_TRAN_ID', $deleteArray)->delete();
-        DB::table('Customers')->insert($cusArray);
     }
 
 
@@ -216,14 +281,15 @@ class NewCheckInController extends BaseController{
 
         foreach($info as $room){
             /*------------------------- insert to roomTran and get its RM_TRAN_ID---------------------------------*/
-            $RM_TRAN = $this->roomTranIn($room,$CONN_RM_TRAN_ID);
+            $RoomTranArray = $this->roomTranPrepare($room,$CONN_RM_TRAN_ID);
+            $RM_TRAN_ID = $this->roomTranIn($room,$RoomTranArray);
             /*------------------------- insert to rooms     ----    --------------------------------*/
-            $this->roomsIn($room["roomSelect"],$RM_TRAN);
+            $this->roomsIn($room["roomSelect"],$RM_TRAN_ID);
            /*------------------------- insert to customers array  and wait to insert in---------------------------------*/
-            $this->customerIn($room,$CustomerArray,$RM_TRAN);
+            $this->customerIn($room,$CustomerArray,$RM_TRAN_ID);
             /*------------------------- insert to roomDesposit and wait to insert in  ---------------------------------*/
             if ($room["CONN_RM_ID"] !="" || $room["CONN_RM_ID"] == $room["roomSelect"]){
-                $this->roomDepositIn($room,$RM_TRAN,$DepositArray);
+                $this->roomDepositIn($room,$RM_TRAN_ID,$DepositArray);
             }
             /*------------------------- change Room Availablilty Check Quan---------------------------------*/
             $this->roomOccupationCheckChange($room);
@@ -231,16 +297,15 @@ class NewCheckInController extends BaseController{
         DB::table('RoomDepositAcct')->insert($DepositArray);
         DB::table('Customers')->insert($CustomerArray);
         /*--------------------------------------- delete Room Availablilty Resv Quan------------------------------------------*/
-        if ($reserve !="null"){
+        if ($reserve != null){
             $this->roomOccupationResvChange($room,$reserve,$unfilled);
-        }
+
         /*--------------------------------------- change Resv Quan and status ------------------------------------------*/
 
-         $this->reservRoomstatus($room,$reserve,$unfilled);
+            $this->reservRoomstatus($room,$reserve,$unfilled);
+        }
 //        DB::update("update ReservationRoom set CHECKED = ? where RESV_ID = ? and RM_TP = ?",
 //            array('T',$reserveId,$RoomNumArray[0]) );
-
-
 
         return Response::json("");
 
@@ -267,7 +332,18 @@ class NewCheckInController extends BaseController{
 //    }
 
 
-    public function roomTranIn(&$room,&$CONN_RM_TRAN_ID){
+    public function roomTranIn(&$room,&$RoomTranArray){
+        // array_push($RoomTranTotal,$RoomTranArray);
+        $RM_TRAN_ID = DB::table('RoomTran')->insertGetId($RoomTranArray);
+        if ($room["roomSelect"] == $room["CONN_RM_ID"]){
+            $CONN_RM_TRAN_ID = $RM_TRAN_ID;
+            DB::table('RoomTran')->where('RM_TRAN_ID',$RM_TRAN_ID)
+                ->update(array("CONN_RM_TRAN_ID" => $CONN_RM_TRAN_ID));
+        }
+        return $RM_TRAN_ID;
+    }
+
+    public function roomTranPrepare(&$room,&$CONN_RM_TRAN_ID){
         $RoomTranArray = array(
             "RM_ID" => $room["roomSelect"],
             "CHECK_IN_DT" => $room["CHECK_IN_DT"],
@@ -291,32 +367,28 @@ class NewCheckInController extends BaseController{
         if($room["TMP_PLAN_ID"]!=''){
             $RoomTranArray["TMP_PLAN_ID"] = $room["TMP_PLAN_ID"];
         }
-        // array_push($RoomTranTotal,$RoomTranArray);
-        $RM_TRAN = DB::table('RoomTran')->insertGetId($RoomTranArray);
-        if ($room["roomSelect"] == $room["CONN_RM_ID"]){
-            $CONN_RM_TRAN_ID = $RM_TRAN;
-            DB::table('RoomTran')->where('RM_TRAN_ID',$RM_TRAN)
-                ->update(array("CONN_RM_TRAN_ID" => $CONN_RM_TRAN_ID));
-        }
-        return $RM_TRAN;
+        return $RoomTranArray;
     }
 
-
-    public function roomsIn($roomSelect,$RM_TRAN){
+    public function roomsIn($roomSelect,$RM_TRAN_ID){
         $RoomsArray = array(
-            "RM_TRAN_ID" => $RM_TRAN,
+            "RM_TRAN_ID" => $RM_TRAN_ID,
             "RM_CONDITION" => "有人"
         );
         DB::table('Rooms')->where('RM_ID',$roomSelect)->update($RoomsArray);
     }
 
-    public function customerIn(&$room,&$CustomerArray,&$RM_TRAN){
+//    public function terminateOriRoom($RM_TRAN_ID){
+//
+//    }
+
+    public function customerIn(&$room,&$CustomerArray,&$RM_TRAN_ID){
         foreach($room["GuestsInfo"]  as $gust){
             $customer = array(
                 "SSN" => $gust["SSN"],
                 "CUS_NAME" => $gust["Name"],
                 "RM_ID" => $room["roomSelect"],
-                "RM_TRAN_ID" => $RM_TRAN,
+                "RM_TRAN_ID" => $RM_TRAN_ID,
 //                "PROVNCE" =>  $gust["Province"],
                 "PHONE"=>$gust["Phone"],
                 "RMRK" =>$gust["RemarkInput"],
@@ -334,11 +406,11 @@ class NewCheckInController extends BaseController{
         }
     }
 
-    public function roomDepositIn(&$room,&$RM_TRAN,&$DepositArray){
+    public function roomDepositIn(&$room,&$RM_TRAN_ID,&$DepositArray){
         $date = new DateTime();
         foreach ($room["pay"]["payByMethods"] as $payByMethod){
             $depo = array(
-                "RM_TRAN_ID" => $RM_TRAN,
+                "RM_TRAN_ID" => $RM_TRAN_ID,
                 "DEPO_AMNT"=>$payByMethod["payAmount"],
                 "PAY_METHOD" => $payByMethod["payMethod"],
                 "DEPO_TSTMP"=> $date

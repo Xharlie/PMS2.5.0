@@ -293,6 +293,8 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
     /************** ********************************** Initialized by conditions ********************************** *************/
     if(initialString == "multiReserve"){
         multiReserve(roomST);
+    }else if (initialString == "multiWalkIn"){
+        multiWalkIn(roomST);
     }
 
     /**********************************/
@@ -351,7 +353,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
 //                    updateDiscount("");
                     updateDiscount4TP("");
                     break;
-                case '预定':
+                case '预订':
                     $scope.caption.searchCaption = "N/A(暂时)";
                     $scope.disable.searchDisable = true;
 //                    updateDiscount("");
@@ -660,7 +662,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
 
 })
 /************************                       singleRoom sub controller                      ***********************/
-    .controller('singleRoomCtrl', function ($scope) {
+    .controller('multiSingleRoomCtrl', function ($scope) {
         $scope.$watch('singleRoom.RM_ID',
             function(newValue, oldValue) {
                 $scope.$parent.updateDisabledRmId(oldValue,newValue);
@@ -670,7 +672,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
     })
 
 /************************                       singleTPsub controller                      ***********************/
-    .controller('singleTPCtrl', function ($scope) {
+    .controller('multiSingleTPCtrl', function ($scope) {
         $scope.$watch('singleTP.finalPrice',
             function(newValue, oldValue) {
                 for (var i = 0 ; i< $scope.singleTP.rooms.length; i++){
@@ -692,7 +694,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
     })
 
     /************************                       singleRoomPay sub controller                      ***********************/
-    .controller('singleRoomPayCtrl', function ($scope) {
+    .controller('multiSingleRoomPayCtrl', function ($scope) {
         $scope.$watch('singleRoom.payment.paymentRequest',
             function(newValue, oldValue) {
                 $scope.$parent.$parent.updatePayInDue($scope.singleRoom);
@@ -702,7 +704,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
     })
 
      /************************                       singlePay sub controller                      ***********************/
-    .controller('singlePayCtrl', function ($scope) {
+    .controller('multiSinglePayCtrl', function ($scope) {
         $scope.$watch('singlePay.payAmount',
             function(newValue, oldValue) {
                 $scope.$parent.$parent.updatePayInDue($scope.$parent.singleRoom);
@@ -710,7 +712,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
             true
         );
     })/************************                       single Master Pay sub controller                      ***********************/
-    .controller('singleMasterPayCtrl', function ($scope) {
+    .controller('multiSingleMasterPayCtrl', function ($scope) {
         $scope.$watch('singlePay.payAmount',
             function(newValue, oldValue) {
                 $scope.$parent.$parent.updatePayInDue($scope.$parent.$parent.BookCommonInfo.Master);

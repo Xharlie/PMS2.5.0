@@ -1,7 +1,7 @@
 <div>
     <div class="modal-header">
         <span class="glyphicon glyphicon-send"></span>
-        <label style="font-size: 15px;">新入住</label> {{ BookCommonInfo.rentType}}
+        <label style="font-size: 15px;">新入住</label>{{}}
         <span class="pull-right btn" ng-click="cancel()">&#x2715</span>
     </div>
     <div class="col-sm-12" style="padding: 30px 20px 45px 25px;">
@@ -33,7 +33,7 @@
                     <select class="form-control" ng-model="BookCommonInfo.rentType">
                         <option value="全日租">全日租</option>
                         <option ng-repeat=" plan in plans | filter:{RM_TP: BookRoom[0].RM_TP}:true  | orderBy: ['PLAN_COV_MIN','PLAN_COV_PRCE'] "
-                            value="{{plan.PLAN_ID}}" >
+                            value="{{plan.PLAN_ID}}" ng-selected="plan.PLAN_ID == rentType" >
                             {{(plan.RM_TP+': '+plan.PLAN_COV_MIN+'分钟 '+plan.PLAN_COV_PRCE+'元')}}
                         </option>
                     </select>
@@ -94,7 +94,7 @@
                 </div>
             </div>
             <div class="col-sm-12 form-group" style="padding:10px 25px 0px 10px; border-top:1px solid #D3D6DE; "
-                ng-repeat="singleRoom in BookRoom " ng-controller="singleRoomCtrl">
+                ng-repeat="singleRoom in BookRoom " ng-controller="scheckSingleRoomCtrl">
                 <div class="col-sm-3 ">
                     <label>房型</label>
                     <select class="form-control" ng-model="singleRoom.RM_TP" ng-change="roomTypeChange(singleRoom)"
@@ -104,7 +104,7 @@
                     <label>房间号</label>
                     <select class="form-control" ng-model="singleRoom.RM_ID" >
                         <option ng-repeat="room in roomsAndRoomTypes[singleRoom.RM_TP]"
-                                ng-disabled= "roomsDisableList[room.RM_ID]" value="{{room.RM_ID}}">
+                                ng-disabled= "roomsDisableList[room.RM_ID]" value="{{room.RM_ID}}" ng-selected="singleRoom.RM_ID==room.RM_ID">
                             {{room.RM_ID}}{{(roomsDisableList[room.RM_ID])&&(singleRoom.RM_ID != room.RM_ID)?'(已选)':''}}
                         </option>
                     </select>
@@ -162,7 +162,7 @@
             </div>
         </div>
         <div ng-show ="viewClick=='Pay'" class="col-sm-12">
-            <div class="col-sm-12" ng-repeat="singleRoom in BookRoom">
+            <div class="col-sm-12" ng-repeat="singleRoom in BookRoom" ng-controller="scheckSingleRoomPayCtrl">
                 <div class="col-sm-12 form-group" style="padding-right:25px; padding-left: 25px; padding-bottom:20px; border-bottom: 1px solid #D3D6DE">
                     <div class="col-sm-4 ">
                         <label>应收数目</label>
@@ -181,7 +181,7 @@
     <!--                </div>-->
                 </div>
                 <div class="col-sm-12 form-group" style="padding-right:25px; padding-left: 25px;"
-                        ng-repeat="singlePay in singleRoom.payment.payByMethods" ng-controller="singlePayCtrl" >
+                        ng-repeat="singlePay in singleRoom.payment.payByMethods" ng-controller="scheckSinglePayCtrl" >
                     <div class="col-sm-4 ">
                         <label>实收数目</label>
                         <input class="form-control" ng-model="singlePay.payAmount" />
@@ -201,9 +201,12 @@
                     <label style="display:block;color: red; font-size: 25px;">{{singleRoom.payment.payInDue}}元</label>
                 </div>
             </div>
-            <button class="pull-right"
+            <button class="pull-right" ng-if="initialstring == 'singleWalkIn'"
                     style="margin-top:25px;padding: 10px 30px 10px 30px; background-color:grey; color: #ffffff"
-                    ng-click="submit()">确认并打印押金单</button>
+                    ng-click="submit()">确认入住并打印押金单</button>
+            <button class="pull-right" ng-if="initialstring != 'singleWalkIn'"
+                    style="margin-top:25px;padding: 10px 30px 10px 30px; background-color:grey; color: #ffffff"
+                    ng-click="editSubmit('true')">确认修改并打印押金单</button>
             <button class="pull-right"
                     style="margin-top:25px;padding: 10px 30px 10px 30px; background-color:#69B4F5; color: #ffffff"
                     ng-click="backward()">返回修改</button>

@@ -21,12 +21,15 @@ class RoomStatusController extends BaseController{
     public function showRoom(){
         $roomShow = DB::table('Rooms')
             ->leftjoin('RoomTran', 'Rooms.RM_TRAN_ID','=','RoomTran.RM_TRAN_ID')
-            ->leftjoin('RoomsTypes', 'RoomsTypes.RM_TP', '=', 'Rooms.RM_TP')
+//            ->leftjoin('RoomsTypes', 'RoomsTypes.RM_TP', '=', 'Rooms.RM_TP')
             ->select('Rooms.RM_ID as RM_ID','Rooms.RM_TRAN_ID as RM_TRAN_ID' ,
                 'Rooms.RM_CONDITION as RM_CONDITION', 'Rooms.RM_TP as RM_TP',
                 'RoomTran.CHECK_IN_DT as CHECK_IN_DT','RoomTran.CHECK_OT_DT as CHECK_OT_DT',
                 'RoomTran.RM_AVE_PRCE as RM_AVE_PRCE','RoomTran.DPST_RMN as DPST_RMN',
-                'RoomTran.RSRV_PAID_DYS as RSRV_PAID_DYS','RoomTran.CONN_RM_TRAN_ID as CONN_RM_TRAN_ID')
+                'RoomTran.RSRV_PAID_DYS as RSRV_PAID_DYS','RoomTran.CONN_RM_TRAN_ID as CONN_RM_TRAN_ID',
+                'RoomTran.LEAVE_TM as LEAVE_TM','RoomTran.CHECK_TP as CHECK_TP',
+                'RoomTran.TMP_PLAN_ID as TMP_PLAN_ID','RoomTran.TREATY_ID as TREATY_ID',
+                'RoomTran.MEM_ID as MEM_ID')
             ->get();
         return Response::json($roomShow);
     }

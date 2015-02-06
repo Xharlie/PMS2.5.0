@@ -159,8 +159,10 @@ Route::get('/showTreatyByID/{TREATY_ID}', 'NewCheckInController@showTreatyByID')
 
 Route::get('/showTreatyByCorp/{CORP_NM}', 'NewCheckInController@showTreatyByCorp');
 
+// room check in
 Route::post('/submitCheckIn','NewCheckInController@submitCheckIn');
 
+// room check in modify
 Route::post('/submitModify','NewCheckInController@submitModify');
 
 
@@ -195,8 +197,10 @@ Route::get('/getProductPrice/{NM}', 'NewCheckOutController@getProductPrice');
 Route::post('/checkOutSubmit', 'NewCheckOutController@checkOutSubmit');
 
 
-
+// new reservation submit
 Route::post('/submitResv','ReservationController@submitResv');
+// edit reservation
+Route::post('/editResv','ReservationController@editResv');
 
 
 Route::get('/accountingGetAll','AccountingController@accountingGetAll');

@@ -56,6 +56,7 @@
         <script src="js/Angular/module_frontDesk/services/frontDeskServices.js"></script>
         <script src="js/Angular/module_frontDesk/services/frontDeskModalServices.js"></script>
         <script src="js/Angular/module_frontDesk/services/newCheckInServices.js"></script>
+        <script src="js/Angular/module_frontDesk/services/newResvServices.js"></script>
         <script src="js/Angular/module_frontDesk/directives/sgDbClick.js"></script>
         <script src="js/Angular/module_frontDesk/directives/popMenu.js"></script>
         <script src="js/Angular/module_frontDesk/pan_lib/util.js"></script>
