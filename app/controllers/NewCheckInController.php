@@ -165,7 +165,7 @@ class NewCheckInController extends BaseController{
         $CustomerArray = array();
         $DepositArray = array();
         try {
-            DB::beginTransaction();
+            DB::beginTransaction();   //////  Important !! TRANSACTION Begin!!!
             foreach($info as $room){
 
                 $oriRec = DB::table('RoomTran')
@@ -196,14 +196,32 @@ class NewCheckInController extends BaseController{
                 }else{
                     // update the original roomTran to terminate
                     DB::table('RoomTran')
-                        ->where('RM_TRAN_ID',$RM_TRAN_ID)
+                        ->where('RM_TRAN_ID',$ori_RM_TRAN_ID)
                         ->update(array("CHECK_OT_DT"=>$room["CHECK_IN_DT"],
                                        "DPST_RMN"=>0));
                     // insert new roomTran and change to the new RM_TRAN_ID to be used everywhere
                     $RM_TRAN_ID = $this->roomTranIn($room,$RoomTranArray);
+                    // transfer the remain deposit to new room in RoomDeposit
+                    $depoOri = array(
+                        "RM_TRAN_ID" => $ori_RM_TRAN_ID,
+                        "DEPO_AMNT"=>(-1)*floatval($ori->DPST_RMN),
+                        "PAY_METHOD" => "internal",
+                        "DEPO_TSTMP"=> new DateTime(),
+                        "RMRK"=> "房间修改"
+                    );
+                    array_push($DepositArray,$depo);
+                    // transfer the remain deposit to new room in RoomDeposit
+                    $depo = array(
+                        "RM_TRAN_ID" => $RM_TRAN_ID,
+                        "DEPO_AMNT"=> floatval($ori->DPST_RMN),
+                        "PAY_METHOD" => "internal",
+                        "DEPO_TSTMP"=> new DateTime(),
+                        "RMRK"=> "房间修改"
+                    );
+                    array_push($DepositArray,$depo);
                     // update Rooms Info
                     DB::table('Rooms')
-                        ->where('RM_TRAN_ID',$room["roomSelect"])
+                        ->where('RM_TRAN_ID',$ori_RM_TRAN_ID)
                         ->update(array("RM_TRAN_ID"=>$RM_TRAN_ID));
                     // update Customers Info
                     DB::table('Customers')
@@ -235,7 +253,8 @@ class NewCheckInController extends BaseController{
                 /*-------------------------     if moneyInvolved add them to DepositArray    -------------------------------*/
                 if ($moneyInvolved){
                     // perpare the roomDeposit
-                    $this->roomDepositIn($room,$RM_TRAN_ID,$DepositArray);
+                    $RMRK="房屋修改";
+                    $this->roomDepositIn($room,$RM_TRAN_ID,$DepositArray,$RMRK);
                 }
                 /*-------------------------     if date or room Type has been changed       -------------------------------*/
                 if($initialString="editRoom"){  //condition under development
@@ -289,7 +308,8 @@ class NewCheckInController extends BaseController{
             $this->customerIn($room,$CustomerArray,$RM_TRAN_ID);
             /*------------------------- insert to roomDesposit and wait to insert in  ---------------------------------*/
             if ($room["CONN_RM_ID"] !="" || $room["CONN_RM_ID"] == $room["roomSelect"]){
-                $this->roomDepositIn($room,$RM_TRAN_ID,$DepositArray);
+                $RMRK = "存入押金";
+                $this->roomDepositIn($room,$RM_TRAN_ID,$DepositArray,$RMRK);
             }
             /*------------------------- change Room Availablilty Check Quan---------------------------------*/
             $this->roomOccupationCheckChange($room);
@@ -406,14 +426,15 @@ class NewCheckInController extends BaseController{
         }
     }
 
-    public function roomDepositIn(&$room,&$RM_TRAN_ID,&$DepositArray){
+    public function roomDepositIn(&$room,&$RM_TRAN_ID,&$DepositArray,&$RMRK){
         $date = new DateTime();
         foreach ($room["pay"]["payByMethods"] as $payByMethod){
             $depo = array(
                 "RM_TRAN_ID" => $RM_TRAN_ID,
                 "DEPO_AMNT"=>$payByMethod["payAmount"],
                 "PAY_METHOD" => $payByMethod["payMethod"],
-                "DEPO_TSTMP"=> $date
+                "DEPO_TSTMP"=> $date,
+                "RMRK"=> $RMRK
             );
             array_push($DepositArray,$depo);
         }

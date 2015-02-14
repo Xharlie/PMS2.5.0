@@ -75,7 +75,7 @@
         <script src="js/Angular/module_frontDesk/directives/RoomAvaiLineChart.js"></script>
 
         <script src="js/Angular/module_frontDesk/newCheckOutModule.js"></script>
-        <script src="js/Angular/module_frontDesk/controllers/newCheckOutController.js"></script>
+        <script src="js/Angular/module_frontDesk/controllers/checkOutModalController.js"></script>
         <script src="js/Angular/module_frontDesk/services/newCheckOutServices.js"></script>
 
         <script src="js/Angular/module_frontDesk/newResvModule.js"></script>

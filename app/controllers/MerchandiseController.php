@@ -13,7 +13,8 @@ class MerchandiseController extends BaseController{
         $productShow = DB::table('ProductInfo')
             ->select('ProductInfo.PROD_ID as PROD_ID','ProductInfo.PROD_TP as PROD_TP',
                 'ProductInfo.PROD_NM as PROD_NM', 'ProductInfo.PROD_COST as PROD_COST',
-                'ProductInfo.PROD_PRICE as PROD_PRICE','ProductInfo.PROD_AVA_QUAN as PROD_AVA_QUAN')
+                'ProductInfo.PROD_PRICE as PROD_PRICE','ProductInfo.PROD_AVA_QUAN as PROD_AVA_QUAN',
+                'ROOM_BAR as ROOM_BAR')
             ->get();
         return json_encode($productShow,JSON_NUMERIC_CHECK);
     }

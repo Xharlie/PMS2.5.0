@@ -52,14 +52,17 @@ app.controller('largeMenuController',function ($scope, $http, $modal, cusModalFa
         }else if(actionString == '退房办理'){
             var modalInstance = $modal.open({
                 windowTemplateUrl: 'directiveViews/modalWindowTemplate',
-                templateUrl: 'directiveViews/singleCheckInModal',
-                controller: 'checkInModalController',
+                templateUrl: 'directiveViews/checkOutModal',
+                controller: 'checkOutModalController',
                 resolve: {
-                    roomST: function () {
-                        return [roomInfo];          // leave flexibility to have multiple parameters or rooms
+                    connRM_TRAN_IDs: function () {
+                        return $scope.owner.connRM_TRAN_IDs;          // leave flexibility to have multiple parameters or rooms
                     },
                     initialString: function () {
-                        return "editRoom";
+                        return "checkOut";
+                    },
+                    RM_IDFortheRoom: function() {
+                        return $scope.owner.RM_ID;
                     }
                 }
             });

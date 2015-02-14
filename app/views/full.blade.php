@@ -50,12 +50,14 @@
         <script src="js/Angular/module_frontDesk/controllers/smallMenuController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/largeMenuController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/CheckInModalController.js"></script>
+        <script src="js/Angular/module_frontDesk/controllers/CheckOutModalController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/MultiCheckInModalController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/reservationModalController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/buildInDirController.js"></script>
         <script src="js/Angular/module_frontDesk/services/frontDeskServices.js"></script>
         <script src="js/Angular/module_frontDesk/services/frontDeskModalServices.js"></script>
         <script src="js/Angular/module_frontDesk/services/newCheckInServices.js"></script>
+        <script src="js/Angular/module_frontDesk/services/newCheckOutServices.js"></script>
         <script src="js/Angular/module_frontDesk/services/newResvServices.js"></script>
         <script src="js/Angular/module_frontDesk/directives/sgDbClick.js"></script>
         <script src="js/Angular/module_frontDesk/directives/popMenu.js"></script>

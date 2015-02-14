@@ -5718,10 +5718,10 @@ button.close {
   height: auto; }
   .roomAction td:hover {
     cursor: pointer;
-    background-color: #42DCCF; }
+    background-color: #DAEBF7; }
     .roomAction td:hover a {
       text-decoration: none;
-      color: #fff; }
+      color: #000000; }
 
 .roomAccounting {
   overflow-y: scroll; }
@@ -5974,6 +5974,25 @@ form .sectionArea {
 .table-room tbody > tr > td > input,
 .table-room tbody > tr > td > select {
     width:100px;
+}
+
+.table-acct tbody > tr {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+.table-acct tbody > tr > td,
+.table-acct tbody > tr > th {
+    border: 0px;
+    line-height: 30px;
+}
+
+.table-acct tbody > tr > th:first-child,
+.table-acct tbody > tr > td:first-child {
+    padding-left:50px;
+}
+
+.table-acct tbody > tr > th:last-child,
+.table-acct tbody > tr > td:last-child {
+    padding-right:30px;
 }
 
 .addOnRow > td {

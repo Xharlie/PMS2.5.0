@@ -122,7 +122,8 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
 /* Database version */
 
     $scope.connectClick = "toStart";
-    $scope.master2Branch = {};
+    $scope.master2BranchStyle = {};
+    $scope.master2BranchID = {};
     $scope.ready=false;
     $scope.blockClass="roomBlockSelected";
 
@@ -156,16 +157,21 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
 
             if($scope.roomStatusInfo[i]['CONN_RM_TRAN_ID'] != null){
                  $scope.roomStatusInfo[i]['connLightUp'] = [];
-                 if($scope.roomStatusInfo[i]['CONN_RM_TRAN_ID'] in $scope.master2Branch){
-                     $scope.master2Branch[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']].push($scope.roomStatusInfo[i].blockClass);
+                 if($scope.roomStatusInfo[i]['CONN_RM_TRAN_ID'] in $scope.master2BranchStyle){
+                     $scope.master2BranchStyle[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']].push($scope.roomStatusInfo[i].blockClass);
+                     $scope.master2BranchID[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']].push($scope.roomStatusInfo[i].RM_TRAN_ID);
                  }else{
-                     $scope.master2Branch[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']] = [$scope.roomStatusInfo[i].blockClass];
+                     $scope.master2BranchStyle[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']] = [$scope.roomStatusInfo[i].blockClass];
+                     $scope.master2BranchID[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']]=[$scope.roomStatusInfo[i].RM_TRAN_ID];
                  }
             }
         }
         for (var i=0; i<$scope.roomStatusInfo.length; i++){
             if($scope.roomStatusInfo[i]['connLightUp'] != undefined){
-               $scope.roomStatusInfo[i]['connLightUp'] = $scope.master2Branch[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']];
+               $scope.roomStatusInfo[i]['connLightUp'] = $scope.master2BranchStyle[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']];
+               $scope.roomStatusInfo[i]['connRM_TRAN_IDs'] = $scope.master2BranchID[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']];
+            }else{
+                $scope.roomStatusInfo[i]['connRM_TRAN_IDs'] = [$scope.roomStatusInfo[i]['RM_TRAN_ID']];
             }
         }
         $scope.ready=true;
