@@ -4,6 +4,7 @@
 
 app.controller('smallMenuController',function ($scope, $http,cusModalFactory,$modal) {
     $scope.excAction = function(actionString){
+        /*********************************          roomStatus          **************************************/
         if(actionString == '入住办理'){
             var modalInstance = $modal.open({
                 windowTemplateUrl: 'directiveViews/modalWindowTemplate',
@@ -24,22 +25,24 @@ app.controller('smallMenuController',function ($scope, $http,cusModalFactory,$mo
             cusModalFactory.Change2Mending($scope.owner.RM_ID).success(function(data){
                 $scope.owner.RM_CONDITION = "维修";
                 $scope.owner.menuIconAction = util.mendIconAction;
-                $scope.owner.roomBlockClass[0] = "room-disabled";
+                $scope.owner.blockClass[0] = "room-disabled";
             });
         }else if(actionString == '维修完毕'){
             cusModalFactory.Change2Mended($scope.owner.RM_ID).success(function(data){
                 $scope.owner.RM_CONDITION = "脏房";
                 $scope.owner.menuIconAction = util.dirtIconAction;
-                $scope.owner.roomBlockClass[0] = "room-dirty";
+                $scope.owner.blockClass[0] = "room-dirty";
             });
         }else if(actionString == '清洁完毕'){
             cusModalFactory.Change2Cleaned($scope.owner.RM_ID).success(function(data){
                 $scope.owner.RM_CONDITION = "空房";
                 $scope.owner.menuIconAction = util.avaIconAction;
-                $scope.owner.roomBlockClass[0] = "room-empty";
+                $scope.owner.blockClass[0] = "room-empty";
 
             });
-        }else if(actionString == '预定入住'){
+        }
+        /*********************************          reservation          **************************************/
+        else if(actionString == '预定入住'){
             var sameID = $scope.$parent.$parent.sameID[$scope.owner.RESV_ID];
             var roomST = [];
             for (var i =0; i < sameID.length; i++){
@@ -102,6 +105,56 @@ app.controller('smallMenuController',function ($scope, $http,cusModalFactory,$mo
                 }
             });
         }
+        /*********************************          merchandise          **************************************/
+        else if(actionString == '商品购买'){
+            if($scope.$parent.$parent.onCounter.indexOf($scope.owner)>=0) return;
+            $scope.$parent.$parent.addBuy($scope.owner);
+
+        /*********************************          membership          **************************************/
+        }else if(actionString == '积分调整'){
+            var modalInstance = $modal.open({
+                windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+                templateUrl: 'directiveViews/addMemberModal',
+                controller: 'addMemberModalController',
+                resolve: {
+                    initialString: function () {
+                        return "pointsAjustment";
+                    },
+                    member: function () {
+                        return $scope.owner;
+                    }
+                }
+            });
+        }else if(actionString == '等级调整'){
+            var modalInstance = $modal.open({
+                windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+                templateUrl: 'directiveViews/addMemberModal',
+                controller: 'addMemberModalController',
+                resolve: {
+                    initialString: function () {
+                        return "levelAdjustment";
+                    },
+                    member: function () {
+                        return $scope.owner;
+                    }
+                }
+            });
+        }else if(actionString == '修改资料'){
+            var modalInstance = $modal.open({
+                windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+                templateUrl: 'directiveViews/addMemberModal',
+                controller: 'addMemberModalController',
+                resolve: {
+                    initialString: function () {
+                        return "editProfile";
+                    },
+                    member: function () {
+                        return $scope.owner;
+                    }
+                }
+            });
+        }
+
     }
 
     $scope.close = function(owner){
@@ -110,3 +163,5 @@ app.controller('smallMenuController',function ($scope, $http,cusModalFactory,$mo
         if($scope.$parent.$parent.extraCleaner!= undefined) $scope.$parent.$parent.extraCleaner(owner);  // clean associate affected element
     }
 });
+
+

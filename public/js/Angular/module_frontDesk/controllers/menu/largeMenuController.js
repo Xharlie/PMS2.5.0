@@ -61,8 +61,11 @@ app.controller('largeMenuController',function ($scope, $http, $modal, cusModalFa
                     initialString: function () {
                         return "checkOut";
                     },
-                    RM_IDFortheRoom: function() {
-                        return $scope.owner.RM_ID;
+                    RM_TRAN_IDFortheRoom: function() {
+                        return $scope.owner.RM_TRAN_ID;
+                    },
+                    ori_Mastr_RM_TRAN_ID: function() {
+                        return $scope.owner.CONN_RM_TRAN_ID;
                     }
                 }
             });
