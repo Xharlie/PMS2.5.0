@@ -1,0 +1,24 @@
+// All Mixins
+
+// Mixin for rooms
+//
+@mixin room-style($room-color,$room-bg,$room-badge){
+	color: $room-color;
+	border-color: darken($room-color, 10%);
+	background-color: $room-bg;
+	@include gradient-directional($room-bg,darken($room-bg,5%),160deg);
+	
+
+
+	&:hover{
+		background-color: darken($room-bg, 5%);
+		@include gradient-directional(darken($room-bg,5%),darken($room-bg,10%),160deg);
+		cursor: pointer;
+	}
+
+	span{
+			background-color: $room-badge;
+			box-shadow: inset 1px 1px 1px darken($room-badge, 15%);
+		}
+	
+}

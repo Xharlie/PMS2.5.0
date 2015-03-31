@@ -1,0 +1,19 @@
+{
+  "name": "BI_Ben_Local",
+  "version": "0.0.0",
+  "homepage": "https://github.com/Xharlie/BI_Dev_Shared",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-sass-official": "~3.2.0+2"
+  },
+  "resolutions": {
+    "bootstrap-sass-official": "~3.2.0+2"
+  }
+}

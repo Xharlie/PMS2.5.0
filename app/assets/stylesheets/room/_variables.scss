@@ -1,0 +1,43 @@
+// Variables for Rooms
+// --------------------------------------------------
+
+
+// Shape
+//
+
+$room-size:						  110px;
+$room-border-radius:              20px;
+$room-margin:					  1px;
+
+// Shadow
+// 
+
+$room-shadow:           		  1px 1px 1px rgba(173,173,173,.5);		  
+
+// Color
+//
+
+$room-full-color:			 	  #fff;
+$room-full-bg:				 	  $brand-primary;
+$room-full-badge:				  rgba(255,255,255,0);
+
+$room-empty-color:			  	  $gray-light;
+$room-empty-bg:				  	  #fff;
+$room-empty-badge:				  $room-full-bg;
+
+$room-disabled-color:		 	  $gray-lighter;
+$room-disabled-bg:			 	  #e9726d;
+$room-disabled-badge:			  darken($room-disabled-bg, 20%);
+
+$room-dirty-color:			 	  #fff;
+$room-dirty-bg:				 	  #ccc;
+$room-dirty-badge:				  darken($room-dirty-bg, 20%);
+
+
+// Modals
+
+$room-modal-color:				  $gray-light;
+$room-modal-height:				  300px;	
+$room-modal-padding-horizontal:	  $content-padding-horizontal*0.75;
+$room-modal-padding-vertical:	  $content-padding-vertical*0.5;
+$room-modal-table-spacing:		  24px;
