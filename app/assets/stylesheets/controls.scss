@@ -1,0 +1,27 @@
+//
+// Controls
+// --------------------------------------------------
+// Defines various customized control functions
+
+
+.mode{
+	overflow: hidden;
+	width: 100%;
+	background-color: $body-bg;
+}
+
+.tab{
+	border-radius:$tab-border-radius;
+	border-style:$tab-border-style;
+	float:left;
+	@include button-size($tab-padding-vertical, $tab-padding-horizontal, $font-size-base, $line-height-base, $tab-border-radius);
+}
+
+.tab-active{
+	background-color: $tab-active-bg;
+}
+
+.tab-inactive{
+	background-color: $tab-inactive-bg;
+}
+

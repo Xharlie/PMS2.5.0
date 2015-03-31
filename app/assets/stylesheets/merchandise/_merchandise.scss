@@ -1,0 +1,28 @@
+//
+// Merchandise
+// --------------------------------------------------
+// Defines system layout
+
+
+// Base styles
+// --------------------------------------------------
+
+.productBoard{
+	overflow: hidden;
+	border-right: $content-border-style $content-border-width $content-border-color;
+
+}
+
+.purchaseBoard{
+	position: aboslute;
+
+	.searchBox{
+		width: 100%;
+	}
+
+}
+
+.buyButton{
+	width: 100%;
+	margin: 20px 0;
+}

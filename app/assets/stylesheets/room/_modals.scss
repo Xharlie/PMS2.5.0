@@ -1,0 +1,64 @@
+//
+// Modals in Rooms
+// --------------------------------------------------
+
+
+// Base styles
+// --------------------------------------------------
+
+
+.modal-content{
+	height: $room-modal-height;
+	overflow: hidden;
+}
+
+
+.modal-title{
+	padding: $room-modal-padding-vertical $room-modal-padding-horizontal;
+}
+
+.modal-body{
+	border-style: none;
+}
+
+.modal-footer{
+	border-style: none;
+}
+
+.roomAction, .infoAction{
+
+	color:$room-modal-color;
+
+	table{
+		width: 100%;
+		border-style: none;
+		margin: $room-modal-padding-vertical 0px;
+
+		td{
+			width: 100%;
+			padding-left: $room-modal-padding-horizontal;
+			height: $room-modal-table-spacing;
+		}
+	}
+
+	a{
+		color:$room-modal-color;
+		text-decoration: none;
+	}
+}
+
+.roomAction{
+
+	border-right: $content-border-width $content-border-style $content-border-color;
+	height: 400px;
+
+	td{
+		&:hover{
+			a { text-decoration: none;
+				color:#fff;}
+			cursor: pointer;
+			background-color: $room-full-bg;
+		}
+	}
+
+}

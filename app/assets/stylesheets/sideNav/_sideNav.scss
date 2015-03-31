@@ -1,0 +1,89 @@
+//
+// SideNav
+// --------------------------------------------------
+
+
+// Base styles
+// --------------------------------------------------
+
+
+.sideNavArea{
+	position: fixed;
+	text-align: center;
+	color: $sideNav-color;
+	background-color: $sideNav-bg;
+	z-index: 1;
+
+}
+
+.sideNav{
+	position: fixed;
+	width: $sideNav-width;
+
+}
+
+.sideNav-title{
+	height: $sideNav-title-height;
+}
+
+.sideNav-profile{
+	height: $sideNav-profile-height;
+	width: 100%;
+	background-color: lighten($sideNav-bg,5%);
+	position: absolute;
+
+	.profile-pic{
+		width: $profile-pic-size;
+		height: $profile-pic-size;
+		border-radius: $profile-pic-radius;
+		overflow: hidden;
+		margin: 20px auto;
+		img{
+			width: 100%;
+		}
+	}
+
+	button{
+		margin-top: 10px;
+	}
+
+}
+
+
+.sideNav-menu{
+	color: darken($sideNav-color,30%);
+	margin-top: $sideNav-profile-height + 40px;
+
+	a{
+		color: darken($sideNav-color,30%);
+		text-decoration: none;
+		width: 100%;
+		padding-left:10px;
+		padding-right: 15px;
+
+		&:hover{
+			text-decoration: none;
+			padding-left:10px;
+			padding-right: 15px;
+		}
+	}
+
+	ul{
+		width: 100%;
+		padding: 0;
+
+		li{
+			list-style: none;
+			width: 100%;
+			padding: 12px;
+			&:hover{
+				background-color: darken($sideNav-bg,10%);
+				cursor: pointer;
+			}
+			&:hover a, &:hover span{
+				color: $sideNav-color;
+			}
+		}
+	}
+
+}
