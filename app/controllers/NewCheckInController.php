@@ -16,7 +16,7 @@ class NewCheckInController extends BaseController{
 
     public function getRoomInfo(){
         $RoomInfo = DB::table('Rooms')
-            ->join('RoomsTypes', 'RoomsTypes.RM_TP', '=', 'Rooms.RM_TP')
+            ->leftjoin('RoomsTypes', 'RoomsTypes.RM_TP', '=', 'Rooms.RM_TP')
             ->select('Rooms.RM_ID as RM_ID','Rooms.RM_CONDITION as RM_CONDITION', 'Rooms.RM_TP as RM_TP',
                 'RoomsTypes.SUGG_PRICE as SUGG_PRICE')
             ->get();

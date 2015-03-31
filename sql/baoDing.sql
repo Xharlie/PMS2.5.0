@@ -1,5 +1,5 @@
 /*
- Navicat Premium Data Transfer begin
+ Navicat Premium Data Transfer
 
  Source Server         : Hotel_Dev
  Source Server Type    : MySQL

@@ -62,7 +62,7 @@ return array(
     			'collation' => 'utf8_general_ci',
     			'prefix'    => '',
     		),
-////
+//
 //        'mysql' => array(
 //            'driver'    => 'mysql',
 //            'host'      => '23.229.206.41',
@@ -73,16 +73,16 @@ return array(
 //            'collation' => 'utf8_general_ci',
 //            'prefix'    => '',
 //        ),
-        'mysql' => array(
-            'driver'    => 'mysql',
-            'host'      => '54.68.240.32',
-            'database'  => 'BI',
-            'username'  => 'ben',
-            'password'  => '^ben$',
-            'charset'   => 'utf8',
-            'collation' => 'utf8_general_ci',
-            'prefix'    => '',
-        ),
+//        'mysql' => array(
+//            'driver'    => 'mysql',
+//            'host'      => '54.68.240.32',
+//            'database'  => 'BI',
+//            'username'  => 'ben',
+//            'password'  => '^ben$',
+//            'charset'   => 'utf8',
+//            'collation' => 'utf8_general_ci',
+//            'prefix'    => '',
+//        ),
 //
 //        'mysql_emply' => array(
 //            'driver'    => 'mysql',

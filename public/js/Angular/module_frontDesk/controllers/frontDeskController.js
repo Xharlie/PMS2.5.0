@@ -254,8 +254,8 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
     $scope.customerizeFilter = function(roomST){
         var test = new RegExp("^.*"+$scope.overall+".*$", "i");
         var RM_ID = roomST.RM_ID.toString();
-        var RM_TP = roomST.RM_TP.toString()
-        var RM_CONDITION =roomST.RM_CONDITION.toString();
+        var RM_TP = roomST.RM_TP
+        var RM_CONDITION = roomST.RM_CONDITION;
         return (RM_ID.match(test) != null) || (RM_TP.match(test)!= null) || (RM_CONDITION.match(test)!= null);  //  | roomST.RM_TP.match(test) | roomST.RM_CONDITION.match(test);
     };
 
