@@ -1,0 +1,28 @@
+<!doctype html>
+<div class="hotelStatus">
+	当前入住 10/70 	今日欲达 5
+</div>
+<div class="roomStatus">
+		<!-- Trump, please replace i<10 with i<number of rooms pulled from server -->
+	<?php for ($i=0;$i<10;$i++): ?>
+		<div class="roomStatusFull"> <!-- roomStatusXXX to represent current status pulled from server-->
+			<table>
+				<tr>
+					<td>大床房</td>
+				</tr>
+				<tr>
+					<td>301</td>
+				</tr>
+				<tr>
+					<td>徐乾庚</td>
+					<td>4人</td>
+				</tr>
+				<tr>
+					<td>status</td>
+				</tr>
+				
+			</table>
+		</div>
+	<?php endfor; ?>
+	
+</div>

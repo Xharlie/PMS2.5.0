@@ -20,7 +20,6 @@ app.controller('sideBarController', function($scope, $http){
 app.controller('reservationController', function($scope, $http, resrvFactory,$modal){
 
     $scope.ready=false;
-    $scope.menuType = "small-menu";
     $scope.menuNoshow = false;
     $scope.iconAndAction = {"resvIconAction":util.resvIconAction };
     $scope.sameID={};
@@ -131,7 +130,6 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
         $scope.roomStatusInfo =data;
         for (var i=0; i<$scope.roomStatusInfo.length; i++){
 
-
             switch($scope.roomStatusInfo[i].RM_CONDITION){
                 case '空房':
                     $scope.roomStatusInfo[i].menuType = 'small-menu';
@@ -153,7 +151,6 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
                     $scope.roomStatusInfo[i].menuIconAction = util.mendIconAction;
                     $scope.roomStatusInfo[i].blockClass = ["room-disabled"];
             }
-
 
             if($scope.roomStatusInfo[i]['CONN_RM_TRAN_ID'] != null){
                  $scope.roomStatusInfo[i]['connLightUp'] = [];
@@ -316,22 +313,19 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
                         }
                     }
                 });
-//                var location = "newCheckOut/"+roomST.RM_TRAN_ID;
-////  legacy code               window.open(location);
-//                util.openTab(location,"","",util.closeCallback);
+// to be change, multi room edit
             }else{
-                cusModalFactory.getConnect(roomST.RM_TRAN_ID).success(function(data){
-                    if(data != null){
-                        var CurrentMaster = data[0];
-                        var ConnRooms = data;
-                        var roomsString = "";
-                        for (var i = 0; i < ConnRooms.length; i++){
-                            roomsString += "/" + ConnRooms[i].RM_TRAN_ID;
+                var modalInstance = $modal.open({
+                    windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+                    templateUrl: 'directiveViews/singleCheckInModal',
+                    controller: 'checkInModalController',
+                    resolve: {
+                        roomST: function () {
+                            return [roomInfo];          // leave flexibility to have multiple parameters or rooms
+                        },
+                        initialString: function () {
+                            return "editRoom";
                         }
-                        roomsString += "/M" + CurrentMaster.RM_TRAN_ID;
-                        var location = "newCheckOut"+roomsString;
-//                        window.open(location);
-                        util.openTab(location,"","",util.closeCallback);
                     }
                 });
             }
@@ -342,7 +336,7 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
 
 
 
-app.controller('customerController', function($scope, $http, customerFactory){
+app.controller('customerController', function($scope, $http, customerFactory,$modal){
 
     $scope.VarMaxSize =util.VarMaxSize;
     $scope.VarItemPerPage=2;
@@ -353,6 +347,12 @@ app.controller('customerController', function($scope, $http, customerFactory){
     $scope.viewClick = "recentCustomer" ;
     $scope.customerInfo ='';
     $scope.memberInfo = '';
+
+    $scope.menuType = "small-menu";
+    $scope.menuNoshow = false;
+    $scope.iconAndAction = {"memberIconAction":util.memberIconAction };
+    $scope.blockClass = "reserveClick"
+    $scope.clicked = false;
     $scope.clearMEMIDfilter = function(){
         if($scope.memberID == '') delete $scope.memberID;
     };
@@ -387,6 +387,9 @@ app.controller('customerController', function($scope, $http, customerFactory){
             customerFactory.memberShow().success(function(data){
                 $scope.memberInfo =data;
                 $scope.ready=true;
+                for (var i =0 ; i< $scope.memberInfo.length; i++){
+                    $scope.memberInfo[i].blockClass=[];
+                }
             });
         }
     };
@@ -398,19 +401,125 @@ app.controller('customerController', function($scope, $http, customerFactory){
 //            $scope.totalItems = $scope.rooms[$scope.selectedFloor.FLOOR_ID].length;
 //        });
 //    }
+    $scope.addNewCustomer = function(){
+        var modalInstance = $modal.open({
+            windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+            templateUrl: 'directiveViews/addMemberModal',
+            controller: 'addMemberModalController',
+            resolve: {
+                initialString: function () {
+                    return "addMember";
+                },
+                member: function () {
+                    return null;
+                }
+            }
+        });
+    }
+
+    $scope.fastAction = function(member){
+        var modalInstance = $modal.open({
+            windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+            templateUrl: 'directiveViews/addMemberModal',
+            controller: 'addMemberModalController',
+            resolve: {
+                initialString: function () {
+                    return "editProfile";
+                },
+                member: function () {
+                    return member;
+                }
+            }
+        });
+    }
+
+    $scope.open = function (member) {
+        $scope.LightUp(member);
+        $scope.clicked = true;
+    };
+
+    $scope.extraCleaner = function(member){
+        $scope.clicked = false;
+        $scope.LightBack(member);
+    }
+
+    $scope.LightUp = function(member){
+        if($scope.clicked) return;  // if some member been selected, don't do the hover light up
+        if (member.blockClass.indexOf($scope.blockClass)<0){
+            member.blockClass.push($scope.blockClass);
+        }
+    }
+
+    $scope.LightBack = function(member){
+        if($scope.clicked) return;  // if some reservation been selected, don't do the hover light back
+        var ind =member.blockClass.indexOf($scope.blockClass);
+        if (ind >=0) member.blockClass.splice(ind,1);
+    }
 
 });
 
-app.controller('accountingController', function($scope, $http, accountingFactory){
+app.controller('accountingController', function($scope, $http, accountingFactory,$modal){
+
+    /******************************************     utilities     **********************************************/
+    var queryAcct = function(startTime, endTime) {
+        accountingFactory.accountingGetAll(startTime, endTime).success(function(data){
+            $scope.acctInfo = data;
+            $scope.ready=true;
+            for (var i =0 ; i< $scope.acctInfo.length; i++){
+                $scope.acctInfo[i].blockClass=[];
+            }
+        });
+    }
+
+    $scope.LightUp = function(member){
+        if($scope.clicked) return;
+        if (member.blockClass.indexOf($scope.blockClass)<0){
+            member.blockClass.push($scope.blockClass);
+        }
+    }
+
+    $scope.LightBack = function(member){
+        if($scope.clicked) return;
+        var ind =member.blockClass.indexOf($scope.blockClass);
+        if (ind >=0) member.blockClass.splice(ind,1);
+    }
+
+    $scope.open = function(acct){
+        $scope.clicked = true;
+        var modalInstance = $modal.open({
+            windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+            templateUrl: 'directiveViews/modifyAcctModal',
+            controller: 'modifyAcctModalController',
+            resolve: {
+                initialString: function () {
+                    return "modifyAcct";
+                },
+                acct: function () {
+                    return acct;
+                }
+            }
+        });
+    }
+
+    $scope.refreshResult = function(){
+        queryAcct(util.dateFormat($scope.QueryDates.startDate),util.dateFormat($scope.QueryDates.endDate));
+    }
+
+    /******************************************     init     **********************************************/
+
     $scope.Conaddup = 0;
     $scope.Payaddup = 0;
     $scope.collections = [];
     $scope.ready=false;
+    var today =  new Date();
+    $scope.QueryDates={today:today,startDate:today,endDate:today};
+    queryAcct(util.dateFormat(today),util.dateFormat(today));
 
-    accountingFactory.accountingGetAll().success(function(data){
-        $scope.acctInfo = data;
-        $scope.ready=true;
-    });
+    /********************* common variables *****************************************/
+
+    $scope.blockClass = "reserveClick";
+    $scope.clicked = false;
+
 
     $scope.TypeFilter = function(acct){
         if ($scope.Type == ""){
@@ -440,7 +549,6 @@ app.controller('accountingController', function($scope, $http, accountingFactory
         }else{
             return parseFloat(numberShow).toFixed(2);
         }
-
     }
 
     var reverse = function(CLASS){
@@ -474,7 +582,6 @@ app.controller('accountingController', function($scope, $http, accountingFactory
         }else{
             alert("error");
         }
-
     }
 });
 
@@ -482,18 +589,41 @@ app.controller('accountingController', function($scope, $http, accountingFactory
 
 app.controller('oneKeyShiftController', function($scope, $http, accountingFactory){
 
-    $scope.ready=false;
+    /****************************************************  utilities *******************************************************/
 
-    accountingFactory.summerize().success(function(data){
-        //     alert(JSON.stringify(data));
-        $scope.cashSum = data['cash'];
-        $scope.roomCardSum = data['cards'];
-        $scope.productSellSum=data['store'];
-        $scope.ready=true;
-    });
     $scope.twoDigit = function(digit){
         return parseFloat(digit).toFixed(2);
     };
+
+    var testFail = function(){
+        return false;
+    }
+    /****************************************************  initFunction *******************************************************/
+    var shiftInfoInit = function(){
+        accountingFactory.summerize().success(function(data){
+            //     alert(JSON.stringify(data));
+            $scope.cashSum = data['cash'];
+            $scope.roomCardSum = data['cards'];
+            $scope.productSellSum=data['store'];
+            $scope.depositReceiptSum=data['receipt'];
+            $scope.memberCardSum=data['member'];
+            $scope.ready=true;
+        });
+    }
+
+    /****************************************************  init *******************************************************/
+    $scope.ready=false;
+    $scope.ShiftInfo = {SHFT_CSH_BOX:null,SHFT_END_PSS2_CSH:null,SHFT_PSS_EMP_ID:null,pssEmpPw:null};
+    shiftInfoInit();
+    /****************************************************  submit *******************************************************/
+
+    $scope.changeShiftSubmit = function(){
+        if(testFail()) return;
+        show($scope.ShiftInfo);
+        accountingFactory.changeShiftSubmit($scope.ShiftInfo).success(function(data){
+
+        });
+    }
 });
 
 app.controller('Datepicker', function($scope){
@@ -535,70 +665,68 @@ app.controller('Datepicker', function($scope){
 
 });
 
+app.controller('merchandiseHistoController', function($scope, $http, merchandiseFactory,$modal){
 
-app.controller('merchandiseController', function($scope, $http, merchandiseFactory,$modal){
-    /* Database version */
-
-
-    $scope.prodInfo ='';
-    $scope.onCounter = [];
-    $scope.prodSumPrice = 0;
-    $scope.prodRoom = "";
-    $scope.room = "";
-    $scope.notValidAmount = 0;
-    $scope.prodRoomTranId = "";
-    $scope.prodRoomId = "";
-    $scope.submitFlag=false;
+    /****************************************************  utilities *******************************************************/
     $scope.ready=false;
+    $scope.menuNoshow = false;
+    $scope.iconAndAction = {"merchIconAction":util.merchIconAction};
+    $scope.blockClass = "reserveClick"
+    $scope.clicked=false;
+    $scope.showNotice = true;
+    $scope.contentFormat="aaa";
 
-    var pathArray = window.location.href.split("/");
-    var room_ID = pathArray[pathArray.length-1];
-    if(room_ID != ":"){
-        $scope.prodRoom = room_ID;
+    $scope.open = function(prod){
+        $scope.lightUp(prod);
+        $scope.clicked = true;
     }
 
-    merchandiseFactory.productShow().success(function(data){
-        $scope.prodInfo = data;
-    });
+    $scope.lightUp = function(prod){
+        if($scope.clicked) return;
+        if (prod.blockClass.indexOf($scope.blockClass)<0){
+            prod.blockClass.push($scope.blockClass);
+        }
+    }
 
-    $scope.initRoomsInfo = function(prodRoom){
-        merchandiseFactory.merchanRoomShow().success(function(data){
-            $scope.rooms = data;
-            $scope.checkRoom(prodRoom);
+    $scope.lightBack = function(prod){
+        if($scope.clicked) return;
+        var ind = prod.blockClass.indexOf($scope.blockClass);
+        if (ind >=0) prod.blockClass.splice(ind,1);
+    }
+
+    $scope.extraCleaner=function(){
+        $scope.clicked=false;
+    }
+
+    /****************************************************  init *******************************************************/
+
+    var allHistoInit = function(){
+        merchandiseFactory.histoPurchaseShow().success(function(data){
+            $scope.histoInfo = data;
             $scope.ready=true;
+            for(var i = 0; i < $scope.histoInfo.length; i++){
+                $scope.histoInfo[i]["blockClass"] = [];
+            }
         });
     }
-    $scope.checkRoom = function(prodRoom){
-        $scope.prodRoomTranId = "";
-        if(prodRoom == ""){
-            $scope.room ="";
-            $scope.prodRoomTranId = "";
-        }else{
-            $scope.room = "请输入正确房间号";
-            for (var i =0; i< $scope.rooms.length; i++){
-                if (prodRoom == $scope.rooms[i].RM_ID){
-                    if($scope.rooms[i].RM_TRAN_ID != undefined){
-                        $scope.prodRoomTranId = $scope.rooms[i].RM_TRAN_ID;
-                        $scope.room = "找到房间，并现有客人";
-                        $scope.prodRoomId = $scope.rooms[i].RM_ID;
-                    }
-                    break;
-                }
-            }
-        }
-    };
 
 
-    $scope.viewClickBuy = function(){
-        $scope.viewClick = "Buy";
-        if ($scope.prodInfo =='') {
-            $scope.ready=false;
-            merchandiseFactory.productShow().success(function(data){
-                $scope.prodInfo = data;
-                $scope.ready=true;
-            });
-        }
+    allHistoInit();
+
+
+
+    $scope.twoDigit = function(digit){
+        return parseFloat(digit).toFixed(2);
     };
+
+});
+
+
+
+app.controller('merchandiseController', function($scope, $http, merchandiseFactory,$modal){
+
+/****************************************************  utilities *******************************************************/
+
 
     $scope.nullify = function(filter){
         if (filter == ""){
@@ -606,120 +734,175 @@ app.controller('merchandiseController', function($scope, $http, merchandiseFacto
         }
     }
 
-    $scope.addProd = function(prod){
-        if(prod.CorC == "取消购买"){
-            prod.buyArrow = {"color":"black"};
-            var index = $scope.onCounter.indexOf(prod);
-            $scope.removeBuy(index);
-        }else{
-            $scope.onCounter.push(prod);
-            prod.AMOUNT=1;
-            prod.MONEY=prod.PROD_PRICE;
-            prod.buyArrow = {"color":"#1AFF00"};
-            prod.CorC = "取消购买";
-            $scope.changeSumPrice();
+    $scope.open = function(prod){
+        $scope.lightUp(prod);
+        $scope.clicked = true;
+    }
+//
+//    var pathArray = window.location.href.split("/");
+//    var room_ID = pathArray[pathArray.length-1];
+//    if(room_ID != ":"){
+//        $scope.prodRoom = room_ID;
+//    }
+
+    $scope.lightUp = function(prod){
+        if($scope.clicked) return;
+        if (prod.blockClass.indexOf($scope.blockClass)<0){
+            prod.blockClass.push($scope.blockClass);
         }
     }
 
-    $scope.calculateMoney = function(buy){
-        if ((buy.AMOUNT % 1 == 0) && buy.AMOUNT>=1 && buy.AMOUNT <= buy.PROD_AVA_QUAN){
-            if (JSON.stringify(buy.amountInput) == JSON.stringify({"color": "red" })){
-                $scope.notValidAmount--;
-                buy.amountInput ={"color": "black" };
-            }
-            buy.MONEY= (buy.AMOUNT * buy.PROD_PRICE).toFixed(2);
-            $scope.changeSumPrice();
+    $scope.lightBack = function(prod){
+        if($scope.clicked) return;
+        var ind = prod.blockClass.indexOf($scope.blockClass);
+        if (ind >=0) prod.blockClass.splice(ind,1);
+    }
+
+    $scope.extraCleaner=function(){
+        $scope.clicked=false;
+    }
+
+    $scope.changeSumPrice = function(context){
+        if(context!=null){
+            $scope.prodSumPrice = "N/A";
         }else{
-            if (buy.amountInput == undefined || JSON.stringify(buy.amountInput) ==JSON.stringify({"color": "black" })){
-                $scope.notValidAmount++;
-                buy.amountInput ={"color": "red" };
+            $scope.prodSumPrice = 0;
+            for (var i= 0; i<$scope.onCounter.length; i++){
+                $scope.prodSumPrice += Number($scope.onCounter[i].PROD_PRICE * $scope.onCounter[i].AMOUNT);
             }
+            $scope.prodSumPrice = util.Limit($scope.prodSumPrice);
         }
     }
+
+    var testFail = function(){
+//        $scope.purchaseCheck = function(){
+//            if ($scope.onCounter.length == 0){
+//                $scope.err = "请选购商品";
+//            }else if($scope.notValidAmount!= 0){
+//                $scope.err = "商品数量输入错误";
+//            }else if($scope.room == "请输入正确房间号"){
+//                $scope.err = "房间号不存在";
+//            }else{
+//                $scope.err = "可以交易";
+//            }
+//
+//        }
+    }
+
+    // change notice on shopping cart area
+    var checkBoughtLength = function(){
+        if($scope.onCounter.length > 0){
+            $scope.buyButtonClass = "btn-primary";
+            $scope.showNotice = false;
+        }else{
+            $scope.buyButtonClass = "btn-disabled";
+            $scope.showNotice = true;
+        }
+    }
+/****************************************************  init *******************************************************/
+    $scope.ready=false;
+    $scope.menuNoshow = false;
+    $scope.iconAndAction = {"merchIconAction":util.merchIconAction};
+    $scope.blockClass = "reserveClick"
+    $scope.clicked=false;
+    $scope.buyButtonClass = "btn-disabled";
+    $scope.showNotice = true;
+
+    $scope.prodInfo ='';
+    $scope.onCounter = [];
+    $scope.BookCommonInfo = {prodSumPrice:0};
+
+    merchandiseFactory.productShow().success(function(data){
+        $scope.ready=true;
+        $scope.prodInfo = data;
+        for(var i = 0; i < $scope.prodInfo.length; i++){
+            $scope.prodInfo[i]["blockClass"] = [];
+        }
+    });
+/****************************************************  confinement *******************************************************/
+
 
     $scope.removeBuy = function($index){
-        $scope.onCounter[$index].buyArrow = "";
-        $scope.onCounter[$index].CorC = "选择商品";
         $scope.onCounter.splice($index,1);
-        $scope.changeSumPrice();
+//        $scope.changeSumPrice(null);
+        checkBoughtLength();
     }
 
-    $scope.changeSumPrice = function(){
-        $scope.prodSumPrice = 0;
-        for (var i= 0; i<$scope.onCounter.length; i++){
-            $scope.prodSumPrice += Number($scope.onCounter[i].MONEY);
-        }
-        $scope.prodSumPrice = $scope.prodSumPrice.toFixed(2);
+
+
+    $scope.addBuy = function(prod){
+        if($scope.onCounter.indexOf(prod)>=0) return;
+        prod.AMOUNT=0;
+        $scope.onCounter.push(prod);
+        checkBoughtLength();
     }
 
-    $scope.purchaseCheck = function(){
-        if ($scope.onCounter.length == 0){
-            $scope.err = "请选购商品";
-        }else if($scope.notValidAmount!= 0){
-            $scope.err = "商品数量输入错误";
-        }else if($scope.room == "请输入正确房间号"){
-            $scope.err = "房间号不存在";
-        }else{
-            $scope.err = "可以交易";
-        }
 
-    }
+//    $scope.initRoomsInfo = function(prodRoom){
+//        merchandiseFactory.merchanRoomShow().success(function(data){
+//            $scope.rooms = data;
+//            $scope.checkRoom(prodRoom);
+//
+//        });
+//    }
 
+//    $scope.checkRoom = function(prodRoom){
+//        $scope.prodRoomTranId = "";
+//        if(prodRoom == ""){
+//            $scope.room ="";
+//            $scope.prodRoomTranId = "";
+//            $scope.prodRoomTKN_ID ="";
+//        }else{
+//            $scope.room = "请输入正确房间号";
+//            for (var i =0; i< $scope.rooms.length; i++){
+//                if (prodRoom == $scope.rooms[i].RM_ID){
+//                    if($scope.rooms[i].RM_TRAN_ID != undefined){
+//                        $scope.prodRoomTranId = $scope.rooms[i].RM_TRAN_ID;
+//                        $scope.room = "找到房间，并现有客人";
+//                        $scope.prodRoomId = $scope.rooms[i].RM_ID;
+//                        $scope.prodRoomTKN_ID = $scope.rooms[i].CONN_RM_TRAN_ID;
+//                    }
+//                    break;
+//                }
+//            }
+//        }
+//    };
+//
+//
+//    $scope.viewClickBuy = function(){
+//        $scope.viewClick = "Buy";
+//        if ($scope.prodInfo =='') {
+//            $scope.ready=false;
+//            merchandiseFactory.productShow().success(function(data){
+//                $scope.prodInfo = data;
+//                $scope.ready=true;
+//            });
+//        }
+//    };
     $scope.buySubmit = function(){
-        if ($scope.err == "可以交易"){
-            $scope.confirmDialog("确认购买?","confirm",$scope.Submit);
-        }
-    }
-
-    $scope.Submit = function(){
-        $scope.buySubmitInfo = {
-            "STR_PAY_AMNT": $scope.prodSumPrice,
-            "RM_TRAN_ID": $scope.prodRoomTranId,
-            "RM_ID": $scope.prodRoomId,
-            "products": $scope.onCounter
-        }
-
-        merchandiseFactory.buySubmit(JSON.stringify($scope.buySubmitInfo)).success(function(data){
-            $scope.submitFlag=true;
-            $scope.onCounter = [];
-            $scope.prodSumPrice = 0;
-            $scope.prodRoom = "";
-            $scope.notValidAmount = 0;
-            $scope.prodRoomTranId = 0;
-            $scope.prodRoomId = 0;
-            $scope.confirmDialog("购买成功","alert",function(){document.location.reload(true)});
+        $scope.changeSumPrice(null);
+        if(testFail()) return;
+        var modalInstance = $modal.open({
+            windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+            templateUrl: 'directiveViews/purchaseModal',
+            controller: 'purchaseModalController',
+            resolve: {
+                paymentRequest: function () {
+                    return $scope.prodSumPrice;
+                },
+                buyer_RM_TRAN_ID: function () {
+                    return null;
+                },
+                owner: function () {
+                    return $scope.onCounter;
+                }
+            }
         });
-    };
-
-    $scope.viewClickManage = function(){
-        $scope.viewClick = "Manage";
-        if($scope.histoInfo == undefined || $scope.submitFlag == true){
-            $scope.ready=false;
-            merchandiseFactory.histoPurchaseShow().success(function(data){
-                $scope.histoInfo = data;
-                $scope.submitFlag = false;
-                $scope.ready=true;
-            });
-        }
-    };
+    }
 
     $scope.twoDigit = function(digit){
-        return digit.toFixed(2);
+        return util.Limit(digit);
     };
-
-    $scope.expandHisto = function(info){
-        if(info.expand == '+'){
-            merchandiseFactory.histoProductShow(info.STR_TRAN_ID).success(function(data){
-                info.histoInfoCollapsed = !(info.histoInfoCollapsed);
-                info.histoProduct = data;
-                info.expand='-';
-            });
-        }else{
-            info.histoInfoCollapsed = !(info.histoInfoCollapsed);
-            info.expand='+';
-        }
-    }
-
 
     $scope.confirmDialog = function (content,type,action) {
 
@@ -745,7 +928,21 @@ app.controller('merchandiseController', function($scope, $http, merchandiseFacto
 
     };
 
+})
+/************************                       single Master Pay sub controller                      ***********************/
+.controller('eachBuyCtrl', function ($scope) {
+    $scope.$watch('buy.AMOUNT',
+        function(newValue, oldValue) {
+            if($scope.buy.PROD_AVA_QUAN >= $scope.buy.AMOUNT){
+                $scope.buy.amountClass = "blackNum";
+            }else{
+                $scope.buy.amountClass = "redNum";
+            }
+        },
+        true
+    );
 });
+
 
 app.controller('dialogController', function ($scope, $modalInstance, content,type) {
 

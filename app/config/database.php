@@ -73,17 +73,27 @@ return array(
 //            'collation' => 'utf8_general_ci',
 //            'prefix'    => '',
 //        ),
-
-        'mysql_emply' => array(
+        'mysql' => array(
             'driver'    => 'mysql',
-            'host'      => 'localhost',
-            'database'  => 'EMP_LGN',
-            'username'  => 'root',
-            'password'  => 'kongzi33',
+            'host'      => '54.68.240.32',
+            'database'  => 'BI',
+            'username'  => 'ben',
+            'password'  => '^ben$',
             'charset'   => 'utf8',
             'collation' => 'utf8_general_ci',
             'prefix'    => '',
         ),
+//
+//        'mysql_emply' => array(
+//            'driver'    => 'mysql',
+//            'host'      => 'localhost',
+//            'database'  => 'EMP_LGN',
+//            'username'  => 'root',
+//            'password'  => 'kongzi33',
+//            'charset'   => 'utf8',
+//            'collation' => 'utf8_general_ci',
+//            'prefix'    => '',
+//        ),
 
 		'pgsql' => array(
 			'driver'   => 'pgsql',

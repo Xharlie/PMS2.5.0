@@ -21,6 +21,11 @@ app.config(['$routeProvider',function ($routeProvider){
             controller:'merchandiseController',
             templateUrl: '../app/views/merchandise.blade.php'
         })
+        .when('/merchandiseHisto/:RM_ID',
+        {
+            controller:'merchandiseHistoController',
+            templateUrl: '../app/views/merchandiseHisto.blade.php'
+        })
         .when('/customer',
         {
             controller:'customerController',

@@ -1,6 +1,34 @@
 /**
  * Created by Xharlie on 12/17/14.
  */
+app.directive('contentMenu', function($document,$parse) {
+    return {
+        restrict: 'A',
+        replace: true,
+        controller: 'contentMenuController',
+        scope: {
+            iconNAction: '=iconNAction',
+            owner:'=owner',
+            blockClass: '=blockClass'
+        },
+        link: function link(scope,element, attrs) {
+            $document.on("click", function(event){
+                    if ( $(event.target).attr("id")!=$(element).attr('id')){
+                        // 设置执行完任务后自动关闭menu,所以在predicate里,没有:&& element.find(event.target).length <= 0
+                        $document.unbind( "click" );
+                        scope.$apply(function () {
+                            scope.close(scope.owner);
+                        });
+                        scope.$destroy();
+                        $(element).remove();
+                        delete element;
+                    };
+                }
+            );
+        },
+        templateUrl: 'directiveViews/contentMenu'   //初步为hardcoding,可进一步优化为function，实现dynamic调用
+    };
+});
 
 app.directive('smallMenu', function($document,$parse) {
     return {
@@ -30,6 +58,7 @@ app.directive('smallMenu', function($document,$parse) {
         templateUrl: 'directiveViews/smallMenu'   //初步为hardcoding,可进一步优化为function，实现dynamic调用
     };
 });
+
 
 
 app.directive('largeMenu', function($document) {

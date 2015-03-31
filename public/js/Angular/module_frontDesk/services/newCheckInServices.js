@@ -15,15 +15,6 @@ app.factory('newCheckInFactory',function($http){
             });
         },
 
-        getRMInfoWithAvail:function(CHECK_IN_DT,CHECK_OT_DT){
-            return $http({
-                method: 'POST',
-                heasders: {'content-Type':'application/json'},
-                url: 'getRMInfoWithAvail',
-                data: {CHECK_IN_DT:CHECK_IN_DT, CHECK_OT_DT:CHECK_OT_DT}
-            });
-        },
-
         getRoomAndRoomType: function(RM_CONDITION){
             return $http({
                 method: 'GET',

@@ -9,12 +9,12 @@
 
 <div class="col-sm-12" ng-show="ready">
     <div class="card card-default">
-        <div ng-switch on="viewClick" class="animate-switch-container">
+        <div ng-switch on="viewClick">
             <div class="animate-switch fixedheight" ng-switch-when ="recentCustomer">
                 <div class="card-actions">
                     <div class="ctrlArea">
                         <div class="ctrlLeft">
-                            <button class="btn btn-primary">添加会员</button>
+                            <button class="btn btn-primary" ng-click="addNewCustomer()">添加会员</button>
                         </div>
                         <div class="ctrlRight">
                             <input class="input-sm searchBox" type="text"  ng-change = "clearMEMIDfilter()" ng-model = "memberID" placeholder="会员编号">
@@ -39,7 +39,7 @@
 
                 <div class="card-body">
                     <div class="customerList tableArea CrossTab">
-                        <table class="table table-striped table-bordered">
+                        <table class="table table-striped table-acct">
                             <tr>
                                 <th>姓名</th>
                                 <th>房号</th>
@@ -75,7 +75,7 @@
                 <div class="card-actions">
                     <div class="ctrlArea fixedheight">
                         <div class="ctrlLeft">
-                            <button class="btn btn-primary">添加会员</button>
+                            <button class="btn btn-primary" ng-click="addNewCustomer()">添加会员</button>
                         </div>
                         <div class="ctrlRight">
                             <input class="input-sm searchBox" type="text"  ng-model = "memberID" placeholder="会员编号">
@@ -97,8 +97,8 @@
                 </div>
 
                 <div class="card-body">
-                    <div class="memberList CrossTab tableArea">
-                        <table class="table table-striped table-bordered">
+                    <div class="memberList CrossTab tableArea ">
+                        <table class="table table-striped table-acct">
                             <tr>
                                 <th>会员卡号</th>
                                 <th>会员级别</th>
@@ -114,7 +114,12 @@
                                 <th>累计住店次数</th>
                                 <th>积分</th>
                             </tr>
-                            <tr ng-repeat = "member in memberInfo | filter : {MEM_ID: memberID, MEM_NM: memberNM,PROV: memProvince ,PHONE: memPhone} | orderBy:memSorter ">
+                            <tr ng-repeat = "member in memberInfo | filter : {MEM_ID: memberID, MEM_NM: memberNM,PROV: memProvince ,PHONE: memPhone} | orderBy:memSorter "
+                                ng-mouseenter="LightUp(member)"
+                                ng-mouseleave = 'LightBack(member)'
+                                ng-dblclick="fastAction(member)"
+                                sglclick="open(member)" onclick="event.preventDefault();" ng-class="member.blockClass" block-class="blockClass"
+                                not-show ="menuNoshow" pop-menu  menu-type="menuType" owner="member" icon-n-action="iconAndAction.memberIconAction" ng-transclude>
                                 <td>{{member.MEM_ID}}</td>
                                 <td>{{member.MEM_TP}}</td>
                                 <td>{{member.MEM_NM}}</td>
@@ -127,7 +132,7 @@
                                 <td>{{member.EMAIL}}</td>
                                 <td>{{member.IN_DT}}</td>
                                 <td>{{member.TIMES}}</td>
-                                <td>{{customer.POINTS}}</td>
+                                <td>{{member.POINTS}}</td>
                             </tr>
                         </table>
                     </div>

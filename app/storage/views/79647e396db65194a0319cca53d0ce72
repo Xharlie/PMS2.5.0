@@ -1,0 +1,38 @@
+<!doctype html>
+<div class="reservationStatus">
+	<button>新预定</button> 今日欲达 5   预定状态 满房
+</div>
+<div class="reservationList">
+	<table>
+		<tr>
+			<td>住客姓名</td>
+			<td>预定卡号</td>
+			<td>预定手机</td>
+			<td>预定人</td>
+			<td>支付方式</td>
+			<td>下订日期</td>
+			<td>预达日期</td>
+			<td>房型</td>
+			<td>协议</td>
+			<td>会员卡号</td>
+			<td>备注</td>
+		</tr>
+		<?php for($i=0;$i<10;$i++): ?>
+			<tr>
+				<td>徐乾庚</td>
+				<td>2010095920580293</td>
+				<td>13889847958</td>
+				<td>李兵</td>
+				<td>信用卡</td>
+				<td>2014/06/16</td>
+				<td>2014/06/18</td>
+				<td>三人间</td>
+				<td>美林银行</td>
+				<td>001000101</td>
+				<td>抽烟</td>
+			</tr>
+		<?php endfor; ?>
+	</table>
+	
+</div>
+

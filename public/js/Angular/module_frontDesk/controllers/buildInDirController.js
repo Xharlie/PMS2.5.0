@@ -3,7 +3,7 @@ app.controller('Datepicker', function($scope){
     $scope.minDate = new Date();
     $scope.minDate2 = new Date($scope.minDate.getTime()+86400000);
 
-
+    $scope.twoDaysBefore = new Date($scope.minDate.getTime()-200*86400000);
     // Disable weekend selection
     $scope.disabled = function(date, mode) {
         return false; //( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );

@@ -58,7 +58,6 @@
             </div>
         </div>
 </div>
-
 <div class="col-sm-9" ng-show="ready">
     <div class="card card-default">
         <div class="card-actions">
@@ -111,7 +110,8 @@
                          ng-mouseenter="connLightUp(roomST)"
                          ng-mouseleave = 'connLightback(roomST)'
                          sglclick="open(roomST)" block-class="blockClass"
-                         not-show ="connectFlag" pop-menu  menu-type="roomST.menuType" owner="roomST" icon-n-action="roomST.menuIconAction" ng-transclude>
+                         not-show ="connectFlag" pop-menu  menu-type="roomST.menuType"
+                         owner="roomST" icon-n-action="roomST.menuIconAction" ng-transclude>
                             <table>
                                 <tr>
                                     <td><span class="roomBadge">{{roomST.RM_ID}}</span></td>
@@ -125,154 +125,7 @@
                             </table>
                      </div>
                 </div>
-
-                    <script type="text/ng-template" id="roomModalContent">
-                        <div class="modal-header">
-                            <h4>客房{{roomST.RM_ID}} <div class="room-modal-status" ng-class="ngSetRoomClass(roomST)">{{roomST.RM_CONDITION}}</div></h4>
-                        </div>
-                        <div class="modal-body container-fluid">
-                            <div class="roomAction col-sm-2">
-                                <table>
-                                    <tr ng-repeat="action in roomAction" class="actionRepeater">
-                                        <td><a ng-click="excAction(action[1])">{{action[0]}} </a></td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div ng-switch on="RMviewClick" class="infoPanel col-sm-10">
-                                <div class="infoAction" ng-switch-when ="infoAction">
-                                    <table class="roomInfo">
-                                        <tr ng-repeat="info in roomInfo">
-                                            <td><a ng-click="">{{info[0]}} : {{info[1]}}</a></td>
-                                        </tr>
-                                    </table>
-
-                                </div>
-                                <div ng-switch-when ="connectCheckOut">
-                                    <h4>点击选则联房中进行退房的房间</h4>
-                                    <lable >主房:{{ConnRooms[0]["RM_ID"]}}</lable>
-                                    <div ui-sortable ng-model="ConnRooms" class="MasterRoom">
-                                        <div class="room room-full"
-                                             ng-init ="room.checkRoom = {}"
-                                             ng-style="room.checkRoom"
-                                             ng-click="checkItOut(room)"
-                                             ng-repeat = "room in ConnRooms | orderBy: room.RM_ID " >
-                                            <table>
-                                                <tr>
-                                                    <td>{{room.RM_ID}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>房单号: {{room.RM_TRAN_ID}}</td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label>选中号房间: {{roomNumString}}</label>
-                                        <button class="btn btn-primary" ng-click = "confirmConnCheckOut()">办理退房</button>
-                                        <button class="btn btn-warning" ng-click = "cancelConnCheckOut()">取消</button>
-                                    </div>
-                                </div>
-                                <div ng-switch-when ="infoAccounting">
-                                
-                                    <div class="roomAccounting">
-            <!--                            <h4>住房帐</h4> -->
-                                        <div class="CrossTab">
-            <!--                                <label>押金</label> -->
-                                            <table class="table table-striped table-bordered">
-                                               <tr>
-                                                    <th>时间</th>
-                                                    <th>房单号</th>
-                                                    <th>金额</th>
-                                                    <th>类型</th>
-                                                </tr> 
-                                                <tr  ng-repeat = "depo in AcctDepo | orderBy: DEPO_TSTAMP  ">
-                                                    <td>{{depo.DEPO_TSTMP}}</td>
-                                                    <td>{{depo.RM_TRAN_ID}}</td>
-                                                    <td>{{depo.DEPO_AMNT}}</td>
-            <!--                                        <td>{{PayMethod(depo.PAY_METHOD)}}</td> -->
-                                                    <td>押金</td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                        <div class="CrossTab">
-            <!--                                <label>房费</label> -->
-                                            <table class="table table-striped table-bordered">
-            <!--                                     <tr>
-                                                    <th>时间</th>
-                                                    <th>房单号</th>
-                                                    <th>金额</th>
-                                                    <th>类型</th>
-                                                </tr> -->
-                                                <tr  ng-repeat = "bill in AcctPay | orderBy: BILL_TSTMP  ">
-                                                    <td>{{bill.BILL_TSTMP}}</td>
-                                                    <td>{{bill.RM_TRAN_ID}}</td>
-                                                    <td>{{bill.RM_PAY_AMNT}}</td>
-            <!--                                         <td>{{PayMethod(bill.RM_PAY_METHOD)}}</td> -->
-                                                    <td>房费</td>
-                                                </tr>
-                                            </table>
-                                         </div>
-                                        <div class="CrossTab">
-            <!--                                 <h4>商品帐</h4> -->
-                                            <table class="table table-striped table-bordered">
-            <!--                                  <tr>
-                                               <th>时间</th>
-                                                    <th>房单号</th>
-                                                    <th>金额</th>
-                                                    <th>类型</th>
-                                                </tr> -->
-                                                <tr  ng-repeat = "store in AcctStore | orderBy: STR_TRAN_TSTAMP  ">
-                                                    <td>{{store.STR_TRAN_TSTAMP}}</td>
-                                                    <td>{{store.RM_TRAN_ID}}</td>
-                                                    <td>{{store.STR_PAY_AMNT}}</td>
-            <!--                                         <td>{{PayMethod(store.STR_PAY_METHOD)}}</td> -->
-                                                    <td>商品</td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                        </div>
-                    </script>
-
-
-
-                    <script type="text/ng-template" id="connectRMModalContent">
-                        <div class="modal-header">
-                            <h3 class="modal-title">以下将成为连房</h3>
-                        </div>
-                        <div class="modal-body">
-                            <div class="col-sm-12">
-                                <div class="room-empty room" ng-repeat = "room in rooms | orderBy: room.RM_TP " >
-                                    <table>
-                                        <tr>
-                                            <td>{{room.RM_ID}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>{{room.RM_TP}}</td>
-                                        </tr>
-                                        <tr>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <button class="btn btn-warning pull-right" ng-click = "cancelConn()">取消</button>
-                                <button class="btn btn-primary pull-right" ng-click = "confirmConn()">确认</button>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-
-                        </div>
-                    </script>
-
             </div>
-
-
         </div>
     </div>
 </div>
