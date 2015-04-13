@@ -2,9 +2,8 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
                                                       $timeout, roomTPs,initialString, newCheckInFactory,newResvFactory){
 
     /********************************************     utility     ***************************************************/
-    var today = util.toLocal(new Date());
+    var today = new Date();
     var tomorrow = new Date(today.getTime()+86400000);
-//    $scope.OT_DT = util.dateFormat(tomorrow)   // for fixing angular 1.30 bug
     $scope.dateTime = new Date((tomorrow).setHours(12,0,0));
     $scope.dateFormat = function(rawDate){
         return util.dateFormat(rawDate);
@@ -89,7 +88,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
     var updateMembers = function(data){
         $scope.Members = data;
         if (data.length<1){
-            alert("查不到");
+            alert("查不到此单登记会员");
             $scope.BookCommonInfo.Member = "";
             return;
         }
@@ -108,7 +107,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
     var updateTreaties= function(data){
         $scope.Treaties = data;
         if (data.length<1){
-            alert("查不到");
+            alert("查不到此单登记协议号");
             $scope.BookCommonInfo.Treaty = "";
             return;
         }
@@ -228,7 +227,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
 
     var clearZeroRM_QUAN = function(BookRoomByTP,property,forbiddenArray){
         for(var TP in BookRoomByTP){
-            show(BookRoomByTP[TP][property])
+//            show(BookRoomByTP[TP][property])
             if(forbiddenArray.indexOf(BookRoomByTP[TP][property]) > -1 ){
                 BookRoomByTP[TP] = null;
                 delete BookRoomByTP[TP];
@@ -248,7 +247,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
         $scope.Members =[];
         $scope.Treaties =[];
 
-        newCheckInFactory.getRMInfoWithAvail(CHECK_IN_DT,CHECK_OT_DT).success(function(data){
+        newResvFactory.getRMInfoWithAvail(CHECK_IN_DT,CHECK_OT_DT).success(function(data){
             $scope.RoomAllinfo = data;
             initRoomsAndRoomTypes();
             for (var key in $scope.roomsAndRoomTypes){
@@ -266,49 +265,19 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
 
     var initialTreatyCheck = function(checkInput,call_back){
         newCheckInFactory.searchTreaties(checkInput,["TREATY_ID"]).success(function(data){
-            $scope.Treaties = data;
             $scope.watcher.finalPrice=false;
             $scope.watcher.paymentRequest=false;
-            if (data.length<1){
-                alert("查不到");
-                $scope.Treaties = [];
-                $scope.BookCommonInfo.Treaty = "";
-                return;
-            }
-            for(var i = 0 ; i < $scope.Treaties.length; i++){
-                $scope.Treaties[i]["summary"] = "<table>"+
-                    "<tr>" +  "<td>" + "类型:" + "</td>" + "<td>" + $scope.Treaties[i].TREATY_TP + "</td>" + "</tr>"+
-                    "<tr>" + "<td>" + "公司电话:" + "</td>" + "<td>" + $scope.Treaties[i].CORP_PHONE + "</td>" + "</tr>"+
-                    "<tr>" + "<td>" + "联系人:" + "</td>" + "<td>" + $scope.Treaties[i].CONTACT_NM + "</td>" + "</tr>"+
-                    "<tr>" + "<td>" + "备注:" + "</td>" + "<td>" + $scope.Treaties[i].RMARK + "</td>" + "</tr>"+
-                    "<tr>" + "<td>" + "优惠:" + "</td>" + "<td>" + $scope.Treaties[i].DISCOUNT + "</td>" + "</tr>"+
-                    "</table>";
-                if($scope.Treaties[i]["TREATY_ID"] == roomTPs[0]["TREATY_ID"]) $scope.BookCommonInfo.Treaty = $scope.Treaties[i];
-            }
+            updateTreaties(data);
             call_back();
         });
     }
 
+
     var initialMemCheck = function(checkInput,call_back){
         newCheckInFactory.searchMember(checkInput,["MEM_ID"]).success(function(data){
-            $scope.Members = data;
             $scope.watcher.finalPrice=false;
             $scope.watcher.paymentRequest=false;
-            if (data.length<1){
-                alert("查不到");
-                $scope.BookCommonInfo.Member = "";
-                return;
-            }
-            for(var i = 0 ; i < $scope.Members.length; i++){
-                $scope.Members[i]["summary"] = "<table>"+
-                    "<tr>" +  "<td>" + "证件:" + "</td>" + "<td>" + $scope.Members[i].SSN + "</td>" + "</tr>"+
-                    "<tr>" + "<td>" + "级别:" + "</td>" + "<td>" + $scope.Members[i].MEM_TP + "</td>" + "</tr>"+
-                    "<tr>" + "<td>" + "折扣:" + "</td>" + "<td>" + $scope.Members[i].DISCOUNT_RATE + "</td>" + "</tr>"+
-                    "<tr>" + "<td>" + "电话:" + "</td>" + "<td>" + $scope.Members[i].PHONE + "</td>" + "</tr>"+
-                    "<tr>" + "<td>" + "积分:" + "</td>" + "<td>" + $scope.Members[i].POINTS + "</td>" + "</tr>"+
-                    "</table>";
-                if($scope.Members[i]["MEMBER_ID"] == roomTPs[0]["MEMBER_ID"]) $scope.BookCommonInfo.Member = $scope.Members[i];
-            }
+            updateMembers(data);
             call_back();
         });
     }
@@ -341,7 +310,9 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
     var  editReservation = function(roomTPs){
         $scope.BookCommonInfo ={CHECK_IN_DT:    roomTPs[0]["CHECK_IN_DT"],
             CHECK_OT_DT:    roomTPs[0]["CHECK_OT_DT"],
-            arriveTime:     util.time2DateTime(new Date(roomTPs[0]["CHECK_IN_DT"]),roomTPs[0]["RESV_LATEST_TIME"]),
+            arriveTime:     (roomTPs[0]["RESV_LATEST_TIME"] == null)?
+                util.time2DateTime(new Date(roomTPs[0]["CHECK_IN_DT"]),"14:00:00"):
+                util.time2DateTime(new Date(roomTPs[0]["CHECK_IN_DT"]),roomTPs[0]["RESV_LATEST_TIME"]),
             roomSource:     roomTPs[0]["RESV_WAY"],
             rentType:       "全日租",
             Member:         {},
@@ -353,7 +324,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
         };
         $scope.reserver["Name"]= roomTPs[0]["RESVER_NAME"];
         $scope.reserver["Phone"]= roomTPs[0]["RESVER_PHONE"];
-        newCheckInFactory.getRMInfoWithAvail(roomTPs["CHECK_IN_DT"],roomTPs["CHECK_OT_DT"]).success(function(data){
+        newResvFactory.getRMInfoWithAvail(roomTPs["CHECK_IN_DT"],roomTPs["CHECK_OT_DT"]).success(function(data){
             $scope.RoomAllinfo = data;
             initRoomsAndRoomTypes();
             if (roomTPs[0]["RESV_WAY"]=="协议" && roomTPs[0]["TREATY_ID"] != null){
@@ -684,13 +655,15 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
 
         var payment = ($scope.BookCommonInfo.paymentFlag)?$scope.BookCommonInfo.payment : null;
 
-        show(newResv);
+//        show(newResv);
 
         newResvFactory.resvSubmit(newResv,payment).success(function(data){
             if(JSON.stringify(data)!= null){
-                alert(data);
+                show("成功预定");
+                $modalInstance.close("checked");
+                util.closeCallback();
             }else{
-                alert("数据库出错")
+                show("数据库出错")
             }
         });
     }
@@ -712,7 +685,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
             "Phone":$scope.reserver.Phone,          //,"email":$scope.singleGuest.email
             "PRE_PAID":PRE_PAID
         };
-        alert(reResv["RESV_TMESTMP"])
+//        show(reResv["RESV_TMESTMP"])
         if ($scope.BookCommonInfo.roomSource == "协议" && $scope.BookCommonInfo.Treaty != ""){
             reResv['roomSourceID'] = $scope.BookCommonInfo.Treaty.TREATY_ID;
         }else if($scope.BookCommonInfo.roomSource == "会员" && $scope.BookCommonInfo.Member != ""){
@@ -724,10 +697,11 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
 //
         newResvFactory.resvEditSubmit(reResv,payment,roomTPs).success(function(data){
             if(JSON.stringify(data)!= null){
-                alert("修改成功!");
+                show("修改成功!");
+                $modalInstance.close("checked");
                 util.closeCallback();
             }else{
-                alert("数据库出错")
+                show("数据库出错")
             }
         });
     };

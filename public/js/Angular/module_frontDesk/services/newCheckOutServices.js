@@ -12,39 +12,43 @@ app.factory('newCheckOutFactory',function($http){
                 data: Room_Array
             })
         },
-        productShow: function(){
-            return $http({
-                method: 'GET',
-                heasders: {'content-Type':'application/json'},
-                url: 'showProduct'
-            })
-        },
-        getProductNM: function(){
-            return $http({
-                method: 'GET',
-                heasders: {'content-Type':'application/json'},
-                url: 'getProductNM'
-            });
-        },
-        getProductPrice: function(NM){
-            return $http({
-                method: 'GET',
-                heasders: {'content-Type':'application/json'},
-                url: 'getProductPrice/'+NM
-            });
-        }
-    }
-});
-
-app.factory('checkOTModalFactory',function($http){
-    return{
-        checkOT: function(RoomNumArray,MASTER_RM_ID){
+        checkOT: function(RoomArray,MasterRoomNpay,editAcct,addAcct,addDepoArray){
             return $http({
                 method: 'POST',
                 heasders: {'content-Type':'application/json'},
                 url: 'checkOutSubmit',
-                data: [RoomNumArray,MASTER_RM_ID]
+                data:  {RoomArray:RoomArray,MasterRoomNpay:MasterRoomNpay,editAcct:editAcct,addAcct:addAcct,addDepoArray:addDepoArray}
             })
         }
-    };
+
+//        productShow: function(){
+//            return $http({
+//                method: 'GET',
+//                heasders: {'content-Type':'application/json'},
+//                url: 'showProduct'
+//            })
+//        },
+//        getProductNM: function(){
+//            return $http({
+//                method: 'GET',
+//                heasders: {'content-Type':'application/json'},
+//                url: 'getProductNM'
+//            });
+//        },
+//        getProductPrice: function(NM){
+//            return $http({
+//                method: 'GET',
+//                heasders: {'content-Type':'application/json'},
+//                url: 'getProductPrice/'+NM
+//            });
+//        },
+//        checkOT: function(RoomNumArray,MASTER_RM_ID){
+//            return $http({
+//                method: 'POST',
+//                heasders: {'content-Type':'application/json'},
+//                url: 'checkOutSubmit',
+//                data: [RoomNumArray,MASTER_RM_ID]
+//            })
+//        }
+    }
 });

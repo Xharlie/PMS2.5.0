@@ -13,7 +13,7 @@
                         <input type="text" class="form-control" show-weeks="false" datepicker-popup="yyyy-MM-dd"
                                ng-model="BookCommonInfo.CHECK_OT_DT" is-open="opened2" min-date="minDate" max-date="'2020-06-22'"
                                datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
-                               ng-required="true" close-text="Close" ng-init="BookCommonInfo.CHECK_OT_DT = OT_DT"
+                               ng-required="true" close-text="Close"
                                ng-style="BookCommonInfo.CheckOTStyle"/>
                                     <span class="input-group-btn">
                                         <button type="button" class="btn btn-default" ng-click="open2($event)"><i class="glyphicon glyphicon-calendar"></i></button>

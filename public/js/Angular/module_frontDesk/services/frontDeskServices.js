@@ -161,9 +161,34 @@ app.factory('customerFactory',function($http){
             return $http({
                 method: 'GET',
                 heasders: {'content-Type':'application/json'},
-                url: 'showMember'
+                url: 'showMembers'
+            });
+        },
+        /********************************         member modal          ***********************************/
+        showMemberType: function(){
+            return $http({
+                method: 'GET',
+                heasders: {'content-Type':'application/json'},
+                url: 'showMemberType'
+            });
+        },
+        addMemberSubmit: function(memberInfo,acct){
+            return $http({
+                method: 'POST',
+                heasders: {'content-Type':'application/json'},
+                url: 'addMemberSubmit',
+                data: {memberInfo:memberInfo,acct:acct}
+            });
+        },
+        editMemberSubmit: function(memberInfo,acct){
+            return $http({
+                method: 'POST',
+                heasders: {'content-Type':'application/json'},
+                url: 'editMemberSubmit',
+                data: {memberInfo:memberInfo,acct:acct}
             });
         }
+
 //        memberPageShow: function(shift,len){
 //            return $http({
 //                method: 'GET',
@@ -176,11 +201,12 @@ app.factory('customerFactory',function($http){
 
 app.factory('accountingFactory',function($http){
     return{
-        accountingGetAll: function(){
+        accountingGetAll: function(startTime, endTime){
             return $http({
-                method: 'GET',
+                method: 'POST',
                 heasders: {'content-Type':'application/json'},
-                url: 'accountingGetAll'
+                url: 'accountingGetAll',
+                data: {startTime:startTime, endTime:endTime}
             })
         },
         summerize:function(){
@@ -189,8 +215,32 @@ app.factory('accountingFactory',function($http){
                 heasders: {'content-Type':'application/json'},
                 url: 'summerize'
             })
+        },
+        submitModifyAcct: function(SubmitInfo){
+            return $http({
+                method: 'POST',
+                heasders: {'content-Type':'application/json'},
+                url: 'submitModifyAcct',
+                data: SubmitInfo
+            });
+        },
+        changeShiftSubmit: function(ShiftInfo){
+            return $http({
+                method: 'POST',
+                heasders: {'content-Type':'application/json'},
+                url: 'changeShiftSubmit',
+                data: ShiftInfo
+            });
         }
-
+        /*    obselete
+        getTargetAcct: function(InfoArray){
+            return $http({
+                method: 'GET',
+                heasders: {'content-Type':'application/json'},
+                url: 'getTargetAcct/'+InfoArray[0]+"/"+InfoArray[1]
+            });
+        }
+        */
     };
 });
 
@@ -216,12 +266,12 @@ app.factory('merchandiseFactory',function($http){
                 url: 'showMerchanRoom'
             })
         },
-        buySubmit: function(buyInfo){
+        buySubmit: function(StoreTransactionArray,RoomStoreTranArray,ProductInTran){
             return $http({
                 method: 'POST',
                 heasders: {'content-Type':'application/json'},
                 url: 'buySubmit',
-                data: buyInfo
+                data: {StoreTransactionArray:StoreTransactionArray,RoomStoreTranArray:RoomStoreTranArray,ProductInTran:ProductInTran}
             });
         },
         histoPurchaseShow: function(){

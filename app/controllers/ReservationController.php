@@ -7,6 +7,25 @@
  */
 
 class ReservationController extends BaseController{
+// initial function for new reservation
+    public function getRMInfoWithAvail(){
+        $CHECK_IN_DT = Input::get('CHECK_IN_DT');
+        $CHECK_OT_DT = Input::get('CHECK_OT_DT');
+        $RoomInfo = DB::table('Rooms')
+            ->join('RoomsTypes', 'RoomsTypes.RM_TP','=','Rooms.RM_TP')
+            ->leftjoin(DB::raw("(select RoomOccupation.RM_TP AS RM_TP, MAX(RoomOccupation.RESV_QUAN + RoomOccupation.CHECK_QUAN) AS QUAN
+                                from RoomOccupation where RoomOccupation.DATE between '$CHECK_IN_DT' AND '$CHECK_OT_DT' group by RM_TP)  mostOccupied"),
+                function($join){
+                    $join->on('mostOccupied.RM_TP', '=', 'Rooms.RM_TP');
+                }
+            )
+            ->select(DB::raw('Rooms.RM_ID as RM_ID,Rooms.RM_CONDITION as RM_CONDITION,
+                              Rooms.RM_TP as RM_TP,RoomsTypes.SUGG_PRICE as SUGG_PRICE,
+                              IFNULL(RoomsTypes.RM_QUAN - mostOccupied.QUAN,RoomsTypes.RM_QUAN) AS AVAIL_QUAN '))
+            ->get();
+        return Response::json($RoomInfo);
+    }
+
 // status has 预订,预付,Filled,NoShow, Cancelled，NoShowExpired
     public function showResv(){
         $resvShow = DB::table('Reservations')
@@ -60,7 +79,7 @@ class ReservationController extends BaseController{
             );
             array_push($ReservationRoomArray,$typeArray);
             /********************************hange Room  occupation******************************/
-            $this->updateRoomOccupation($period,$rmTP,$tpInfo);
+            $this->updateRoomOccupation($period,$rmTP,$tpInfo,$newResv["CHECK_IN_DT"],$newResv["CHECK_OT_DT"]);
         }
         DB::table("ReservationRoom")->insert($ReservationRoomArray);
             /********************************prepare Room pay array******************************/
@@ -89,7 +108,6 @@ class ReservationController extends BaseController{
             ->where('RESV_ID',$RESV_ID)
             ->update($ReservationsArray);
 
-
         foreach($RESV as $oriRmTP){
             /********************************          delete  Reservations             ******************************/
             $this->deleteResvRoom($RESV_ID,$oriRmTP);
@@ -110,7 +128,7 @@ class ReservationController extends BaseController{
             );
             array_push($ReservationRoomArray,$typeArray);
             /********************************hange Room  occupation******************************/
-            $this->updateRoomOccupation($period,$rmTP,$tpInfo);
+            $this->updateRoomOccupation($period,$rmTP,$tpInfo,$reResv["CHECK_IN_DT"],$reResv["CHECK_OT_DT"]);
         }
 
         DB::table("ReservationRoom")->insert($ReservationRoomArray);
@@ -145,7 +163,11 @@ class ReservationController extends BaseController{
         }
     }
 
-    public function updateRoomOccupation(&$period,&$rmTP,&$tpInfo){
+    public function updateRoomOccupation(&$period,&$rmTP,&$tpInfo,$CHECK_IN_DT,$CHECK_OT_DT){
+
+        DB::update('update RoomOccupation set RESV_QUAN = RESV_QUAN + ? where RM_TP = ? and DATE >=  ? and DATE < ? ',
+            array($tpInfo["roomAmount"],$rmTP,$CHECK_IN_DT,$CHECK_OT_DT) );
+
         foreach ( $period as $dt ){
             $dtMatch = $dt->format( "Y-m-d" );
             $has = DB::table('RoomOccupation')
@@ -153,10 +175,7 @@ class ReservationController extends BaseController{
                 ->where('RoomOccupation.RM_TP','=',$rmTP)
                 ->get();
             $hasArray = json_decode(json_encode($has));
-            if(count($hasArray) >= 1){
-                DB::update('update RoomOccupation set RESV_QUAN = RESV_QUAN + ? where DATE = ? and RM_TP = ?',
-                    array($tpInfo["roomAmount"],$dtMatch,$rmTP) );
-            }else{
+            if(count($hasArray) < 1){
                 $OccArray = array(
                     "DATE" => $dtMatch,
                     "RM_TP"=>$rmTP,
@@ -191,8 +210,9 @@ class ReservationController extends BaseController{
     }
 //  didn't delete the row even check quan and resv quan both are 0
     public function deleteResvRoomOccupation( &$oriRmTP){
-            DB::update('update RoomOccupation set RESV_QUAN = RESV_QUAN - ? where RM_TP = ? and DATE between ? and ?  ',
+            DB::update('update RoomOccupation set RESV_QUAN = RESV_QUAN - ? where RM_TP = ? and DATE >=  ? and DATE < ?  ',
                 array((int)$oriRmTP["RM_QUAN"],$oriRmTP["RM_TP"],$oriRmTP["CHECK_IN_DT"], $oriRmTP["CHECK_OT_DT"]) );
+
     }
 }
 

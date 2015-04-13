@@ -2,7 +2,7 @@
  * Created by Xharlie on 9/3/14.
  */
 
-appModify.factory('newModifyWindowFactory',function($http){
+app.factory('newModifyWindowFactory',function($http){
     return{
         getTargetAcct: function(InfoArray){
             return $http({

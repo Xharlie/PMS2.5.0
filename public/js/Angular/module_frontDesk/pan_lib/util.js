@@ -93,7 +93,27 @@ var util = {
     resvIconAction : [{icon:"glyphicon glyphicon-send",action:"预定入住"},
         {icon:"glyphicon glyphicon-pencil",action:"预定修改"},
         {icon:"glyphicon glyphicon-pencil",action:"取消预定"}]
-          //空房菜单
+
+    //--------------------   会员页面  ---------------------------
+    ,
+    memberIconAction : [{icon:"glyphicon glyphicon-tree-deciduous",action:"积分调整"},
+        {icon:"glyphicon glyphicon-open",action:"等级调整"},
+        {icon:"glyphicon glyphicon-pencil",action:"修改资料"}]
+
+    // --------------------   商品页面  ---------------------------
+    ,
+    merchIconAction : [{icon:"glyphicon glyphicon-shopping-cart",action:"商品购买"}]
+    //
+    // --------------------   商品历史  ---------------------------
+    ,
+    merchIconAction : [{icon:"glyphicon glyphicon-barcode",action:"制门卡"},
+        {icon:"glyphicon glyphicon-send",action:"客人修改"},
+        {icon:"glyphicon glyphicon-shopping-cart",action:"商品购买"},
+        {icon:"glyphicon glyphicon-pencil",action:"房间更改"},
+        {icon:"glyphicon glyphicon-list-alt  ",action:"房价调整"},
+        {icon:"glyphicon glyphicon-arrow-left",action:"退房办理"}]
+    //
+
     //--------------------- input check --------------------------
     ,
     isSSN : function(Num){
@@ -112,6 +132,7 @@ var util = {
 var show =function(showee){
     alert(JSON.stringify(showee));
 }
+
 //
 //    ['基本信息','basicInfo'],["账单查看",'viewAccounting'],["叫醒服务",'wakeUp'],["退房办理",'checkOut'],
 //    ["商品购买",'shopping']];               //有人房间菜单

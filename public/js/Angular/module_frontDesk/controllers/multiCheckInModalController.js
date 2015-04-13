@@ -5,9 +5,8 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
                                                        $modalInstance, $timeout, roomST,initialString,RESV){
 
     /********************************************     utility     ***************************************************/
-    var today = util.toLocal(new Date());
+    var today = new Date();
     var tomorrow = new Date(today.getTime()+86400000);
-    $scope.OT_DT = util.dateFormat(tomorrow)   // for fixing angular 1.30 bug
     $scope.dateTime = new Date((tomorrow).setHours(12,0,0));
     $scope.dateFormat = function(rawDate){
         return util.dateFormat(rawDate);
@@ -225,7 +224,6 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
 
     var multiReserve = function(roomST){
         $scope.BookCommonInfo.CHECK_OT_DT = (RESV.CHECK_OT_DT == "")? $scope.BookCommonInfo.CHECK_OT_DT: RESV.CHECK_OT_DT;
-        $scope.OT_DT = $scope.BookCommonInfo.CHECK_OT_DT;
         newCheckInFactory.getRoomInfo().success(function(data){
             $scope.RoomAllinfo = data;
             $scope.BookCommonInfo.roomSource=RESV.roomSource;
@@ -271,7 +269,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
     /********************************************     common initial setting     *****************************************/
     $scope.viewClick = "Info";
     $scope.initialString=initialString;
-    $scope.BookCommonInfo = {CHECK_IN_DT: util.dateFormat(today),CHECK_OT_DT: util.dateFormat(tomorrow),leaveTime:$scope.dateTime,
+    $scope.BookCommonInfo = {CHECK_IN_DT: today,CHECK_OT_DT: tomorrow,leaveTime:$scope.dateTime,
         roomSource:'', rentType:"全日租",Member:{},Treaty:{},Master:{CONN_RM_ID:"",payment:createNewPayment()}};
     $scope.caption = {searchCaption:"",resultCaption:""};
     $scope.styles = {CheckInStyle:{},CheckOTStyle:{},memStyle:{}};
@@ -300,17 +298,6 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
     /**********************************/
     /************** ********************************** Page Logical Confinement ********************************** *************/
 
-        // work around fixing Anuglar 1.30 bug....
-    $scope.$watch("BookCommonInfo.CHECK_OT_DT",
-        function(newValue,oldValue){
-            if (newValue == null || newValue == undefined) {
-//                $scope.BookCommonInfo.CHECK_OT_DT = $scope.OT_DT;
-            }else{
-                $scope.OT_DT = util.dateFormat(newValue);
-            }
-        }
-        ,true
-    )
 
     // roomSource change: 1. search caption, 2. check bar disable, 3.discount
     $scope.$watch(function(){
@@ -588,7 +575,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
         if (testFail()) return;
         $scope.SubmitInfo=[];
         var CHECK_IN_DT =  $scope.BookCommonInfo.CHECK_IN_DT;
-        var CHECK_OT_DT =  $scope.OT_DT;
+        var CHECK_OT_DT =  $scope.BookCommonInfo.CHECK_OT_DT;
         var j = 0;
         for (var i = 0; i<$scope.BookRoom.length; i++){
             var room = $scope.BookRoom[i];
@@ -613,10 +600,10 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
                 $scope.SubmitInfo[j]["CONN_RM_ID"]=$scope.BookCommonInfo.Master.CONN_RM_ID;
                 if( $scope.SubmitInfo[j]["roomSelect"] == $scope.BookCommonInfo.Master.CONN_RM_ID){
                     // master room pay all deposit
-                    $scope.SubmitInfo[j]["pay"]["payByMethods"] = $scope.BookCommonInfo.Master.payment["payByMethods"];
+                    $scope.SubmitInfo[j]["pay"] = util.deepCopy($scope.BookCommonInfo.Master.payment);
                 }else{
                     // non-master room pay no deposit
-                    $scope.SubmitInfo[j]["pay"]["payByMethods"] = [];
+                    $scope.SubmitInfo[j]["pay"]=createNewPayment();
                 }
 
             }else{
@@ -649,7 +636,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
 //        resetAvail =[decodeURI(RoomNumArray[1]),RoomNumArray[2],new Date(RoomNumArray[4].replace("-","/"))
 //            ,new Date(RoomNumArray[5].replace("-","/"))];
 //    }
-        show(unfilled);
+//        show(unfilled);
         newCheckInFactory.submit(JSON.stringify({SubmitInfo:$scope.SubmitInfo,RESV:RESV,unfilled:unfilled})).success(function(data){
             show("办理成功!");
             $modalInstance.close("checked");
@@ -697,7 +684,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
     .controller('multiSingleRoomPayCtrl', function ($scope) {
         $scope.$watch('singleRoom.payment.paymentRequest',
             function(newValue, oldValue) {
-                $scope.$parent.$parent.updatePayInDue($scope.singleRoom);
+                $scope.$parent.updatePayInDue($scope.singleRoom);
             },
             true
         );
@@ -715,7 +702,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
     .controller('multiSingleMasterPayCtrl', function ($scope) {
         $scope.$watch('singlePay.payAmount',
             function(newValue, oldValue) {
-                $scope.$parent.$parent.updatePayInDue($scope.$parent.$parent.BookCommonInfo.Master);
+                $scope.$parent.updatePayInDue($scope.$parent.BookCommonInfo.Master);
             },
             true
         );

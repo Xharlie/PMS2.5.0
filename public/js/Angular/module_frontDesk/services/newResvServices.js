@@ -3,6 +3,14 @@
  */
 app.factory('newResvFactory',function($http){
     return{
+        getRMInfoWithAvail:function(CHECK_IN_DT,CHECK_OT_DT){
+            return $http({
+                method: 'POST',
+                heasders: {'content-Type':'application/json'},
+                url: 'getRMInfoWithAvail',
+                data: {CHECK_IN_DT:CHECK_IN_DT, CHECK_OT_DT:CHECK_OT_DT}
+            });
+        },
         resvSubmit: function(newResv,payment){
             return $http({
                 method: 'POST',

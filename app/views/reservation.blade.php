@@ -34,8 +34,8 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="reservationList tableArea CrossTab">
-            	<table class="table table-striped table-bordered">
+            <div class=" tableArea CrossTab">
+            	<table class="table table-striped table-acct">
             		<tr>
                         <th>订单号</th>
                         <th>姓名</th>
@@ -54,7 +54,8 @@
                             ng-mouseleave = 'sameIDLightBack(reserve)'
                             ng-dblclick="fastAction(reserve)"
                             sglclick="open(reserve)" onclick="event.preventDefault();" ng-class="reserve.blockClass" block-class="blockClass"
-                            not-show ="menuNoshow" pop-menu  menu-type="menuType" owner="reserve" icon-n-action="iconAndAction.resvIconAction" ng-transclude>
+                            not-show ="menuNoshow" pop-menu  menu-type="'small-menu'" owner="reserve"
+                            icon-n-action="iconAndAction.resvIconAction" ng-transclude>
                             <td >
                                 {{reserve.RESV_ID}}
                             </td>

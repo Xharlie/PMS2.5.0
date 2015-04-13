@@ -2887,13 +2887,13 @@ background-color: #ffffff}
     line-height: 0;
     background-color: #e5e5e5; }
   .dropdown-menu > li > a {
-    display: block;
-    padding: 0px 0px;
-    clear: both;
-    font-weight: normal;
-    line-height: 0;
-    color: #333333;
-    white-space: nowrap; }
+      display: block;
+      padding: 3px 20px;
+      clear: both;
+      font-weight: 400;
+      line-height: 1.42857143;
+      color: #333333;
+      white-space: nowrap; }
 
 .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
   text-decoration: none;
@@ -5976,6 +5976,9 @@ form .sectionArea {
     width:100px;
 }
 
+.table-acct tbody > tr :hover {
+    cursor: pointer;
+}
 .table-acct tbody > tr {
     border-bottom: 1px solid rgba(0, 0, 0, 0.04);
 }
@@ -5999,6 +6002,26 @@ form .sectionArea {
     background-color: #E8FFF8!important;
 }
 
+.menu-content {
+    position: absolute;
+    z-index: 1000;
+    display: block;
+    float: left;
+    width: auto;
+    min-width: 80px;
+    min-height: 30px;
+    margin: 2px 0 0;
+    list-style: none;
+    font-size: 12px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    background-clip: padding-box;
+}
+
 
 .menu-small {
      position: absolute;
@@ -6007,7 +6030,7 @@ form .sectionArea {
      float: left;
      width: auto;
      min-width: 80px;
-     min-height: 80px;
+     min-height: 30px;
      padding: 5px 5px;
      margin: 2px 0 0;
      list-style: none;
@@ -6077,4 +6100,65 @@ form .sectionArea {
     background-color: #d9edf7 !important;
 }
 
+.greenOut > td, .greenOut {
+    opacity: 0.1;
+    background-color: #79C3F7!important;
+}
+
+/*spinning deletion icon here */
+.gly-spin:hover {
+    font-size: 15px;
+    -webkit-animation: spin 2s infinite linear;
+    -moz-animation: spin 2s infinite linear;
+    -o-animation: spin 2s infinite linear;
+    animation: spin 2s infinite linear;
+}
+@-moz-keyframes spin {
+    0% {
+        -moz-transform: rotate(0deg);
+    }
+    100% {
+        -moz-transform: rotate(359deg);
+    }
+}
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(359deg);
+    }
+}
+@-o-keyframes spin {
+    0% {
+        -o-transform: rotate(0deg);
+    }
+    100% {
+        -o-transform: rotate(359deg);
+    }
+}
+@keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+
+.redNum {
+    color:red;
+}
+
+.blackNum {
+    color:black;
+}
+
+.greenNum {
+    color: #00b200;
+
+}
+/*spinning deletion icon end */
 /*# sourceMappingURL=application.css.map */

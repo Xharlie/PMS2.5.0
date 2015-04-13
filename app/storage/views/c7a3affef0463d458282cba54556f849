@@ -1,0 +1,35 @@
+<!doctype html>
+<div class="customerStatus">
+	<button>新会员</button> <form> <input type="number" placeholder="会员编号"><input type="text" placeholder="客人姓名"></form>
+</div>
+</div>
+<div class="customerList">
+	<table>
+		<tr>
+			<td>会员卡号</td>
+			<td>姓名</td>
+			<td>会员级别</td>
+			<td>籍贯</td>
+			<td>证件类型</td>
+			<td>证件号码</td>
+			<td>地址</td>
+			<td>手机号码</td>
+			<td>备注</td>
+		</tr>
+		<?php for($i=0;$i<10;$i++): ?>
+			<tr>
+				<td>2010095920580293</td>
+				<td>徐乾庚</td>
+				<td>金卡</td>
+				<td>河北省</td>
+				<td>二代身份证</td>
+				<td>61010010010010</td>
+				<td>唐宁街10号</td>
+				<td>13800010001</td>
+				<td>爱吃大蒜</td>
+			</tr>
+		<?php endfor; ?>
+	</table>
+	
+</div>
+

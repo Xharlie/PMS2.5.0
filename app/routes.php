@@ -34,11 +34,6 @@ Route::group(array('prefix' => 'directiveViews'), function()
 });
 
 
-Route::get('/', array('before' => 'authen',function()
-{
-    return View::make('full');
-}));
-
 Route::get('/logon', function()
 {
     return View::make('logon',array('err' => Session::get("err")));
@@ -117,7 +112,16 @@ Route::get('/showEmpty/{RM_TP}', 'RoomStatusController@showEmpty');
 
 Route::get('/showCustomer', 'CustomerController@showCustomer');
 
-Route::get('/showMember', 'CustomerController@showMember');
+Route::get('/showMembers', 'CustomerController@showMembers');
+// get member type
+Route::get('/showMemberType', 'CustomerController@showMemberType');
+// adding a member
+Route::post('/addMemberSubmit', 'CustomerController@addMemberSubmit');
+// edit a member
+Route::post('/editMemberSubmit', 'CustomerController@editMemberSubmit');
+
+
+
 
 Route::filter('checkInFilter', function($RM_ID,$RM_TP){
         if (is_null($RM_ID)){
@@ -131,7 +135,7 @@ Route::get('/getSingleRoomInfo/{RM_ID}', 'NewCheckInController@getSingleRoomInfo
 // get  all rooms  info in  check in;
 Route::get('/getRoomInfo', 'NewCheckInController@getRoomInfo');
 // get  all rooms info with availability;
-Route::post('/getRMInfoWithAvail', 'NewCheckInController@getRMInfoWithAvail');
+Route::post('/getRMInfoWithAvail', 'ReservationController@getRMInfoWithAvail');
 
 
 
@@ -141,7 +145,7 @@ Route::get('/showSoldOut/{checkInDt}/{checkOtDt}', 'NewCheckInController@showSol
 Route::get('/showRoomQuan', 'NewCheckInController@showRoomQuan');
 
 // Route::get('/showRoomUnAvail', 'NewCheckInController@showRoomUnAvail');
-
+// get history customer for check in ......
 Route::get('/showHistoCustomer/{SSN}', 'NewCheckInController@showHistoCustomer');
 
 // check in search members
@@ -194,6 +198,7 @@ Route::get('/getProductNM', 'NewCheckOutController@getProductNM');
 
 Route::get('/getProductPrice/{NM}', 'NewCheckOutController@getProductPrice');
 
+// submit the checkOut room, accts
 Route::post('/checkOutSubmit', 'NewCheckOutController@checkOutSubmit');
 
 
@@ -202,15 +207,18 @@ Route::post('/submitResv','ReservationController@submitResv');
 // edit reservation
 Route::post('/editResv','ReservationController@editResv');
 
-
-Route::get('/accountingGetAll','AccountingController@accountingGetAll');
+// acct get all info
+Route::post('/accountingGetAll','AccountingController@accountingGetAll');
 
 
 Route::get('/getTargetAcct/{DB}/{ACCT_ID}', 'AccountingController@getTargetAcct');
 
 Route::post('/submitModifyAcct','AccountingController@submitModifyAcct');
 
-Route::get('/summerize','AccountingController@Summerize');
+// one key shift
+Route::get('/summerize','AccountingController@summerize');
+// shift submission
+Route::post('/changeShiftSubmit','AccountingController@changeShiftSubmit');
 
 
 

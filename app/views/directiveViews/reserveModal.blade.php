@@ -1,7 +1,7 @@
 <div>
     <div class="modal-header">
         <span class="glyphicon glyphicon-send"></span>
-        <label style="font-size: 15px;">新入住</label>{{BookCommonInfo.payment.paymentRequest}}{{}}
+        <label style="font-size: 15px;">新入住</label>
         <span class="pull-right btn" ng-click="cancel()">&#x2715</span>
     </div>
     <div class="col-sm-12" style="padding: 10px 20px 45px 25px;" >

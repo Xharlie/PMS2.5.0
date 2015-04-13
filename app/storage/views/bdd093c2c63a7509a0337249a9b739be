@@ -1,0 +1,22 @@
+
+<div class="roomStatus-menu" style="display: block;" id="roomStatusMenu">
+    <!--  id popMenu不可删去-->
+    <ul id="bb">
+        <li>
+            <a href >
+                {{iconNAction}}
+            </a>
+
+        </li>
+        <li>
+            <a href >
+                fasdfadsf
+            </a>
+        </li>
+        <li>
+            <a href >
+                fasdfadsf
+            </a>
+        </li>
+    </ul>
+</div>

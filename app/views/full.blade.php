@@ -36,7 +36,7 @@
         <script src="Scripts/jquery/jquery-ui-1.11.0.min.js"></script>
         <script src="Scripts/angularjs/angular.min.js"></script>
 <!--        <script src="Scripts/angularjs/ui-bootstrap-tpls-0.11.0.js"></script>-->
-        <script src="Scripts/angularjs/ui-bootstrap-tpls-0.12.0.js"></script>
+        <script src="Scripts/angularjs/ui-bootstrap-tpls-0.12.1.js"></script>
         <script src="Scripts/angularjs/angular-route.js"></script>
         <script src="Scripts/angularjs/angular-animate-1.3.0.js"></script>
         <script src="Scripts/angularjs/angular-ui-0.4.0.min.js"></script>
@@ -47,13 +47,17 @@
         <script src="js/Angular/module_frontDesk/module.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/frontDeskController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/frontDeskModals.js"></script>
-        <script src="js/Angular/module_frontDesk/controllers/smallMenuController.js"></script>
-        <script src="js/Angular/module_frontDesk/controllers/largeMenuController.js"></script>
+        <script src="js/Angular/module_frontDesk/controllers/menu/smallMenuController.js"></script>
+        <script src="js/Angular/module_frontDesk/controllers/menu/largeMenuController.js"></script>
+        <script src="js/Angular/module_frontDesk/controllers/menu/contentMenuController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/CheckInModalController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/CheckOutModalController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/MultiCheckInModalController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/reservationModalController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/buildInDirController.js"></script>
+        <script src="js/Angular/module_frontDesk/controllers/addMemberModalController.js"></script>
+        <script src="js/Angular/module_frontDesk/controllers/modifyAcctModalController.js"></script>
+        <script src="js/Angular/module_frontDesk/controllers/purchaseModalController.js"></script>
         <script src="js/Angular/module_frontDesk/services/frontDeskServices.js"></script>
         <script src="js/Angular/module_frontDesk/services/frontDeskModalServices.js"></script>
         <script src="js/Angular/module_frontDesk/services/newCheckInServices.js"></script>
@@ -61,6 +65,8 @@
         <script src="js/Angular/module_frontDesk/services/newResvServices.js"></script>
         <script src="js/Angular/module_frontDesk/directives/sgDbClick.js"></script>
         <script src="js/Angular/module_frontDesk/directives/popMenu.js"></script>
+        <script src="js/Angular/module_frontDesk/directives/autoScrollTo.js"></script>
+        <script src="js/Angular/module_frontDesk/directives/datePickerBackUp.js"></script>
         <script src="js/Angular/module_frontDesk/pan_lib/util.js"></script>
 
     <script language="JavaScript" type="text/javascript">

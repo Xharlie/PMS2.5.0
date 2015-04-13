@@ -19,14 +19,106 @@ class CustomerController extends BaseController{
         return Response::json($customerShow);
     }
 
-    public function showMember(){
+    public function showMembers(){
         $memberShow = DB::table('MemberInfo')
-            ->select('MemberInfo.MEM_ID as MEM_ID','MemberInfo.SSN as SSN','MemberInfo.MEM_NM as MEM_NM',
-                'MemberInfo.MEM_GEN as MEM_GEN','MemberInfo.MEM_DOB as MEM_DOB','MemberInfo.PROV as PROV',
-                'MemberInfo.CITY as CITY','MemberInfo.ADDRS as ADDRS','MemberInfo.PHONE as PHONE',
-                'MemberInfo.IN_DT as IN_DT','MemberInfo.EMAIL as EMAIL','MemberInfo.TIMES as TIMES',
-                'MemberInfo.POINTS as POINTS','MemberInfo.MEM_TP as MEM_TP')
             ->get();
         return Response::json($memberShow);
     }
+
+    public function showMemberType(){
+        $memberShow = DB::table('MemberType')
+            ->get();
+        return Response::json($memberShow);
+    }
+
+    public function addMemberSubmit(){
+        $memberInfo = Input::get('memberInfo');
+        $acct = Input::get('acct');
+        $memTranDepoArray = array();
+        try {
+            DB::beginTransaction();   //////  Important !! TRANSACTION Begin!!!
+            /***************                    Insert to Member info                   ***************/
+            $MEM_ID = DB::table('MemberInfo')->insertGetId($memberInfo);
+            /***************                    prepare and insert to memTran                    ***************/
+            if($acct!=null && $acct!=""){
+                $memTranArray = $this->memTranIn($MEM_ID,$acct);
+                $MEM_TRAN_ID = DB::table('MemTran')->insertGetId($memTranArray);
+                /***************                    prepare and insert to memTranDepo                    ***************/
+                foreach($acct["payByMethods"] as $depo){
+                    $this->memTranDepoIn($MEM_ID,$MEM_TRAN_ID,$depo,$memTranDepoArray);
+                }
+                DB::table('MemTranDeposit')->insert($memTranDepoArray);
+            }
+
+        }catch (Exception $e){
+            DB::rollback();
+            $message=($e->getLine())."&&".$e->getMessage();
+            throw new Exception($message);
+            return Response::json($message);
+        }finally{
+            DB::commit();
+            return Response::json("success!");
+        }
+    }
+
+
+    public function editMemberSubmit(){
+        $memberInfo = Input::get('memberInfo');
+        $acct = Input::get('acct');
+        $memTranDepoArray = array();
+        $MEM_ID = $memberInfo["MEM_ID"];
+        try {
+            DB::beginTransaction();   //////  Important !! TRANSACTION Begin!!!
+            /***************                    update the Member info                   ***************/
+            DB::table('MemberInfo')
+                ->where('MEM_ID','=',$MEM_ID)
+                ->update($memberInfo);
+            if($acct!=null){
+                /***************                    prepare and insert to memTran                    ***************/
+                $memTranArray = $this->memTranIn($MEM_ID,$acct);
+                $MEM_TRAN_ID = DB::table('MemTran')->insertGetId($memTranArray);
+                /***************                    prepare and insert to memTranDepo                    ***************/
+                foreach($acct["payByMethods"] as $depo){
+                    $this->memTranDepoIn($MEM_ID,$MEM_TRAN_ID,$depo,$memTranDepoArray);
+                }
+                DB::table('MemTranDeposit')->insert($memTranDepoArray);
+            }
+        }catch (Exception $e){
+            DB::rollback();
+            $message=($e->getLine())."&&".$e->getMessage();
+            throw new Exception($message);
+            return Response::json($message);
+        }finally{
+            DB::commit();
+            return Response::json("success!");
+        }
+    }
+
+
+    public function memTranIn($MEM_ID,&$acct){
+        $memTranArrary = array(
+             "MEM_ID" =>$MEM_ID,
+             "EMP_ID" => null,
+             "MEM_TSTMP" => (new DateTime())->format('Y-m-d H:i:s'),
+             "FEE_AMNT" => $acct["paymentRequest"],
+             "FEE_TP" => $acct["paymentType"],
+             "RMRK" => null,
+             "FILLED" => "T"
+        );
+        return $memTranArrary;
+    }
+
+    public function memTranDepoIn($MEM_ID,$MEM_TRAN_ID,&$depo,&$memTranDepoArray){
+        $memTDArrary = array(
+            "MEM_TRAN_ID" =>$MEM_TRAN_ID,
+            "PAY_MTHD" => $depo["payMethod"],
+            "EMP_ID" => null,
+            "MEM_ID" => $MEM_ID,
+            "PAY_AMNT" => $depo["payAmount"],
+            "RMRK" => null
+        );
+        array_push($memTranDepoArray,$memTDArrary);
+    }
+
+
 }

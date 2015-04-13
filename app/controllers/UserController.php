@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Xharlie
- * Date: 11/11/14
- * Time: 10:07 PM
- */
 
 class UserController extends BaseController{
 

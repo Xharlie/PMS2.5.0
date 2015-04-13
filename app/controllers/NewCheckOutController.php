@@ -9,12 +9,156 @@ class NewCheckOutController extends BaseController{
      function checkOutGetInfo(){
          $info = Input::all();
 
-         $allInfo = DB::table('RoomTran')
+         $allInfoArray = DB::table('RoomTran')
                     ->whereIn('RoomTran.RM_TRAN_ID',$info)
                     ->leftjoin('Rooms','Rooms.RM_TRAN_ID','=','RoomTran.RM_TRAN_ID')
                     ->leftjoin('RoomsTypes','Rooms.RM_TP','=','RoomsTypes.RM_TP')
                     ->get();
-         $allInfoArray = json_decode(json_encode($allInfo));
+         $acct["AcctPay"] = array();
+         $acct["AcctDepo"] = array();
+         $acct["AcctStore"] = array();
+         $acct["AcctPenalty"] = array();
+         for ($i = 0; $i < count($allInfoArray); $i++){
+
+             $allInfoArray[$i] = (array)$allInfoArray[$i];
+
+             $allInfoArray[$i]["Customers"]= DB::table('Customers')
+                 ->where('Customers.RM_TRAN_ID',$allInfoArray[$i]["RM_TRAN_ID"])
+                 ->get();
+
+             $acctPay = DB::table('RoomAcct')
+                                        ->join('RoomTran','RoomTran.RM_TRAN_ID','=','RoomAcct.RM_TRAN_ID')
+                                        ->where('TKN_RM_TRAN_ID','=',$allInfoArray[$i]["RM_TRAN_ID"])
+                                        ->where('RoomAcct.FILLED', '=', 'F')
+                                        ->get();
+
+             $acctRoomDepo= DB::table('RoomDepositAcct')
+                                        ->join('RoomTran','RoomTran.RM_TRAN_ID','=','RoomDepositAcct.RM_TRAN_ID')
+                                        ->where('RoomDepositAcct.RM_TRAN_ID',$allInfoArray[$i]["RM_TRAN_ID"])
+                                        ->where('RoomDepositAcct.FILLED', '=', 'F')
+                                        ->get();
+
+             $acctRoomStore = DB::table('RoomStoreTran')
+                                             ->join('RoomTran','RoomTran.RM_TRAN_ID','=','RoomStoreTran.RM_TRAN_ID')
+                                             ->where('RoomStoreTran.TKN_RM_TRAN_ID',$allInfoArray[$i]["RM_TRAN_ID"])
+                                             ->leftjoin('StoreTransaction','StoreTransaction.STR_TRAN_ID','=','RoomStoreTran.STR_TRAN_ID')
+                                             ->leftjoin('ProductInTran','ProductInTran.STR_TRAN_ID','=','RoomStoreTran.STR_TRAN_ID')
+                                             ->leftjoin('ProductInfo','ProductInfo.PROD_ID','=','ProductInTran.PROD_ID')
+                                             ->where('RoomStoreTran.FILLED', '=', 'F')
+                                             ->get();
+
+             $acctPenalty = DB::table('PenaltyAcct')
+                                         ->join('RoomTran','RoomTran.RM_TRAN_ID','=','PenaltyAcct.RM_TRAN_ID')
+                                         ->where('TKN_RM_TRAN_ID','=',$allInfoArray[$i]["RM_TRAN_ID"])
+                                         ->where('PenaltyAcct.FILLED', '=', 'F')
+                                         ->get();
+
+             $acct["AcctPay"] = array_merge($acct["AcctPay"],(array)$acctPay);
+             $acct["AcctDepo"] = array_merge($acct["AcctDepo"],(array)$acctRoomDepo);
+             $acct["AcctStore"] = array_merge($acct["AcctStore"],(array)$acctRoomStore);
+             $acct["AcctPenalty"] = array_merge($acct["AcctPenalty"],(array)$acctPenalty);
+
+         }
+
+         return Response::json(array("room"=>$allInfoArray,"acct"=>$acct));
+     }
+
+    function checkOutSubmit(){
+        $RoomArray = Input::get('RoomArray');
+        $mastr_RM_TRAN_ID = Input::get('MasterRoomNpay')['mastr_RM_TRAN_ID'];
+        $ori_Mastr_RM_TRAN_ID = Input::get('MasterRoomNpay')['ori_Mastr_RM_TRAN_ID'];
+        $editAcct = Input::get('editAcct');
+        $addAcct = Input::get('addAcct');
+        $addDepoArray = Input::get('addDepoArray');
+        $today = (new DateTime())->format('Y-m-d');
+        try {
+            DB::beginTransaction();   //////  Important !! TRANSACTION Begin!!!
+            foreach ($RoomArray as $room){
+                /*------------------------- change RoomTran -----------------------------------------------------*/
+                $RoomTranUpdateArray = array(
+                    "CHECK_OT_DT" => $today,
+                    "DPST_RMN" => "0",
+                    "FILLED" => "T"
+                );
+                DB::table('RoomTran')->where('RM_TRAN_ID',$room["RM_TRAN_ID"])->update($RoomTranUpdateArray);
+
+                /*------------------------- change Room Status ---------------- ---------------------------------*/
+                $RoomUpdateArray = array(
+                    "RM_TRAN_ID" => null,
+                    "RM_CONDITION" => "脏房",
+                );
+                DB::table('Rooms')->where('RM_TRAN_ID',$room["RM_TRAN_ID"])->update($RoomUpdateArray);
+
+                /*------------------------- change Room Availablilty Check Quan ---------------------------------*/
+                if($today < $room["oriCHECK_OT_DT"]){
+                    DB::update('update RoomOccupation set CHECK_QUAN = CHECK_QUAN - ? where RM_TP = ? and DATE >= ? and DATE < ?   ',
+                        array(1,$room["RM_TP"],$today, $room["oriCHECK_OT_DT"]) );
+                }
+            }
+
+
+            /*------------------------- update all Accts  -------------------------------------------------------*/
+            foreach($editAcct["RoomAcct"] as $updateArray){
+                DB::table('RoomAcct')->where('RM_BILL_ID',$updateArray["RM_BILL_ID"])->update($updateArray);
+            }
+            foreach($editAcct["PenaltyAcct"] as $updateArray){
+                DB::table('PenaltyAcct')->where('PEN_BILL_ID',$updateArray["PEN_BILL_ID"])->update($updateArray);
+            }
+            foreach($editAcct["RoomStoreTran"] as $updateArray){
+                DB::table('RoomStoreTran')->where('STR_TRAN_ID',$updateArray["STR_TRAN_ID"])->update($updateArray);
+            }
+            foreach($editAcct["RoomDepositAcct"] as $updateArray){
+                DB::table('RoomDepositAcct')->where('RM_DEPO_ID',$updateArray["RM_DEPO_ID"])->update($updateArray);
+            }
+            /*------------------------- add all new Accts  -------------------------------------------------------*/
+            foreach($addDepoArray as $insertArray){
+                DB::table('RoomDepositAcct')->insertGetId($insertArray);
+            }
+            foreach($addAcct["RoomAcct"] as $insertArray){
+                DB::table('RoomAcct')->insertGetId($insertArray);
+            }
+            foreach($addAcct["PenaltyAcct"] as $insertArray){
+                DB::table('PenaltyAcct')->insertGetId($insertArray);
+            }
+            foreach($addAcct["RoomStore"] as $RoomStore){
+                $STR_TRAN_ID = DB::table('StoreTransaction')->insertGetId($RoomStore["StoreTransaction"]);
+                $RoomStore["RoomStoreTran"]["STR_TRAN_ID"] = $STR_TRAN_ID;
+                $RoomStore["ProductInTran"]["STR_TRAN_ID"] = $STR_TRAN_ID;
+                DB::table('ProductInTran')->insertGetId($RoomStore["ProductInTran"]);
+                DB::table('RoomStoreTran')->insertGetId($RoomStore["RoomStoreTran"]);
+            }
+            if($ori_Mastr_RM_TRAN_ID != "" && $ori_Mastr_RM_TRAN_ID != $mastr_RM_TRAN_ID){
+                /*------------------------- update all connected room master room number-----------------------------*/
+                DB::table('RoomTran')->where('CONN_RM_TRAN_ID',$ori_Mastr_RM_TRAN_ID)->update(array("CONN_RM_TRAN_ID"=>$mastr_RM_TRAN_ID));
+                /*------------------------- update all connected room master room number-----------------------------*/
+                DB::table('RoomAcct')->where('TKN_RM_TRAN_ID',$ori_Mastr_RM_TRAN_ID)->update(array("TKN_RM_TRAN_ID"=>$mastr_RM_TRAN_ID));
+                DB::table('PenaltyAcct')->where('TKN_RM_TRAN_ID',$ori_Mastr_RM_TRAN_ID)->update(array("TKN_RM_TRAN_ID"=>$mastr_RM_TRAN_ID));
+                DB::table('RoomStoreTran')->where('TKN_RM_TRAN_ID',$ori_Mastr_RM_TRAN_ID)->update(array("TKN_RM_TRAN_ID"=>$mastr_RM_TRAN_ID));
+                DB::table('RoomDepositAcct')->where('RM_TRAN_ID',$ori_Mastr_RM_TRAN_ID)->update(array("RM_TRAN_ID"=>$mastr_RM_TRAN_ID));
+            }
+        }catch (Exception $e){
+            DB::rollback();
+            $message=($e->getLine())."&&".$e->getMessage();
+            throw new Exception($message);
+            return Response::json($message);
+        }finally{
+            DB::commit();
+            return Response::json("办理完毕!");
+        }
+    }
+
+   /* old check out
+    function checkOutGetInfo(){
+         $info = Input::all();
+
+         $allInfoArray = DB::table('RoomTran')
+                    ->whereIn('RoomTran.RM_TRAN_ID',$info)
+                    ->leftjoin('Rooms','Rooms.RM_TRAN_ID','=','RoomTran.RM_TRAN_ID')
+                    ->leftjoin('RoomsTypes','Rooms.RM_TP','=','RoomsTypes.RM_TP')
+                    ->get();
+         $allInfoArray["AcctPay"] = [];
+         $allInfoArray["AcctDepo"] = [];
+         $allInfoArray["AcctStore"] = [];
          for ($i = 0; $i < count($allInfoArray); $i++){
 
              $allInfoArray[$i] = (array)$allInfoArray[$i];
@@ -33,7 +177,6 @@ class NewCheckOutController extends BaseController{
                                              ->leftjoin('ProductInTran','ProductInTran.STR_TRAN_ID','=','RoomStoreTran.STR_TRAN_ID')
                                              ->leftjoin('ProductInfo','ProductInfo.PROD_ID','=','ProductInTran.PROD_ID')
                                              ->get();
-
              $allInfoArray[$i]["Customers"]= DB::table('Customers')
                                              ->where('Customers.RM_TRAN_ID',$allInfoArray[$i]["RM_TRAN_ID"])
                                              ->get();
@@ -41,7 +184,7 @@ class NewCheckOutController extends BaseController{
 
          return Response::json($allInfoArray);
      }
-
+*/
 //    function getProductNM(){
 //        $name = DB::table('ProductInfo')->lists('PROD_NM');
 //        return $name;

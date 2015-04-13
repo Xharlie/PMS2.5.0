@@ -22,44 +22,41 @@ class MerchandiseController extends BaseController{
 
     public function showMerchanRoom(){
         $roomShow = DB::table('Rooms')
-            ->select('Rooms.RM_ID as RM_ID','Rooms.RM_TRAN_ID as RM_TRAN_ID',
-                'Rooms.RM_CONDITION as RM_CONDITION', 'Rooms.RM_TP as RM_TP')
+            ->join("RoomTran","RoomTran.RM_TRAN_ID","=","Rooms.RM_TRAN_ID")
             ->get();
         return json_encode($roomShow);
     }
 
     public function buySubmit(){
-        $info = Input::all();
+        $StoreTransactionArray = Input::get('StoreTransactionArray');
+        $RoomStoreTranArray = Input::get('RoomStoreTranArray');
+        $ProductInTran = Input::get('ProductInTran');
+        try {
+            DB::beginTransaction();   //////  Important !! TRANSACTION Begin!!!
+            /***************                    update the Member info                   ***************/
+            $STR_TRAN_ID = DB::table('StoreTransaction')->insertGetId($StoreTransactionArray);
 
-        $storeTransactionArray = array(
-            "STR_TRAN_TSTAMP" => date('Y-m-d H:i:s'),
-            "STR_PAY_AMNT" => $info["STR_PAY_AMNT"],
-        );
+            if ($RoomStoreTranArray!="" && $RoomStoreTranArray!=null){
+                $RoomStoreTranArray["STR_TRAN_ID"] = $STR_TRAN_ID;
+                DB::table('RoomStoreTran')->insert($RoomStoreTranArray);
+            }
 
-        $STR_TRAN_ID = DB::table('StoreTransaction')->insertGetId($storeTransactionArray);
-
-        if (($info["RM_TRAN_ID"])!=""){
-            DB::table('RoomStoreTran')->insert(
-                array(
-                    "RM_TRAN_ID" => $info["RM_TRAN_ID"],
-                    "STR_TRAN_ID" => $STR_TRAN_ID,
-                    "RM_ID" => $info["RM_ID"],
-                ));
+            foreach($ProductInTran as &$product){
+                DB::update('update ProductInfo set PROD_AVA_QUAN = PROD_AVA_QUAN - ? where PROD_ID = ?',
+                    array($product["PROD_QUAN"],$product["PROD_ID"]));
+                $product["STR_TRAN_ID"] = $STR_TRAN_ID;
+//                array_push($productsArray,$productArray);
+            }
+            DB::table('ProductInTran')->insert($ProductInTran);
+        }catch (Exception $e){
+            DB::rollback();
+            $message=($e->getLine())."&&".$e->getMessage();
+            throw new Exception($message);
+            return Response::json($message);
+        }finally{
+            DB::commit();
+            return Response::json("success!");
         }
-
-        $productsArray = array();
-        foreach($info["products"] as $product){
-            DB::update('update ProductInfo set PROD_AVA_QUAN = PROD_AVA_QUAN - ? where PROD_ID = ?',array($product["AMOUNT"],$product["PROD_ID"]));
-
-            $productArray = array(
-              "STR_TRAN_ID" => $STR_TRAN_ID,
-              "PROD_ID" => $product["PROD_ID"],
-              "PROD_QUAN" => $product["AMOUNT"],
-            );
-            array_push($productsArray,$productArray);
-        }
-        DB::table('ProductInTran')->insert($productsArray);
-        return $info;
     }
 
     public function showHistoPurchase(){
