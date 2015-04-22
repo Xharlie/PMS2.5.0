@@ -1,10 +1,10 @@
-<div>
+<div id="wholeModal">  <!-- id cannot change here, children focus identifier   -->
     <div class="modal-header">
         <span class="glyphicon glyphicon-send"></span>
-        <label style="font-size: 15px;">新入住</label>{{}}
+        <label style="font-size: 15px;">{{(initialString == 'singleWalkIn')?'新入住':'入住修改'}}</label>
         <span class="pull-right btn" ng-click="cancel()">&#x2715</span>
     </div>
-    <div class="col-sm-12" style="padding: 30px 20px 45px 25px;">
+    <div class="col-sm-12" style="padding: 30px 20px 45px 25px;" >
         <div class="col-sm-12" ng-show ="viewClick=='Info'"  >
             <div class="col-sm-12 form-group" style="padding-right:25px; padding-left: 25px; ">
                 <div class="col-sm-4 ">
@@ -119,10 +119,10 @@
                 </div>
 
                 <div class="col-sm-12 " style="padding-top:10px;"
-                     ng-repeat=" singleGuest in singleRoom.GuestsInfo">
+                     ng-repeat=" singleGuest in singleRoom.GuestsInfo" >
                     <div class="col-sm-2 ">
                         <label>客人姓名</label>
-                        <input class="form-control"ng-model="singleGuest.Name" />
+                        <input class="form-control" ng-model="singleGuest.Name" />
                     </div>
                     <div class="col-sm-2 ">
                         <label>证件类型</label>
@@ -201,12 +201,21 @@
                     <label style="display:block;color: red; font-size: 25px;">{{singleRoom.payment.payInDue}}元</label>
                 </div>
             </div>
-            <button class="pull-right" ng-if="initialstring == 'singleWalkIn'"
+            <button class="pull-right" ng-if="initialString == 'singleWalkIn'"
                     style="margin-top:25px;padding: 10px 30px 10px 30px; background-color:grey; color: #ffffff"
-                    ng-click="submit()">确认入住并打印押金单</button>
-            <button class="pull-right" ng-if="initialstring != 'singleWalkIn'"
+                    ng-click="submit()" btn-loading="submitBusy" data-role="button"
+                    btn-loading="submitLoading"
+                    reset-text = '确认并打印押金单'
+                    loading-text = '处理中请您稍后'
+                    loading-gif= 'assets/dummy/buttonProcessing.gif'>确认入住并打印押金单</button>
+            <button class="pull-right" ng-if="initialString != 'singleWalkIn'"
                     style="margin-top:25px;padding: 10px 30px 10px 30px; background-color:grey; color: #ffffff"
-                    ng-click="editSubmit('true')">确认修改并打印押金单</button>
+                    ng-click="editSubmit('true')"
+                    btn-loading="submitLoading"
+                    reset-text = '确认并打印押金单'
+                    loading-text = '处理中请您稍后'
+                    loading-gif= 'assets/dummy/buttonProcessing.gif'>确认修改并打印押金单</button>
+
             <button class="pull-right"
                     style="margin-top:25px;padding: 10px 30px 10px 30px; background-color:#69B4F5; color: #ffffff"
                     ng-click="backward()">返回修改</button>

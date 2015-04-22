@@ -276,7 +276,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
     $scope.disable = {searchDisable:false};
     $scope.Members =[];
     $scope.Treaties =[];
-    $scope.Connected=false;
+    $scope.Connected=true;
     $scope.roomsAndRoomTypes = [];
     $scope.roomsDisableList = {};
     $scope.BookRoom = [];
@@ -573,9 +573,10 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
 
     $scope.submit = function(){
         if (testFail()) return;
+        $scope.submitLoading = true;
         $scope.SubmitInfo=[];
-        var CHECK_IN_DT =  $scope.BookCommonInfo.CHECK_IN_DT;
-        var CHECK_OT_DT =  $scope.BookCommonInfo.CHECK_OT_DT;
+        var CHECK_IN_DT =  util.dateFormat($scope.BookCommonInfo.CHECK_IN_DT);
+        var CHECK_OT_DT =  util.dateFormat($scope.BookCommonInfo.CHECK_OT_DT);
         var j = 0;
         for (var i = 0; i<$scope.BookRoom.length; i++){
             var room = $scope.BookRoom[i];
@@ -639,6 +640,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
 //        show(unfilled);
         newCheckInFactory.submit(JSON.stringify({SubmitInfo:$scope.SubmitInfo,RESV:RESV,unfilled:unfilled})).success(function(data){
             show("办理成功!");
+            $scope.submitLoading = false;
             $modalInstance.close("checked");
             util.closeCallback();
         });

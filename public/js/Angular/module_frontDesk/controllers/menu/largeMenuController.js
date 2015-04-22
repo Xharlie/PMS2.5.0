@@ -69,17 +69,27 @@ app.controller('largeMenuController',function ($scope, $http, $modal, cusModalFa
                     }
                 }
             });
+        }else if(actionString == '房间更改'){
+            var modalInstance = $modal.open({
+                windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+                    templateUrl: 'directiveViews/singleCheckInModal',
+                    controller: 'checkInModalController',
+                    resolve: {
+                    roomST: function () {
+                        return [roomInfo];          // leave flexibility to have multiple parameters or rooms
+                    },
+                    initialString: function () {
+                        return "editRoom";
+                    }
+                }
+            });
         }
 //        }else if(actionString == '商品购买'){
 //            cusModalFactory.Change2Mending($scope.owner.RM_ID).success(function(data){
 //                $scope.owner.RM_CONDITION = "维修";
 //                $scope.owner.menuIconAction = mendIconAction;
 //            });
-//        }else if(actionString == '房间更改'){
-//            cusModalFactory.Change2Mended($scope.owner.RM_ID).success(function(data){
-//                $scope.owner.RM_CONDITION = "脏房";
-//                $scope.owner.menuIconAction = dirtIconAction;
-//            });
+//        }
 //        }else if(actionString == '房价调整'){
 //            cusModalFactory.Change2Cleaned($scope.owner.RM_ID).success(function(data){
 //                $scope.owner.RM_CONDITION = "空房";

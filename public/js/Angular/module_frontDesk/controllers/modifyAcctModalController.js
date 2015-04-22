@@ -51,7 +51,7 @@ app.controller('modifyAcctModalController', function($scope, $http, $modalInstan
 
     $scope.submit = function(){
         if (testFail()) return;
-
+        $scope.submitLoading = true;
         var Amount = util.Limit( Number($scope.modifyAcct.changeType)*
                                  Number($scope.modifyAcct.payAmount)*
                                  ((Number($scope.oriAmount)>0)?1:-1)
@@ -70,6 +70,7 @@ app.controller('modifyAcctModalController', function($scope, $http, $modalInstan
         };
 
         accountingFactory.submitModifyAcct($scope.submitInfo).success(function(){
+            $scope.submitLoading = false;
             $modalInstance.close("checked");
             util.closeCallback();
         });
@@ -79,13 +80,15 @@ app.controller('modifyAcctModalController', function($scope, $http, $modalInstan
         if (testFail()) return;
         if(!moneyInvolved) $scope.memPay.payment = null;
         customerFactory.editMemberSubmit($scope.BookCommonInfo, $scope.memPay.payment).success(function(data){
-//            show(data);
+            show("办理成功");
             $modalInstance.close("checked");
             util.closeCallback();
         });
     }
 
-
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
     /*********************************************/
 
 })

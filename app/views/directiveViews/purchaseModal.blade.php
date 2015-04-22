@@ -93,7 +93,11 @@
 
             <button class="pull-right"
                     style="margin-top:25px;padding: 10px 30px 10px 30px; background-color:grey; color: #ffffff"
-                    ng-click="submit()">确认并打印押金单</button>
+                    ng-click="submit()"
+                    btn-loading="submitLoading"
+                    reset-text = '确认并打印押金单'
+                    loading-text = '处理中请您稍后'
+                    loading-gif= 'assets/dummy/buttonProcessing.gif'>确认并打印押金单</button>
             <button class="pull-right"
                     style="margin-top:25px;padding: 10px 30px 10px 30px; background-color:#69B4F5; color: #ffffff"
                     ng-click="backward('roomInfo')">返回修改</button>

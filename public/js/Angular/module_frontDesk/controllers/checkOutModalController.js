@@ -5,7 +5,7 @@
 app.controller('checkOutModalController', function($scope, $http, newCheckOutFactory, $modalInstance,merchandiseFactory,
                                                    $timeout, RM_TRAN_IDFortheRoom,connRM_TRAN_IDs,ori_Mastr_RM_TRAN_ID,initialString){
     /********************************************     utility     ***************************************************/
-    var today = util.toLocal(new Date());
+    var today = new Date();
     var tomorrow = new Date(today.getTime()+86400000);
     var defaultTimeString="13:00:00";
 
@@ -26,15 +26,10 @@ app.controller('checkOutModalController', function($scope, $http, newCheckOutFac
         room["DAYS_STAY"] = Math.round( (new Date(room["CHECK_OT_DT"]).getTime()
                             -new Date(room["CHECK_IN_DT"]).getTime())/86400000);
     }
-//
-//    var adjustSelected = function(){
-//        var sumation =0;
-//        for (var i = 0; i < $scope.BookRoom.length; i++){
-//            sumation = sumation + $scope.BookRoom["Sumation"];
-//            $scope.singleRoom['AcctDepo'].push();
-//        }
-//        $scope.singleRoom["sumation"]=sumation;
-//    }
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
 
     $scope.updateSumation=function(){
         var sumation=0;
@@ -256,6 +251,7 @@ app.controller('checkOutModalController', function($scope, $http, newCheckOutFac
             }
             $scope.updateSumation();
             $scope.viewClick=($scope.BookRoom.length>1)?'RoomChoose':'Info';
+            $scope.ready=true;
         });
     }
 
@@ -280,6 +276,7 @@ app.controller('checkOutModalController', function($scope, $http, newCheckOutFac
     $scope.addedItems=[];
     $scope.RM_TRAN_ID_SelectedList={};
     $scope.newItem={};
+    $scope.ready=false;
 
 
     /************** ********************************** Initialize by conditions ********************************** *************/
@@ -417,7 +414,8 @@ app.controller('checkOutModalController', function($scope, $http, newCheckOutFac
     /************** ********************************** submit  ********************************** *************/
 
     $scope.submit = function(){
-        var today = util.toLocal(new Date());
+        $scope.submitLoading = true;
+        var today = new Date();
         var editAcct = {RoomAcct:[],PenaltyAcct:[],RoomStoreTran:[],RoomDepositAcct:[]};
         for( var key in $scope.acct){
             for(var i = 0; i < $scope.acct[key].length; i++){
@@ -493,12 +491,14 @@ app.controller('checkOutModalController', function($scope, $http, newCheckOutFac
             }
         }
 
-//        show(editAcct);
-//        show(addAcct);
         newCheckOutFactory.checkOT(RoomArray,$scope.BookCommonInfo.Master,editAcct,addAcct,addDepoArray).success(function(data){
-            show(data);
-//            window.close();
+            $scope.submitLoading = false;
+            show("办理成功!");
+            $modalInstance.close("checked");
+            util.closeCallback();
+
         });
+
     }
 })
 

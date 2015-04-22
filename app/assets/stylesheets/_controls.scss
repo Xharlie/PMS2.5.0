@@ -1,0 +1,56 @@
+//
+// Controls
+// --------------------------------------------------
+// Defines various customized control functions
+
+
+.mode{
+	overflow: hidden;
+	width: 100%;
+	background-color: $content-outer-bg;
+}
+
+.ctrlArea{
+	padding:$control-padding;
+	overflow: hidden;
+
+	.ctrlRight{
+		float: right;
+		@include clearfix();
+	}
+
+	.ctrlLeft{
+		float: left;
+		@include clearfix();
+	}
+}
+
+.tab{
+	border-radius:$tab-border-radius;
+	border-style:$tab-border-style;
+	float:left;
+	@include button-size($tab-padding-vertical, $tab-padding-horizontal, $font-size-base, $line-height-base, $tab-border-radius);
+}
+
+.tab-active{
+	background-color: $tab-active-bg;
+	color: $tab-active-color;
+}
+
+.tab-inactive{
+	background-color: $tab-inactive-bg;
+	color: $tab-inactive-color;
+}
+
+.searchBox{
+	border:$searchBox-border;
+	border-radius:$searchBox-radius;
+	width: $searchBox-width;
+}
+
+.inputBox{
+	border:$searchBox-border;
+	width: 30px;
+	padding: 0 5px;
+	text-align: center;
+}

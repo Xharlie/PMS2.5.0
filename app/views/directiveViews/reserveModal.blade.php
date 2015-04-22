@@ -1,7 +1,7 @@
 <div>
     <div class="modal-header">
         <span class="glyphicon glyphicon-send"></span>
-        <label style="font-size: 15px;">新入住</label>
+        <label style="font-size: 15px;">新预订</label>
         <span class="pull-right btn" ng-click="cancel()">&#x2715</span>
     </div>
     <div class="col-sm-12" style="padding: 10px 20px 45px 25px;" >
@@ -205,10 +205,18 @@
             </div>
             <button class="pull-right"  ng-if="initialString=='newReservation'"
                     style="margin-top:25px;padding: 10px 30px 10px 30px; background-color:grey; color: #ffffff"
-                    ng-click="submit()">确认并打印押金单</button>
+                    ng-click="submit()"
+                    btn-loading="submitLoading"
+                    reset-text = '确认并打印押金单'
+                    loading-text = '处理中请您稍后'
+                    loading-gif= 'assets/dummy/buttonProcessing.gif'>确认并打印押金单</button>
             <button class="pull-right" ng-if="initialString=='editReservation'"
                     style="margin-top:25px;padding: 10px 30px 10px 30px; background-color:grey; color: #ffffff"
-                    ng-click="editSubmit(BookCommonInfo.payment.paymentRequest)">确认差价并提交</button>
+                    ng-click="editSubmit(BookCommonInfo.payment.paymentRequest)"
+                    btn-loading="submitLoading"
+                    reset-text = '确认并打印押金单'
+                    loading-text = '处理中请您稍后'
+                    loading-gif= 'assets/dummy/buttonProcessing.gif'>确认差价并提交</button>
             <button class="pull-right"
                     style="margin-top:25px;padding: 10px 30px 10px 30px; background-color:#69B4F5; color: #ffffff"
                     ng-click="backward('Info')">返回修改</button>

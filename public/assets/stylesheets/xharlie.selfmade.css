@@ -1,0 +1,47 @@
+/*.modalWindow-room {*/
+    /*overflow: scroll;*/
+    /*z-index: 10011;*/
+    /*position: absolute;*/
+    /*background-color: #fcfcfc;*/
+    /*border: 1px solid #999;*/
+    /*border: 1px solid rgba(0, 0, 0, 0.2);*/
+    /*border-radius: 6px;*/
+    /*-webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);*/
+    /*box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);*/
+    /*background-clip: padding-box;*/
+    /*outline: 0;*/
+    /*width: 44%;*/
+    /*max-height: 95%;*/
+    /*margin-left: 28%;*/
+    /*margin-right: 28%;*/
+    /*margin-top: 1%;*/
+    /*color: #555;*/
+/*}*/
+
+.removeArrow > table > tbody > .text-center {
+    display: none;
+}
+
+.reserveClick  > td{
+    background-color: #d9edf7 !important;
+}
+
+.greenOut > td, .greenOut {
+    opacity: 0.1;
+    background-color: #79C3F7!important;
+}
+
+.redNum {
+    color:red;
+}
+
+.blackNum {
+    color:black;
+}
+
+.greenNum {
+    color: #00b200;
+
+}
+/*spinning deletion icon end */
+/*# sourceMappingURL=application.css.map */

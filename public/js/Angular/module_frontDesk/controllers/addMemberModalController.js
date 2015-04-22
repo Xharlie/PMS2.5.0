@@ -134,12 +134,13 @@ app.controller('addMemberModalController', function($scope, $http, $modalInstanc
 
     $scope.submit = function(){
         if (testFail()) return;
+        $scope.submitLoading = true;
         if($scope.memPay.payment.paymentRequest == 0 ||$scope.memPay.payment.paymentRequest =="" ){
             $scope.memPay.payment = null;
         }
         $scope.BookCommonInfo["IN_TSTMP"] = util.tstmpFormat(new Date());
         customerFactory.addMemberSubmit($scope.BookCommonInfo, $scope.memPay.payment).success(function(data){
-//            show(data);
+            $scope.submitLoading = false;
             $modalInstance.close("checked");
             util.closeCallback();
         });
@@ -147,9 +148,10 @@ app.controller('addMemberModalController', function($scope, $http, $modalInstanc
 
     $scope.editSubmit = function(moneyInvolved){
         if (testFail()) return;
+        $scope.submitLoading = true;
         if(!moneyInvolved) $scope.memPay.payment = null;
         customerFactory.editMemberSubmit($scope.BookCommonInfo, $scope.memPay.payment).success(function(data){
-//            show(data);
+            $scope.submitLoading = false;
             $modalInstance.close("checked");
             util.closeCallback();
         });

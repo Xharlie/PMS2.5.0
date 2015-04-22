@@ -21,7 +21,6 @@ class RoomStatusController extends BaseController{
     public function showRoom(){
         $roomShow = DB::table('Rooms')
             ->leftjoin('RoomTran', 'Rooms.RM_TRAN_ID','=','RoomTran.RM_TRAN_ID')
-//            ->leftjoin('RoomsTypes', 'RoomsTypes.RM_TP', '=', 'Rooms.RM_TP')
             ->select('Rooms.RM_ID as RM_ID','Rooms.RM_TRAN_ID as RM_TRAN_ID' ,
                 'Rooms.RM_CONDITION as RM_CONDITION', 'Rooms.RM_TP as RM_TP',
                 'RoomTran.CHECK_IN_DT as CHECK_IN_DT','RoomTran.CHECK_OT_DT as CHECK_OT_DT',
@@ -30,7 +29,36 @@ class RoomStatusController extends BaseController{
                 'RoomTran.LEAVE_TM as LEAVE_TM','RoomTran.CHECK_TP as CHECK_TP',
                 'RoomTran.TMP_PLAN_ID as TMP_PLAN_ID','RoomTran.TREATY_ID as TREATY_ID',
                 'RoomTran.MEM_ID as MEM_ID')
+            ->orderBy('Rooms.RM_ID', 'ASC')
             ->get();
+//        foreach($roomShow as $room){
+//            if($room->RM_CONDITION == '有人'){
+//                $room->customers = $this->showOccupied($room->RM_TRAN_ID);
+//            }
+//        }
+        $cusShow = DB::table('Rooms')
+            ->join('Customers','Customers.RM_TRAN_ID','=','Rooms.RM_TRAN_ID')
+            ->orderBy('Rooms.RM_ID', 'ASC')
+            ->get();
+        $cLen = count($cusShow);
+        $rLen = count($roomShow);
+        $cP = 0;
+        $rP = 0;
+        while($rP < $rLen && $cP < $cLen){
+            $rID = $roomShow[$rP]->RM_ID;
+            $cID = $cusShow[$cP]->RM_ID;
+            if( $rID == $cID  ){
+                if(!property_exists($roomShow[$rP], 'customers')){
+                    $roomShow[$rP]->customers = array();
+                }
+                array_push($roomShow[$rP]->customers, $cusShow[$cP]);
+                $cP++;
+            }else if(  $rID > $cID ){
+                $cP++;
+            }else{
+                $rP++;
+            }
+        }
         return Response::json($roomShow);
     }
 
@@ -38,7 +66,7 @@ class RoomStatusController extends BaseController{
         $occupiedShow = DB::table('Customers')
             ->where('Customers.RM_TRAN_ID',$RM_TRAN_ID)
             ->get();
-        return Response::json($occupiedShow);
+        return $occupiedShow;
     }
 
     public function showEmpty($RM_TP){

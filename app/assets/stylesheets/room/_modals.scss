@@ -6,26 +6,19 @@
 // Base styles
 // --------------------------------------------------
 
-
-.modal-content{
-	height: $room-modal-height;
-	overflow: hidden;
+.room-modal-status{
+	width: 50px;
+	display: inline;
+	border-radius: 3px;
+	padding: 2px;
+	font-size: 12px;
 }
 
-
-.modal-title{
-	padding: $room-modal-padding-vertical $room-modal-padding-horizontal;
+.infoPanel{
+	overflow-y:auto;
 }
 
-.modal-body{
-	border-style: none;
-}
-
-.modal-footer{
-	border-style: none;
-}
-
-.roomAction, .infoAction{
+.roomAction{
 
 	color:$room-modal-color;
 
@@ -61,4 +54,14 @@
 		}
 	}
 
+}
+
+.roomAccounting{
+	table{
+		
+		width: 90%;
+		margin: 0 auto;
+		border-top:none;
+	}
+	overflow-y:scroll;
 }

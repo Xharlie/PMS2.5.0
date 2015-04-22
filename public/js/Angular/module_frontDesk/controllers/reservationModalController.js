@@ -4,10 +4,14 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
     /********************************************     utility     ***************************************************/
     var today = new Date();
     var tomorrow = new Date(today.getTime()+86400000);
-    $scope.dateTime = new Date((tomorrow).setHours(12,0,0));
+    $scope.dateTime = new Date((tomorrow).setHours(18,0,0));
     $scope.dateFormat = function(rawDate){
         return util.dateFormat(rawDate);
     }
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
 
     var createBookRoom = function(len){
         for (var i=0; i<len; i++){
@@ -629,6 +633,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
 
     $scope.submit = function(){
         if (testFail()) return;
+        $scope.submitLoading = true;
         clearZeroRM_QUAN($scope.BookRoomByTP,"roomAmount",["0",0,null]);
         var newResv = {
             "roomSource": $scope.BookCommonInfo.roomSource,
@@ -658,6 +663,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
 //        show(newResv);
 
         newResvFactory.resvSubmit(newResv,payment).success(function(data){
+            $scope.submitLoading = false;
             if(JSON.stringify(data)!= null){
                 show("成功预定");
                 $modalInstance.close("checked");
@@ -670,6 +676,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
 
     $scope.editSubmit = function(PAY_DIFF){
         if (testFail()) return;
+        $scope.submitLoading = true;
         clearZeroRM_QUAN($scope.BookRoomByTP,"roomAmount",["0",0,null]);
         var PRE_PAID =  util.Limit((util.isNum(roomTPs[0]["PRE_PAID"]))? roomTPs[0]["PRE_PAID"] : 0) + util.Limit(PAY_DIFF);
         var reResv = {
@@ -696,6 +703,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
         var payment = (PAY_DIFF != 0)? $scope.BookCommonInfo.payment : null;
 //
         newResvFactory.resvEditSubmit(reResv,payment,roomTPs).success(function(data){
+            $scope.submitLoading = false;
             if(JSON.stringify(data)!= null){
                 show("修改成功!");
                 $modalInstance.close("checked");

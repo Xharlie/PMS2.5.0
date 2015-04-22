@@ -1,7 +1,7 @@
 /**
  * Created by Xharlie on 12/22/14.
  */
-app.controller('checkInModalController', function($scope, $http, newCheckInFactory,$modalInstance,$timeout, roomST,initialString){
+app.controller('checkInModalController', function($scope, $http, newCheckInFactory, focusInSideFactory, $modalInstance,$timeout, roomST,initialString){
 
     /********************************************     utility     ***************************************************/
     var today = new Date();
@@ -304,17 +304,17 @@ app.controller('checkInModalController', function($scope, $http, newCheckInFacto
     createBookRoom(roomST.length);
     $scope.check= {checkInput: ""};
     $scope.watcher={"roomSource":true,"treaty":true,"member":true,"finalPrice":true,"discount":true,"paymentRequest":true,"rentType":true};
-
-//    show(roomST)
-
-
+    $scope.submitBusy = false;
+    focusInSideFactory.tabInit('wholeModal');
+    $timeout(function(){
+        focusInSideFactory.manual('wholeModal');
+    },0)
 
     /**********************************/
     /************** ********************************** Initialize by conditions ********************************** *************/
     if(initialString == "singleWalkIn"){
         getTempPlan(null);
         singleWalkInInit(roomST[0].RM_ID);
-//        reserveCheckInInit("单人间");
     }else if(initialString == "editRoom"){
         editRoomInit(roomST);
     }
@@ -566,12 +566,14 @@ app.controller('checkInModalController', function($scope, $http, newCheckInFacto
 
     $scope.submit = function(){
         if (testFail()) return;
+        $scope.submitLoading = true;
+        $scope.submitBusy = true;
         $scope.SubmitInfo=[];
 
         for (var i = 0; i<$scope.BookRoom.length; i++){
             var room = $scope.BookRoom[i];
-            var CHECK_IN_DT =  $scope.BookCommonInfo.CHECK_IN_DT;
-            var CHECK_OT_DT =  $scope.BookCommonInfo.CHECK_OT_DT;
+            var CHECK_IN_DT =  util.dateFormat($scope.BookCommonInfo.CHECK_IN_DT);
+            var CHECK_OT_DT =  util.dateFormat($scope.BookCommonInfo.CHECK_OT_DT);
             $scope.SubmitInfo.push({roomSelect:room.RM_ID, roomType:room.RM_TP, CHECK_IN_DT: CHECK_IN_DT
                 ,CHECK_OT_DT: CHECK_OT_DT, leaveTime:util.toLocal($scope.BookCommonInfo.leaveTime), finalPrice: room.finalPrice,
                 roomSource:$scope.BookCommonInfo.roomSource, GuestsInfo: room.GuestsInfo,pay:room.payment});
@@ -610,13 +612,9 @@ app.controller('checkInModalController', function($scope, $http, newCheckInFacto
             }
         }
 
-//    var resetAvail=[];
-//    if (initialString!="singleWalkIn"){
-//        resetAvail =[decodeURI(RoomNumArray[1]),RoomNumArray[2],new Date(RoomNumArray[4].replace("-","/"))
-//            ,new Date(RoomNumArray[5].replace("-","/"))];
-//    }
         alert(JSON.stringify($scope.SubmitInfo));
         newCheckInFactory.submit(JSON.stringify({SubmitInfo:$scope.SubmitInfo,RESV_ID:null,unfilled:null})).success(function(data){
+            $scope.submitLoading = false;
             show("办理成功!");
             $modalInstance.close("checked");
             util.closeCallback();
@@ -626,10 +624,12 @@ app.controller('checkInModalController', function($scope, $http, newCheckInFacto
 
     // for edit
     $scope.editSubmit = function(moneyInvolved){
+        if (testFail()) return;
+        $scope.submitLoading = true;
         for (var i = 0; i<$scope.BookRoom.length; i++){
             var room = $scope.BookRoom[i];
             var CHECK_IN_DT =  util.dateFormat(today);
-            var CHECK_OT_DT =  $scope.BookCommonInfo.CHECK_OT_DT;
+            var CHECK_OT_DT =  util.dateFormat($scope.BookCommonInfo.CHECK_OT_DT);
             $scope.SubmitInfo=[];
             $scope.SubmitInfo.push({roomSelect:room.RM_ID, roomType:room.RM_TP, CHECK_IN_DT: CHECK_IN_DT
                 ,CHECK_OT_DT: CHECK_OT_DT, leaveTime:util.toLocal($scope.BookCommonInfo.leaveTime), finalPrice: room.finalPrice,
@@ -671,12 +671,15 @@ app.controller('checkInModalController', function($scope, $http, newCheckInFacto
             alert(JSON.stringify($scope.SubmitInfo));
             newCheckInFactory.modify(JSON.stringify({SubmitInfo:$scope.SubmitInfo,
                     RM_TRAN_ID:roomST[0].RM_TRAN_ID,initialString:initialString,moneyInvolved:moneyInvolved})).success(function(data){
-//                show(data);
+                $scope.submitLoading = false;
+                show("办理成功!");
                 $modalInstance.close("checked");
                 util.closeCallback();
             });
         }
     };
+
+
     /*********************************************/
 
 })

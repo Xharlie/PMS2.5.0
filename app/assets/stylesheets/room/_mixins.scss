@@ -2,23 +2,24 @@
 
 // Mixin for rooms
 //
-@mixin room-style($room-color,$room-bg,$room-badge){
+@mixin room-style($room-color,$room-bg,$room-border){
 	color: $room-color;
-	border-color: darken($room-color, 10%);
+	border: 1px solid $room-border;
 	background-color: $room-bg;
-	@include gradient-directional($room-bg,darken($room-bg,5%),160deg);
+//	@include gradient-directional($room-bg,darken($room-bg,5%),180deg);
 	
 
 
 	&:hover{
 		background-color: darken($room-bg, 5%);
-		@include gradient-directional(darken($room-bg,5%),darken($room-bg,10%),160deg);
+	//	@include gradient-directional(darken($room-bg,5%),darken($room-bg,10%),160deg);
 		cursor: pointer;
 	}
 
 	span{
-			background-color: $room-badge;
-			box-shadow: inset 1px 1px 1px darken($room-badge, 15%);
+		// 	color: $room-color;
+		//	background-color: darken($room-bg, 7%);;
+		//	box-shadow: inset 0px 1px 10px darken($room-bg, 7%);
 		}
 	
 }

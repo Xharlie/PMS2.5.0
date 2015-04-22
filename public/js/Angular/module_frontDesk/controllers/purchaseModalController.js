@@ -88,6 +88,7 @@ app.controller('purchaseModalController', function($scope, $http,$modalInstance,
 
     $scope.submit = function(){
         if(testFail()) return;
+        $scope.submitLoading = true;
         var today = new Date();
         var pay = $scope.BookCommonInfo.Master.payment;
         var RoomStoreTranArray = null;
@@ -115,6 +116,7 @@ app.controller('purchaseModalController', function($scope, $http,$modalInstance,
 
         merchandiseFactory.buySubmit(StoreTransactionArray,RoomStoreTranArray,ProductInTran).success(function(data){
             show("办理成功!");
+            $scope.submitLoading = false;
             $modalInstance.close("checked");
             util.closeCallback();
         });

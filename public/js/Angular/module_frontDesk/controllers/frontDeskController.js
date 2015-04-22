@@ -299,36 +299,37 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
                 }
             });
         }else if($scope.connectFlag == false && roomST.RM_CONDITION == "有人"){
-            if (roomST.CONN_RM_TRAN_ID == null || roomST.CONN_RM_TRAN_ID==''){
-                var modalInstance = $modal.open({
-                    windowTemplateUrl: 'directiveViews/modalWindowTemplate',
-                    templateUrl: 'directiveViews/singleCheckInModal',
-                    controller: 'checkInModalController',
-                    resolve: {
-                        roomST: function () {
-                            return [roomInfo];          // leave flexibility to have multiple parameters or rooms
-                        },
-                        initialString: function () {
-                            return "editRoom";
-                        }
+            var modalInstance = $modal.open({
+                windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+                templateUrl: 'directiveViews/checkOutModal',
+                controller: 'checkOutModalController',
+                resolve: {
+                    connRM_TRAN_IDs: function () {
+                        return roomST.connRM_TRAN_IDs;          // leave flexibility to have multiple parameters or rooms
+                    },
+                    initialString: function () {
+                        return "checkOut";
+                    },
+                    RM_TRAN_IDFortheRoom: function() {
+                        return roomST.RM_TRAN_ID;
+                    },
+                    ori_Mastr_RM_TRAN_ID: function() {
+                        return roomST.CONN_RM_TRAN_ID;
                     }
-                });
-// to be change, multi room edit
-            }else{
-                var modalInstance = $modal.open({
-                    windowTemplateUrl: 'directiveViews/modalWindowTemplate',
-                    templateUrl: 'directiveViews/singleCheckInModal',
-                    controller: 'checkInModalController',
-                    resolve: {
-                        roomST: function () {
-                            return [roomInfo];          // leave flexibility to have multiple parameters or rooms
-                        },
-                        initialString: function () {
-                            return "editRoom";
-                        }
-                    }
-                });
-            }
+                }
+            })
+        }else if($scope.connectFlag == false && roomST.RM_CONDITION == "脏房"){
+            cusModalFactory.Change2Cleaned(roomST.RM_ID).success(function(data){
+                roomST.RM_CONDITION = "空房";
+                roomST.menuIconAction = util.avaIconAction;
+                roomST.blockClass[0] = "room-empty";
+            });
+        }else if($scope.connectFlag == false && roomST.RM_CONDITION == "维修"){
+            cusModalFactory.Change2Mended(roomST.RM_ID).success(function(data){
+                roomST.RM_CONDITION = "脏房";
+                roomST.menuIconAction = util.dirtIconAction;
+                roomST.blockClass[0] = "room-dirty";
+            });
         }
     };
 
@@ -619,9 +620,10 @@ app.controller('oneKeyShiftController', function($scope, $http, accountingFactor
 
     $scope.changeShiftSubmit = function(){
         if(testFail()) return;
+        $scope.submitLoading = true;
         show($scope.ShiftInfo);
         accountingFactory.changeShiftSubmit($scope.ShiftInfo).success(function(data){
-
+            $scope.submitLoading = false;
         });
     }
 });
