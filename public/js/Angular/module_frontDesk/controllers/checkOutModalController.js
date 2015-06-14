@@ -2,10 +2,10 @@
  * Created by Xharlie on 2/6/15.
  */
 
-app.controller('checkOutModalController', function($scope, $http, newCheckOutFactory, $modalInstance,merchandiseFactory,
+app.controller('checkOutModalController', function($scope, $http, focusInSideFactory,newCheckOutFactory, $modalInstance,merchandiseFactory,
                                                    $timeout, RM_TRAN_IDFortheRoom,connRM_TRAN_IDs,ori_Mastr_RM_TRAN_ID,initialString){
     /********************************************     utility     ***************************************************/
-    var today = util.toLocal(new Date());
+    var today = new Date();
     var tomorrow = new Date(today.getTime()+86400000);
     var defaultTimeString="13:00:00";
 
@@ -26,15 +26,10 @@ app.controller('checkOutModalController', function($scope, $http, newCheckOutFac
         room["DAYS_STAY"] = Math.round( (new Date(room["CHECK_OT_DT"]).getTime()
                             -new Date(room["CHECK_IN_DT"]).getTime())/86400000);
     }
-//
-//    var adjustSelected = function(){
-//        var sumation =0;
-//        for (var i = 0; i < $scope.BookRoom.length; i++){
-//            sumation = sumation + $scope.BookRoom["Sumation"];
-//            $scope.singleRoom['AcctDepo'].push();
-//        }
-//        $scope.singleRoom["sumation"]=sumation;
-//    }
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
 
     $scope.updateSumation=function(){
         var sumation=0;
@@ -71,6 +66,10 @@ app.controller('checkOutModalController', function($scope, $http, newCheckOutFac
 
     $scope.twoDigit = function(limitee){
         return util.Limit(limitee);
+    }
+
+    $scope.abs = function(limitee){
+        return Math.abs(limitee);
     }
 
     var createNewPayByMethod = function(){
@@ -133,6 +132,8 @@ app.controller('checkOutModalController', function($scope, $http, newCheckOutFac
             if(item.penalty.PAY_AMNT!='' && item.penalty.PENALTY_ITEM!='' && item.penalty.PAYER_PHONE!=''){
                 addUp=item.penalty.PAY_AMNT;
             }
+        }else if(item.itemCategory=='newAcct' ){
+            show(1)
         }
         item.paymentRequest = (addUp == 0)? 'n/a' : util.Limit(addUp);
     }
@@ -203,6 +204,17 @@ app.controller('checkOutModalController', function($scope, $http, newCheckOutFac
         return util.Limit(diff/10);
     }
 
+    $scope.checkTransferable= function(){
+        if(initialString == 'checkOut') {
+            for (var i = 0; i < $scope.BookRoom.length; i++) {
+                if (!$scope.BookRoom[i]["selected"]) {
+                    $scope.BookCommonInfo.transferable = true;
+                    return;
+                }
+            }
+        }
+        $scope.BookCommonInfo.transferable = false;
+    };
     /************** ********************************** Initial functions ******************************************* *************/
     var initGetAllAcct= function(){
         newCheckOutFactory.getAllInfo(connRM_TRAN_IDs).success(function(data){
@@ -211,19 +223,20 @@ app.controller('checkOutModalController', function($scope, $http, newCheckOutFac
             $scope.acct["exceedPay"] = [];
             for (var i = 0; i < $scope.BookRoom.length; i++){
                 initNewRoomAcct($scope.BookRoom[i]);
-                var expectedOut = ($scope.BookRoom[i].LEAVE_TM != undefined && $scope.BookRoom[i].LEAVE_TM.length==8)?
-                                   $scope.BookRoom[i].LEAVE_TM : defaultTimeString;
+                if(initialString == 'checkOut'){
+                    var expectedOut = ($scope.BookRoom[i].LEAVE_TM != undefined && $scope.BookRoom[i].LEAVE_TM.length==8)?
+                        $scope.BookRoom[i].LEAVE_TM : defaultTimeString;
 
-                var diff = util.Limit((Number(today) - Number(new Date(util.dateFormat(today)+"T"+expectedOut+".000Z")))/1000/60);
-                if (diff > 0){
-                    $scope.acct["exceedPay"].push({"BILL_TSTMP":util.tstmpFormat(today),"RM_TRAN_ID":$scope.BookRoom[i]["RM_TRAN_ID"],
-                        RM_ID:$scope.BookRoom[i]["RM_ID"],"RM_PAY_AMNT":exceedPayMethod(diff),exceedTime:parseInt(diff)});
+                    var diff = util.Limit((Number(today) - Number(new Date(util.dateFormat(today)+"T"+expectedOut+".000Z")))/1000/60
+                    - today.getTimezoneOffset());
+                    if (diff > 0){
+                        $scope.acct["exceedPay"].push({"BILL_TSTMP":util.tstmpFormat(today),"RM_TRAN_ID":$scope.BookRoom[i]["RM_TRAN_ID"],
+                            RM_ID:$scope.BookRoom[i]["RM_ID"],"RM_PAY_AMNT":exceedPayMethod(diff),exceedTime:parseInt(diff)});
+                    }
                 }
-
                 $scope.BookRoom[i]["selected"] = ($scope.BookRoom[i].RM_TRAN_ID==RM_TRAN_IDFortheRoom);
                 $scope.RM_TRAN_ID_SelectedList[$scope.BookRoom[i].RM_TRAN_ID] = ($scope.BookRoom[i].RM_TRAN_ID==RM_TRAN_IDFortheRoom);
                 $scope.TRAN2RMmapping[$scope.BookRoom[i].RM_TRAN_ID] = $scope.BookRoom[i].RM_ID;
-
             }
             for( var key in $scope.acct){
                 for(var i = 0; i < $scope.acct[key].length; i++){
@@ -256,6 +269,7 @@ app.controller('checkOutModalController', function($scope, $http, newCheckOutFac
             }
             $scope.updateSumation();
             $scope.viewClick=($scope.BookRoom.length>1)?'RoomChoose':'Info';
+            $scope.ready=true;
         });
     }
 
@@ -273,17 +287,22 @@ app.controller('checkOutModalController', function($scope, $http, newCheckOutFac
     /************** ********************************** Common initial setting  ******************************************* ********/
 
     $scope.newItemID = 0;
-    $scope.BookCommonInfo = {selectAll:false,Master:{mastr_RM_TRAN_ID:"",
+    $scope.BookCommonInfo = {selectAll:false,Master:{mastr_RM_TRAN_ID:"",transferable:false,
                              ori_Mastr_RM_TRAN_ID:ori_Mastr_RM_TRAN_ID, payment:createNewPayment()}};
     $scope.watcher = {member:true, selected:true, selectAll:true, isopen:true, addedItems:true,exceedPay:true};
     $scope.TRAN2RMmapping = {};
     $scope.addedItems=[];
     $scope.RM_TRAN_ID_SelectedList={};
     $scope.newItem={};
-
+    $scope.ready=false;
+    focusInSideFactory.tabInit('wholeModal');
+    $timeout(function(){
+        focusInSideFactory.manual('wholeModal');
+    },0)
 
     /************** ********************************** Initialize by conditions ********************************** *************/
-    if(initialString == "checkOut"){
+    $scope.initialString = initialString;
+    if(initialString == "checkOut" || "checkLedger" ){
         initGetAllAcct();
         initGetRoomProduct();
     }
@@ -332,6 +351,7 @@ app.controller('checkOutModalController', function($scope, $http, newCheckOutFac
 
 
     $scope.addItem = function(newItem){
+        if(newItem.showup == null || newItem.showup == "未选") return;
         // clean transition effect Ids
         delete $scope.newAddedIds;
         $scope.newAddedIds = [];
@@ -403,7 +423,6 @@ app.controller('checkOutModalController', function($scope, $http, newCheckOutFac
                     }
                 }
             }
-
         }else{
             // master ID if is connected room
             $scope.BookCommonInfo.Master.mastr_RM_TRAN_ID = RM_TRAN_IDFortheRoom;
@@ -417,7 +436,8 @@ app.controller('checkOutModalController', function($scope, $http, newCheckOutFac
     /************** ********************************** submit  ********************************** *************/
 
     $scope.submit = function(){
-        var today = util.toLocal(new Date());
+        $scope.submitLoading = true;
+        var today = new Date();
         var editAcct = {RoomAcct:[],PenaltyAcct:[],RoomStoreTran:[],RoomDepositAcct:[]};
         for( var key in $scope.acct){
             for(var i = 0; i < $scope.acct[key].length; i++){
@@ -493,12 +513,14 @@ app.controller('checkOutModalController', function($scope, $http, newCheckOutFac
             }
         }
 
-//        show(editAcct);
-//        show(addAcct);
         newCheckOutFactory.checkOT(RoomArray,$scope.BookCommonInfo.Master,editAcct,addAcct,addDepoArray).success(function(data){
-            show(data);
-//            window.close();
+            $scope.submitLoading = false;
+            show("办理成功!");
+            $modalInstance.close("checked");
+            util.closeCallback();
+
         });
+
     }
 })
 

@@ -10,7 +10,6 @@ app.directive('datepickerPopup', ['datepickerPopupConfig', 'dateParser', 'dateFi
                 dateFormat = value || datepickerPopupConfig.datepickerPopup;
                 ngModel.$render();
             });
-
             ngModel.$formatters.push(function (value) {
                 return ngModel.$isEmpty(value) ? value : dateFilter(value, dateFormat);
             });

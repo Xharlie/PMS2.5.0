@@ -19,7 +19,7 @@ $gray-light:             lighten(#000, 46.7%) !default; // #777
 $gray-lighter:           lighten(#000, 93.5%) !default; // #eee
 
 //@@ Pantheo Brand Colors
-$brand-primary:         #6fc7ed;
+$brand-primary:         #19B5FE;
 $brand-success:         #5cb85c; //positive, green
 $brand-info:            #5bc0de !default;
 $brand-warning:         #f0ad4e !default;
@@ -31,12 +31,12 @@ $brand-danger:          #fa303d; //negative, red
 //## Settings for some of the most global styles.
 
 //** Background color for `<body>`.
-$body-bg:               #fcfcfc;
+$body-bg:               #f6f6f6;
 //** Global text color on `<body>`.
-$text-color:            $gray-dark !default;
+$text-color:            #757575 !default;
 
 //** Global textual link color.
-$link-color:            $brand-primary !default;
+$link-color:            #2980B9;//darken($brand-primary, 40%);
 //** Link hover color set via `darken()` function.
 $link-hover-color:      darken($link-color, 15%) !default;
 
@@ -52,8 +52,8 @@ $font-family-serif:       Georgia, "Times New Roman", Times, serif !default;
 $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace !default;
 $font-family-base:        $font-family-sans-serif !default;
 
-$font-size-base:          14px !default;
-$font-size-large:         ceil(($font-size-base * 1.25)) !default; // ~18px
+$font-size-base:          12px !default;
+$font-size-large:         ceil(($font-size-base * 1.00)); // Used to be 1.25
 $font-size-small:         ceil(($font-size-base * 0.85)) !default; // ~12px
 
 $font-size-h1:            floor(($font-size-base * 2.6)) !default; // ~36px
@@ -110,8 +110,8 @@ $padding-xs-horizontal:     5px !default;
 $line-height-large:         1.33 !default;
 $line-height-small:         1.5 !default;
 
-$border-radius-base:        4px !default;
-$border-radius-large:       6px !default;
+$border-radius-base:        3px;//used to be 4
+$border-radius-large:       3px;//sued to be 6
 $border-radius-small:       3px !default;
 
 //** Global color for active items (e.g., navs or dropdowns).
@@ -135,9 +135,9 @@ $table-cell-padding:            8px !default;
 $table-condensed-cell-padding:  5px !default;
 
 //** Default background color used for all tables.
-$table-bg:                      transparent !default;
+$table-bg:                      #eeeeee;//transparent !default;
 //** Background color used for `.table-striped`.
-$table-bg-accent:               #f9f9f9 !default;
+$table-bg-accent:               #f3f3f3;//#f9f9f9 !default;
 //** Background color used for `.table-hover`.
 $table-bg-hover:                #f5f5f5 !default;
 $table-bg-active:               $table-bg-hover !default;
@@ -154,11 +154,11 @@ $btn-font-weight:                normal !default;
 
 $btn-default-color:              #333 !default;
 $btn-default-bg:                 #fff !default;
-$btn-default-border:             #eaeaea;
+$btn-default-border:             #ccc;
 
 $btn-primary-color:              #fff !default;
 $btn-primary-bg:                 $brand-primary !default;
-$btn-primary-border:             darken($btn-primary-bg, 5%) !default;
+$btn-primary-border:             #169DDD;//darken($btn-primary-bg, 5%) !default;
 
 $btn-success-color:              #fff !default;
 $btn-success-bg:                 $brand-success !default;
@@ -316,7 +316,7 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
 //** Number of columns in the grid.
 $grid-columns:              12;
 //** Padding between columns. Gets divided in half for the left and right.
-$grid-gutter-width:         0;
+$grid-gutter-width:         6px;
 // Navbar collapse
 //** Point at which the navbar becomes uncollapsed.
 $grid-float-breakpoint:     $screen-sm-min !default;
@@ -493,9 +493,9 @@ $state-success-text:             #3c763d !default;
 $state-success-bg:               #dff0d8 !default;
 $state-success-border:           darken(adjust-hue($state-success-bg, -10), 5%) !default;
 
-$state-info-text:                #31708f !default;
-$state-info-bg:                  #d9edf7 !default;
-$state-info-border:              darken(adjust-hue($state-info-bg, -10), 7%) !default;
+$state-info-text:                #aaaaaa;//#31708f !default;
+$state-info-bg:                  #ECF3F7;//#d9edf7 !default;
+$state-info-border:              #C0D5E2;//darken(adjust-hue($state-info-bg, -10), 7%) !default;
 
 $state-warning-text:             #8a6d3b !default;
 $state-warning-bg:               #fcf8e3 !default;

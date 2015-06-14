@@ -5,39 +5,39 @@
 // Shape
 //
 
-$room-size:						  110px;
-$room-border-radius:              20px;
+$room-size:						  98px;
+$room-border-radius:              3px;
 $room-margin:					  1px;
 
 // Shadow
 // 
 
-$room-shadow:           		  1px 1px 1px rgba(173,173,173,.5);		  
+$room-shadow:           		  $card-shadow;	 
 
 // Color
 //
 
-$room-full-color:			 	  #fff;
-$room-full-bg:				 	  $brand-primary;
-$room-full-badge:				  rgba(255,255,255,0);
+$room-empty-color:			 	  #fff;
+$room-empty-bg:				 	  #19B5FE;
+$room-empty-border:				  #169DDD;
 
-$room-empty-color:			  	  $gray-light;
-$room-empty-bg:				  	  #fff;
-$room-empty-badge:				  $room-full-bg;
+$room-full-color:			  	  #fff;
+$room-full-bg:				  	  #2980B9;
+$room-full-border:				  #2471A3;
 
-$room-disabled-color:		 	  $gray-lighter;
-$room-disabled-bg:			 	  #e9726d;
-$room-disabled-badge:			  darken($room-disabled-bg, 20%);
+$room-disabled-color:		 	  #fff;
+$room-disabled-bg:			 	  #F8BE3B;
+$room-disabled-border:			  #E4AD32;
 
 $room-dirty-color:			 	  #fff;
-$room-dirty-bg:				 	  #ccc;
-$room-dirty-badge:				  darken($room-dirty-bg, 20%);
+$room-dirty-bg:				 	  #676D72;
+$room-dirty-border:				  #565555;
 
 
 // Modals
 
 $room-modal-color:				  $gray-light;
 $room-modal-height:				  300px;	
-$room-modal-padding-horizontal:	  $content-padding-horizontal*0.75;
-$room-modal-padding-vertical:	  $content-padding-vertical*0.5;
+$room-modal-padding-horizontal:	  15px;
+$room-modal-padding-vertical:	  15px;
 $room-modal-table-spacing:		  24px;

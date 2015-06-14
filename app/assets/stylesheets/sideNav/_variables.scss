@@ -5,8 +5,8 @@
 // Shape
 //
 
-$sideNav-width:						  12%;
-$sideNav-title-height:				  64px;
+$sideNav-width:						  100%;
+$sideNav-height:				 	  $title-height;
 $sideNav-profile-height:			  200px;
 
 $profile-pic-size:					  64px;
@@ -16,5 +16,5 @@ $profile-pic-radius:				  $profile-pic-size/2;
 // Color
 //
 
-$sideNav-bg:						  #444;
-$sideNav-color:						  #fff;
+$sideNav-bg:						  #f8f8f8;
+$sideNav-color:						  #9d9d9d;

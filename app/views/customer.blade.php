@@ -13,14 +13,11 @@
             <div class="animate-switch fixedheight" ng-switch-when ="recentCustomer">
                 <div class="card-actions">
                     <div class="ctrlArea">
-                        <div class="ctrlLeft">
-                            <button class="btn btn-primary" ng-click="addNewCustomer()">添加会员</button>
-                        </div>
                         <div class="ctrlRight">
-                            <input class="input-sm searchBox" type="text"  ng-change = "clearMEMIDfilter()" ng-model = "memberID" placeholder="会员编号">
-                            <input class="input-sm searchBox" type="text" ng-model = "CustomerNM" placeholder="客人姓名">
-                            <input class="input-sm searchBox" type="text" ng-model = "RoomID" placeholder="房间号">
-                            <select class="btn btn-default" ng-model="sorter" >
+                            <input class="input-lg searchBox" type="text"  ng-change = "clearMEMIDfilter()" ng-model = "memberID" placeholder="会员编号">
+                            <input class="input-lg searchBox" type="text" ng-model = "CustomerNM" placeholder="客人姓名">
+                            <input class="input-lg searchBox" type="text" ng-model = "RoomID" placeholder="房间号">
+                            <select class="btn btn-default btn-lg" ng-model="sorter" >
                                 <option value="">排序</option>
                                 <option value="GUEST_NM">姓名</option>
                                 <option value="RM_ID">房号</option>
@@ -75,14 +72,14 @@
                 <div class="card-actions">
                     <div class="ctrlArea fixedheight">
                         <div class="ctrlLeft">
-                            <button class="btn btn-primary" ng-click="addNewCustomer()">添加会员</button>
+                            <button class="btn btn-primary btn-lg" ng-click="addNewCustomer()">添加会员</button>
                         </div>
                         <div class="ctrlRight">
-                            <input class="input-sm searchBox" type="text"  ng-model = "memberID" placeholder="会员编号">
-                            <input class="input-sm searchBox" type="text" ng-model = "memberNM" placeholder="会员姓名">
-                            <input class="input-sm searchBox" type="text" ng-model = "memProvince" placeholder="省份">
-                            <input class="input-sm searchBox" type="text" ng-change = "clearMEMphonefilter()" ng-model = "memPhone" placeholder="手机号">
-                            <select class="btn btn-default" ng-model="memSorter" >
+                            <input class="input-lg searchBox" type="text"  ng-model = "memberID" placeholder="会员编号">
+                            <input class="input-lg searchBox" type="text" ng-model = "memberNM" placeholder="会员姓名">
+                            <input class="input-lg searchBox" type="text" ng-model = "memProvince" placeholder="省份">
+                            <input class="input-lg searchBox" type="text" ng-change = "clearMEMphonefilter()" ng-model = "memPhone" placeholder="手机号">
+                            <select class="btn btn-default btn-lg" ng-model="memSorter" >
                                 <option value="">排序</option>
                                 <option value="MEM_ID">会员卡号</option>
                                 <option value="MEM_TP">会员级别</option>
@@ -141,6 +138,10 @@
         </div>
     </div>
 </div>
-<div style="margin-top: 20%; margin-left: 50%" ng-hide="ready">
-    <img src="assets/dummy/pageloading.gif" />
+<div class="loader loader-main" ng-hide="ready">
+    <div class="loader-inner ball-scale-multiple">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
 </div>

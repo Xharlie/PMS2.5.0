@@ -1,0 +1,31 @@
+//Various Themes
+//---------------------------
+//Bunch of hacks we made to override angularjs defaults
+
+
+//removeArrow is a class Charlie added to override the timepicker arrows. 
+.removeArrow > table > tbody > .text-center {
+    display: none;
+}
+
+.removeArrow > table {
+	background-color: transparent;
+}
+
+.removeArrow input, .removeArrow button {
+    font-size: 12px;
+    line-height: 1.33;
+    padding: 10px 16px;
+    height: 38px;
+
+}
+
+.reserveClick  > td{
+    background-color: #d9edf7 !important;
+}
+
+.greenOut > td, .greenOut {
+    opacity: 0.1;
+    background-color: #79C3F7!important;
+}
+

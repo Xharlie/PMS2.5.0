@@ -35,7 +35,7 @@ app.controller('largeMenuController',function ($scope, $http, $modal, cusModalFa
 
 
     $scope.excAction = function(actionString){
-        if(actionString == '客人修改'){
+        if(actionString == '信息修改'){
             var modalInstance = $modal.open({
                 windowTemplateUrl: 'directiveViews/modalWindowTemplate',
                 templateUrl: 'directiveViews/singleCheckInModal',
@@ -69,17 +69,30 @@ app.controller('largeMenuController',function ($scope, $http, $modal, cusModalFa
                     }
                 }
             });
+        }else if(actionString == '账目查看'){
+            var modalInstance = $modal.open({
+                windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+                templateUrl: 'directiveViews/checkOutModal',
+                controller: 'checkOutModalController',
+                resolve: {
+                    connRM_TRAN_IDs: function () {
+                        return $scope.owner.connRM_TRAN_IDs;          // leave flexibility to have multiple parameters or rooms
+                    },
+                    initialString: function () {
+                        return "checkLedger";
+                    },
+                    RM_TRAN_IDFortheRoom: function() {
+                        return $scope.owner.RM_TRAN_ID;
+                    },
+                    ori_Mastr_RM_TRAN_ID: function() {
+                        return $scope.owner.CONN_RM_TRAN_ID;
+                    }
+                }
+            });
+        }else if(actionString == '商品购买'){
+            angular.element('#largeMenu').remove();
+            window.location.href = '#/merchandise/:' + $scope.owner.RM_TRAN_ID;
         }
-//        }else if(actionString == '商品购买'){
-//            cusModalFactory.Change2Mending($scope.owner.RM_ID).success(function(data){
-//                $scope.owner.RM_CONDITION = "维修";
-//                $scope.owner.menuIconAction = mendIconAction;
-//            });
-//        }else if(actionString == '房间更改'){
-//            cusModalFactory.Change2Mended($scope.owner.RM_ID).success(function(data){
-//                $scope.owner.RM_CONDITION = "脏房";
-//                $scope.owner.menuIconAction = dirtIconAction;
-//            });
 //        }else if(actionString == '房价调整'){
 //            cusModalFactory.Change2Cleaned($scope.owner.RM_ID).success(function(data){
 //                $scope.owner.RM_CONDITION = "空房";

@@ -1,50 +1,53 @@
 
-<div class="menu-large"  id="largeMenu">
+<div class="menu-large container-fluid"  id="largeMenu">
     <!--  在这个div container 内可随意修改,div 外不可加内容包括comment,会被认为是dom sub root,
     另外 id largeMenu不可删去，用作destroy identifier-->
-    <div class="roomAction col-sm-4">
-        <table>
-            <tr ng-repeat="action in iconNAction">
-                <td>
-                    <span ng-class="action.icon"></span>
-                    <a ng-click="excAction(action.action)">{{ action.action }}</a>
-                </td>
+    <div class="pull-left">
+        <ul>
+            <li ng-repeat="action in iconNAction">
+                <span>
+                    <a ng-click="excAction(action.action)" class="btn">
+                        <span ng-class="action.icon"></span>
+                        {{ action.action }}
+                    </a>
+                </span>
                     <!-- icon class 在 public/js/Angular/module_frontDesk/pan_lib/util.js中 变量infoIconAction里 -->
-            </tr>
-        </table>
+            </li>
+        </ul>
     </div>
-    <div ng-switch on="RMviewClick" class="infoPanel col-sm-7">
+    <div ng-switch on="RMviewClick" class="pull-left padded-block">
         <div class="infoAction" ng-switch-when ="infoAction">
-            <table class="roomInfo">
+            <table>
                     <tr>
                         <td>客人</td>
                         <td><label>{{nametogether}}</label></td>
                     </tr>
                     <tr>
-                        <td>入住日期</td>
+                        <td>入住时间</td>
                         <td><label>{{owner.CHECK_IN_DT}}</label></td>
                     </tr>
                     <tr>
-                        <td>预离日期</td>
+                        <td>预离时间</td>
                         <td>
                             <label>{{owner.CHECK_OT_DT}}</label>
-                            <a class="pull-right" style="cursor: pointer; ">续住</a>
+                            <label>{{owner.LEAVE_TM}}</label>
+                            <a class="pull-right" style="cursor: pointer;" ng-click="excAction('信息修改')">续住</a>
                         </td>
                     </tr>
-                    <tr>
+<!--                   <tr>
                         <td>预离时间</td>
                         <td>
                             <label>{{owner.LEAVE_TM}}</label>
                             <a class="pull-right " style="cursor: pointer; ">更改</a>
                         </td>
-                    </tr>
+                    </tr> -->
                     <tr>
                         <td>早叫</td>
-                        <td><label>{{owner.WKP}}</label></td>
+                        <td><label>{{owner.WKP}}未设置</label></td>
                     </tr>
                     <tr>
-                        <td>在接物品</td>
-                        <td><label>{{owner.BRRW}}</label></td>
+                        <td>在借物品</td>
+                        <td><label>{{owner.BRRW}}暂无</label></td>
                     </tr>
                     <tr>
                         <td>日均价</td>
@@ -69,12 +72,12 @@
 <!--                     ng-click="checkItOut(room)"-->
 <!--                     ng-repeat = "room in ConnRooms | orderBy: room.RM_ID " >-->
 <!--                    <table>-->
-<!--                        <tr>-->
-<!--                            <td>{{room.RM_ID}}</td>-->
-<!--                        </tr>-->
-<!--                        <tr>-->
-<!--                            <td>房单号: {{room.RM_TRAN_ID}}</td>-->
-<!--                        </tr>-->
+<!--                        <li>-->
+<!--                            <span>{{room.RM_ID}}</span>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <span>房单号: {{room.RM_TRAN_ID}}</span>-->
+<!--                        </li>-->
 <!--                    </table>-->
 <!--                </div>-->
 <!--            </div>-->
@@ -92,57 +95,57 @@
                 <!--                            <h4>住房帐</h4> -->
                 <div class="CrossTab">
                     <!--                                <label>押金</label> -->
-                    <table class="table table-striped table-bordered">
-                        <tr>
+                    <ul class="table table-striped table-bordered">
+                        <li>
                             <th>时间</th>
                             <th>房单号</th>
                             <th>金额</th>
                             <th>类型</th>
-                        </tr>
-                        <tr  ng-repeat = "depo in AcctDepo | orderBy: DEPO_TSTAMP  ">
-                            <td>{{depo.DEPO_TSTMP}}</td>
-                            <td>{{depo.RM_TRAN_ID}}</td>
-                            <td>{{depo.DEPO_AMNT}}</td>
-                            <!--                                        <td>{{PayMethod(depo.PAY_METHOD)}}</td> -->
-                            <td>押金</td>
-                        </tr>
-                    </table>
+                        </li>
+                        <li  ng-repeat = "depo in AcctDepo | orderBy: DEPO_TSTAMP  ">
+                            <span>{{depo.DEPO_TSTMP}}</span>
+                            <span>{{depo.RM_TRAN_ID}}</span>
+                            <span>{{depo.DEPO_AMNT}}</span>
+                            <!--                                        <span>{{PayMethod(depo.PAY_METHOD)}}</span> -->
+                            <span>押金</span>
+                        </li>
+                    </ul>
                 </div>
                 <div class="CrossTab">
                     <!--                                <label>房费</label> -->
-                    <table class="table table-striped table-bordered">
-                        <!--                                     <tr>
+                    <ul class="table table-striped table-bordered">
+                        <!--                                     <li>
                                                                 <th>时间</th>
                                                                 <th>房单号</th>
                                                                 <th>金额</th>
                                                                 <th>类型</th>
-                                                            </tr> -->
-                        <tr  ng-repeat = "bill in AcctPay | orderBy: BILL_TSTMP  ">
-                            <td>{{bill.BILL_TSTMP}}</td>
-                            <td>{{bill.RM_TRAN_ID}}</td>
-                            <td>{{bill.RM_PAY_AMNT}}</td>
-                            <!--                                         <td>{{PayMethod(bill.RM_PAY_METHOD)}}</td> -->
-                            <td>房费</td>
-                        </tr>
-                    </table>
+                                                            </li> -->
+                        <li  ng-repeat = "bill in AcctPay | orderBy: BILL_TSTMP  ">
+                            <span>{{bill.BILL_TSTMP}}</span>
+                            <span>{{bill.RM_TRAN_ID}}</span>
+                            <span>{{bill.RM_PAY_AMNT}}</span>
+                            <!--                                         <span>{{PayMethod(bill.RM_PAY_METHOD)}}</span> -->
+                            <span>房费</span>
+                        </li>
+                    </ul>
                 </div>
                 <div class="CrossTab">
                     <!--                                 <h4>商品帐</h4> -->
-                    <table class="table table-striped table-bordered">
-                        <!--                                  <tr>
+                    <ul class="table table-striped table-bordered">
+                        <!--                                  <li>
                                                            <th>时间</th>
                                                                 <th>房单号</th>
                                                                 <th>金额</th>
                                                                 <th>类型</th>
-                                                            </tr> -->
-                        <tr  ng-repeat = "store in AcctStore | orderBy: STR_TRAN_TSTAMP  ">
-                            <td>{{store.STR_TRAN_TSTAMP}}</td>
-                            <td>{{store.RM_TRAN_ID}}</td>
-                            <td>{{store.STR_PAY_AMNT}}</td>
-                            <!--                                         <td>{{PayMethod(store.STR_PAY_METHOD)}}</td> -->
-                            <td>商品</td>
-                        </tr>
-                    </table>
+                                                            </li> -->
+                        <li  ng-repeat = "store in AcctStore | orderBy: STR_TRAN_TSTAMP  ">
+                            <span>{{store.STR_TRAN_TSTAMP}}</span>
+                            <span>{{store.RM_TRAN_ID}}</span>
+                            <span>{{store.STR_PAY_AMNT}}</span>
+                            <!--                                         <span>{{PayMethod(store.STR_PAY_METHOD)}}</span> -->
+                            <span>商品</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
 

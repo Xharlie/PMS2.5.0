@@ -16,17 +16,18 @@ th {
 .table {
   width: 100%;
   max-width: 100%;
-  margin-bottom: $line-height-computed;
+  //margin-bottom: $line-height-computed;
   // Cells
   > thead,
   > tbody,
   > tfoot {
     > tr {
-      > th,
-      > td {
-        padding: $table-cell-padding;
+      > th {
         line-height: $line-height-base;
-        vertical-align: top;
+      }
+
+      > td {
+        line-height: $line-height-base;
         border-top: 1px solid $table-border-color;
       }
     }
@@ -171,7 +172,7 @@ table {
 .table-responsive {
   @media screen and (max-width: $screen-xs-max) {
     width: 100%;
-    margin-bottom: ($line-height-computed * 0.75);
+ //   margin-bottom: ($line-height-computed * 0.75);
     overflow-y: hidden;
     overflow-x: auto;
     -ms-overflow-style: -ms-autohiding-scrollbar;
@@ -180,7 +181,7 @@ table {
 
     // Tighten up spacing
     > .table {
-      margin-bottom: 0;
+   //   margin-bottom: 0;
 
       // Ensure the content doesn't wrap
       > thead,

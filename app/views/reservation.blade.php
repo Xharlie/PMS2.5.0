@@ -4,17 +4,17 @@
         <div class="card-actions">
             <div class="ctrlArea">
                 <div class="ctrlLeft">
-                    <button ng-click = "addNew()" class="btn btn-primary btn-md">新预定</button>
+                    <button ng-click = "addNew()" class="btn btn-primary btn-lg">新预定</button>
                 </div>
                 <div class="ctrlRight">
-                    <input type="text"  ng-model = "resvName" placeholder="预订人" class="searchBox input-sm">
-                    <select ng-model="roomType" class="btn btn-default btn-md">
+                    <input type="text"  ng-model = "resvName" placeholder="预订人" class="searchBox input-lg">
+                    <select ng-model="roomType" class="btn btn-default btn-lg">
                         <option value="">所有房型</option>>
                         <option value="Single">单人床房</option>
                         <option value="Double">双人床房</option>
                         <option value="Kingbed">大床房</option>
                     </select>
-                    <select ng-model="sorter" class="btn btn-default btn-md" >
+                    <select ng-model="sorter" class="btn btn-default btn-lg" >
                         <option value="">排序</option>
                         <option value="GUEST_NM">住客姓名</option>
                         <option value="RESVER_CARDNM">预定卡号</option>
@@ -55,7 +55,7 @@
                             ng-dblclick="fastAction(reserve)"
                             sglclick="open(reserve)" onclick="event.preventDefault();" ng-class="reserve.blockClass" block-class="blockClass"
                             not-show ="menuNoshow" pop-menu  menu-type="'small-menu'" owner="reserve"
-                            icon-n-action="iconAndAction.resvIconAction" ng-transclude>
+                            icon-n-action="reserve.iconAndAction.resvIconAction" ng-transclude>
                             <td >
                                 {{reserve.RESV_ID}}
                             </td>
@@ -68,10 +68,10 @@
                             <td >
                                 {{reserve.RESVER_PHONE}}
                             </td>
-                            <td >
+                            <td ng-class="reserve.timeOutClass">
                                 {{reserve.CHECK_IN_DT}}
                             </td>
-                            <td >
+                            <td ng-class="reserve.timeOutClass">
                                 {{reserve.RESV_LATEST_TIME}}
                             </td>
                             <td >
@@ -95,6 +95,10 @@
         </div>
     </div>
 </div>
-<div style="margin-top: 20%; margin-left: 50%" ng-hide="ready">
-    <img src="assets/dummy/pageloading.gif" />
+<div class="loader loader-main" ng-hide="ready">
+    <div class="loader-inner ball-scale-multiple">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
 </div>

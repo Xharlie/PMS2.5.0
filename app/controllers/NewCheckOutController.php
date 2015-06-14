@@ -6,62 +6,82 @@
  * Time: 11:53 PM
  */
 class NewCheckOutController extends BaseController{
-     function checkOutGetInfo(){
-         $info = Input::all();
+    function checkOutGetInfo(){
+        $info = Input::all();
 
-         $allInfoArray = DB::table('RoomTran')
-                    ->whereIn('RoomTran.RM_TRAN_ID',$info)
-                    ->leftjoin('Rooms','Rooms.RM_TRAN_ID','=','RoomTran.RM_TRAN_ID')
-                    ->leftjoin('RoomsTypes','Rooms.RM_TP','=','RoomsTypes.RM_TP')
-                    ->get();
-         $acct["AcctPay"] = array();
-         $acct["AcctDepo"] = array();
-         $acct["AcctStore"] = array();
-         $acct["AcctPenalty"] = array();
-         for ($i = 0; $i < count($allInfoArray); $i++){
+        $allInfoArray = DB::table('RoomTran')
+            ->whereIn('RoomTran.RM_TRAN_ID',$info)
+            ->leftjoin('Rooms','Rooms.RM_TRAN_ID','=','RoomTran.RM_TRAN_ID')
+            ->leftjoin('RoomsTypes','Rooms.RM_TP','=','RoomsTypes.RM_TP')
+            ->get();
+        $acct["AcctPay"] = array();
+        $acct["AcctDepo"] = array();
+        $acct["AcctStore"] = array();
+        $acct["AcctPenalty"] = array();
 
-             $allInfoArray[$i] = (array)$allInfoArray[$i];
+        for ($i = 0; $i < count($allInfoArray); $i++){
 
-             $allInfoArray[$i]["Customers"]= DB::table('Customers')
-                 ->where('Customers.RM_TRAN_ID',$allInfoArray[$i]["RM_TRAN_ID"])
-                 ->get();
+//             $allInfoArray[$i] = (array)$allInfoArray[$i];
 
-             $acctPay = DB::table('RoomAcct')
-                                        ->join('RoomTran','RoomTran.RM_TRAN_ID','=','RoomAcct.RM_TRAN_ID')
-                                        ->where('TKN_RM_TRAN_ID','=',$allInfoArray[$i]["RM_TRAN_ID"])
-                                        ->where('RoomAcct.FILLED', '=', 'F')
-                                        ->get();
+            $allInfoArray[$i]->Customers= DB::table('Customers')
+                ->where('Customers.RM_TRAN_ID',$allInfoArray[$i]->RM_TRAN_ID)
+                ->get();
+//             return Response::json($allInfoArray[$i]->RM_TRAN_ID);
 
-             $acctRoomDepo= DB::table('RoomDepositAcct')
-                                        ->join('RoomTran','RoomTran.RM_TRAN_ID','=','RoomDepositAcct.RM_TRAN_ID')
-                                        ->where('RoomDepositAcct.RM_TRAN_ID',$allInfoArray[$i]["RM_TRAN_ID"])
-                                        ->where('RoomDepositAcct.FILLED', '=', 'F')
-                                        ->get();
 
-             $acctRoomStore = DB::table('RoomStoreTran')
-                                             ->join('RoomTran','RoomTran.RM_TRAN_ID','=','RoomStoreTran.RM_TRAN_ID')
-                                             ->where('RoomStoreTran.TKN_RM_TRAN_ID',$allInfoArray[$i]["RM_TRAN_ID"])
-                                             ->leftjoin('StoreTransaction','StoreTransaction.STR_TRAN_ID','=','RoomStoreTran.STR_TRAN_ID')
-                                             ->leftjoin('ProductInTran','ProductInTran.STR_TRAN_ID','=','RoomStoreTran.STR_TRAN_ID')
-                                             ->leftjoin('ProductInfo','ProductInfo.PROD_ID','=','ProductInTran.PROD_ID')
-                                             ->where('RoomStoreTran.FILLED', '=', 'F')
-                                             ->get();
+            $acctPay = DB::table('RoomAcct')
+                ->join('RoomTran','RoomTran.RM_TRAN_ID','=','RoomAcct.RM_TRAN_ID')
+                ->where('TKN_RM_TRAN_ID','=',$allInfoArray[$i]->RM_TRAN_ID)
+                ->where(function($query)
+                {
+                    $query->where('RoomAcct.FILLED', '!=', 'T')
+                        ->orWhereNull('RoomAcct.FILLED');
+                })
+                ->get();
 
-             $acctPenalty = DB::table('PenaltyAcct')
-                                         ->join('RoomTran','RoomTran.RM_TRAN_ID','=','PenaltyAcct.RM_TRAN_ID')
-                                         ->where('TKN_RM_TRAN_ID','=',$allInfoArray[$i]["RM_TRAN_ID"])
-                                         ->where('PenaltyAcct.FILLED', '=', 'F')
-                                         ->get();
+            $acctRoomDepo= DB::table('RoomDepositAcct')
+                ->join('RoomTran','RoomTran.RM_TRAN_ID','=','RoomDepositAcct.RM_TRAN_ID')
+                ->where('RoomDepositAcct.RM_TRAN_ID','=',$allInfoArray[$i]->RM_TRAN_ID)
+                ->where(function($query)
+                {
+                    $query->where('RoomDepositAcct.FILLED', '!=', 'T')
+                        ->orWhereNull('RoomDepositAcct.FILLED');
+                })
+                ->get();
 
-             $acct["AcctPay"] = array_merge($acct["AcctPay"],(array)$acctPay);
-             $acct["AcctDepo"] = array_merge($acct["AcctDepo"],(array)$acctRoomDepo);
-             $acct["AcctStore"] = array_merge($acct["AcctStore"],(array)$acctRoomStore);
-             $acct["AcctPenalty"] = array_merge($acct["AcctPenalty"],(array)$acctPenalty);
+            $acctRoomStore = DB::table('RoomStoreTran')
+                ->join('RoomTran','RoomTran.RM_TRAN_ID','=','RoomStoreTran.RM_TRAN_ID')
+                ->where('RoomStoreTran.TKN_RM_TRAN_ID',$allInfoArray[$i]->RM_TRAN_ID)
+                ->leftjoin('StoreTransaction','StoreTransaction.STR_TRAN_ID','=','RoomStoreTran.STR_TRAN_ID')
+                ->leftjoin('ProductInTran','ProductInTran.STR_TRAN_ID','=','RoomStoreTran.STR_TRAN_ID')
+                ->leftjoin('ProductInfo','ProductInfo.PROD_ID','=','ProductInTran.PROD_ID')
+                ->where(function($query)
+                {
+                    $query->where('RoomStoreTran.FILLED', '!=', 'T')
+                        ->orWhereNull('RoomStoreTran.FILLED');
+                })
+                ->get();
 
-         }
+            $acctPenalty = DB::table('PenaltyAcct')
+                ->join('RoomTran','RoomTran.RM_TRAN_ID','=','PenaltyAcct.RM_TRAN_ID')
+                ->where('TKN_RM_TRAN_ID','=',$allInfoArray[$i]->RM_TRAN_ID)
+                ->where('PenaltyAcct.FILLED', '!=', 'T')
+                ->where(function($query)
+                {
+                    $query->where('PenaltyAcct.FILLED', '!=', 'T')
+                        ->orWhereNull('PenaltyAcct.FILLED');
+                })
+                ->get();
 
-         return Response::json(array("room"=>$allInfoArray,"acct"=>$acct));
-     }
+            $acct["AcctPay"] = array_merge($acct["AcctPay"],(array)$acctPay);
+            $acct["AcctDepo"] = array_merge($acct["AcctDepo"],(array)$acctRoomDepo);
+            $acct["AcctStore"] = array_merge($acct["AcctStore"],(array)$acctRoomStore);
+            $acct["AcctPenalty"] = array_merge($acct["AcctPenalty"],(array)$acctPenalty);
+
+        }
+
+        return Response::json(array("room"=>$allInfoArray,"acct"=>$acct));
+    }
 
     function checkOutSubmit(){
         $RoomArray = Input::get('RoomArray');
@@ -147,44 +167,44 @@ class NewCheckOutController extends BaseController{
         }
     }
 
-   /* old check out
-    function checkOutGetInfo(){
-         $info = Input::all();
+    /* old check out
+     function checkOutGetInfo(){
+          $info = Input::all();
 
-         $allInfoArray = DB::table('RoomTran')
-                    ->whereIn('RoomTran.RM_TRAN_ID',$info)
-                    ->leftjoin('Rooms','Rooms.RM_TRAN_ID','=','RoomTran.RM_TRAN_ID')
-                    ->leftjoin('RoomsTypes','Rooms.RM_TP','=','RoomsTypes.RM_TP')
-                    ->get();
-         $allInfoArray["AcctPay"] = [];
-         $allInfoArray["AcctDepo"] = [];
-         $allInfoArray["AcctStore"] = [];
-         for ($i = 0; $i < count($allInfoArray); $i++){
+          $allInfoArray = DB::table('RoomTran')
+                     ->whereIn('RoomTran.RM_TRAN_ID',$info)
+                     ->leftjoin('Rooms','Rooms.RM_TRAN_ID','=','RoomTran.RM_TRAN_ID')
+                     ->leftjoin('RoomsTypes','Rooms.RM_TP','=','RoomsTypes.RM_TP')
+                     ->get();
+          $allInfoArray["AcctPay"] = [];
+          $allInfoArray["AcctDepo"] = [];
+          $allInfoArray["AcctStore"] = [];
+          for ($i = 0; $i < count($allInfoArray); $i++){
 
-             $allInfoArray[$i] = (array)$allInfoArray[$i];
+              $allInfoArray[$i] = (array)$allInfoArray[$i];
 
-             $allInfoArray[$i]["AcctPay"]= DB::table('RoomAcct')
-                                        ->where('RM_TRAN_ID','=',$allInfoArray[$i]["RM_TRAN_ID"])
-                                        ->get();
-
-             $allInfoArray[$i]["AcctDepo"]= DB::table('RoomDepositAcct')
-                                         ->where('RoomDepositAcct.RM_TRAN_ID',$allInfoArray[$i]["RM_TRAN_ID"])
+              $allInfoArray[$i]["AcctPay"]= DB::table('RoomAcct')
+                                         ->where('RM_TRAN_ID','=',$allInfoArray[$i]["RM_TRAN_ID"])
                                          ->get();
 
-             $allInfoArray[$i]["AcctStore"]= DB::table('RoomStoreTran')
-                                             ->where('RoomStoreTran.RM_TRAN_ID',$allInfoArray[$i]["RM_TRAN_ID"])
-                                             ->leftjoin('StoreTransaction','StoreTransaction.STR_TRAN_ID','=','RoomStoreTran.STR_TRAN_ID')
-                                             ->leftjoin('ProductInTran','ProductInTran.STR_TRAN_ID','=','RoomStoreTran.STR_TRAN_ID')
-                                             ->leftjoin('ProductInfo','ProductInfo.PROD_ID','=','ProductInTran.PROD_ID')
-                                             ->get();
-             $allInfoArray[$i]["Customers"]= DB::table('Customers')
-                                             ->where('Customers.RM_TRAN_ID',$allInfoArray[$i]["RM_TRAN_ID"])
-                                             ->get();
-         }
+              $allInfoArray[$i]["AcctDepo"]= DB::table('RoomDepositAcct')
+                                          ->where('RoomDepositAcct.RM_TRAN_ID',$allInfoArray[$i]["RM_TRAN_ID"])
+                                          ->get();
 
-         return Response::json($allInfoArray);
-     }
-*/
+              $allInfoArray[$i]["AcctStore"]= DB::table('RoomStoreTran')
+                                              ->where('RoomStoreTran.RM_TRAN_ID',$allInfoArray[$i]["RM_TRAN_ID"])
+                                              ->leftjoin('StoreTransaction','StoreTransaction.STR_TRAN_ID','=','RoomStoreTran.STR_TRAN_ID')
+                                              ->leftjoin('ProductInTran','ProductInTran.STR_TRAN_ID','=','RoomStoreTran.STR_TRAN_ID')
+                                              ->leftjoin('ProductInfo','ProductInfo.PROD_ID','=','ProductInTran.PROD_ID')
+                                              ->get();
+              $allInfoArray[$i]["Customers"]= DB::table('Customers')
+                                              ->where('Customers.RM_TRAN_ID',$allInfoArray[$i]["RM_TRAN_ID"])
+                                              ->get();
+          }
+
+          return Response::json($allInfoArray);
+      }
+ */
 //    function getProductNM(){
 //        $name = DB::table('ProductInfo')->lists('PROD_NM');
 //        return $name;

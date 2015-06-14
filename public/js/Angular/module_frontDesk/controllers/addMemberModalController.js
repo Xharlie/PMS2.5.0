@@ -1,8 +1,16 @@
 /**
  * Created by Xharlie on 2/24/15.
  */
-app.controller('addMemberModalController', function($scope, $http, $modalInstance,$timeout,initialString, customerFactory,member){
+app.controller('addMemberModalController', function($scope, $http, focusInSideFactory,$modalInstance,$timeout,initialString, customerFactory,member){
 
+    /********************************************     validation     ***************************************************/
+    $scope.hasError = function(btnPass){
+        if(eval("$scope."+btnPass)==null) eval("$scope."+btnPass+"=0");
+        eval("$scope."+btnPass+"++");
+    }
+    $scope.noError = function(btnPass){
+        eval("$scope."+btnPass+"--");
+    }
     /********************************************     utility     ***************************************************/
 
     var createNewPayByMethod = function(){
@@ -28,6 +36,11 @@ app.controller('addMemberModalController', function($scope, $http, $modalInstanc
     var testFail = function(){
         return false;
     }
+
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
 
     /************** ********************************** Initial functions ******************************************* *************/
     var initAddMember = function(){
@@ -70,6 +83,8 @@ app.controller('addMemberModalController', function($scope, $http, $modalInstanc
     };
     $scope.memPay = {payment : createNewPayment()};
     $scope.MemberTPs = "";
+    $scope.submitLoading = false;
+
 //    $scope.watcher = {member:true, selected:true, selectAll:true, isopen:true, addedItems:true,exceedPay:true};
 
     /************** ********************************** Initialize by conditions ********************************** *************/
@@ -134,12 +149,13 @@ app.controller('addMemberModalController', function($scope, $http, $modalInstanc
 
     $scope.submit = function(){
         if (testFail()) return;
+        $scope.submitLoading = true;
         if($scope.memPay.payment.paymentRequest == 0 ||$scope.memPay.payment.paymentRequest =="" ){
             $scope.memPay.payment = null;
         }
         $scope.BookCommonInfo["IN_TSTMP"] = util.tstmpFormat(new Date());
         customerFactory.addMemberSubmit($scope.BookCommonInfo, $scope.memPay.payment).success(function(data){
-//            show(data);
+            $scope.submitLoading = false;
             $modalInstance.close("checked");
             util.closeCallback();
         });
@@ -147,9 +163,10 @@ app.controller('addMemberModalController', function($scope, $http, $modalInstanc
 
     $scope.editSubmit = function(moneyInvolved){
         if (testFail()) return;
+        $scope.submitLoading = true;
         if(!moneyInvolved) $scope.memPay.payment = null;
         customerFactory.editMemberSubmit($scope.BookCommonInfo, $scope.memPay.payment).success(function(data){
-//            show(data);
+            $scope.submitLoading = false;
             $modalInstance.close("checked");
             util.closeCallback();
         });

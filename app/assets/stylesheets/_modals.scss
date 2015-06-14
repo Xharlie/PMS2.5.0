@@ -1,0 +1,20 @@
+//
+// Modals
+// --------------------------------------------------
+// Add to Bootstrap's modal design
+
+.modal{
+	width: 640px;
+	margin: 64px auto 64px auto;
+	height: auto;
+}
+
+.modal-body{
+	overflow: hidden;
+	padding:0;
+}
+
+.modal-header{
+	font-size: 16px;
+	height: 64px;
+}

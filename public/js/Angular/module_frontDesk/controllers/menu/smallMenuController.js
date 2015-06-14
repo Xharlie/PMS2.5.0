@@ -104,6 +104,8 @@ app.controller('smallMenuController',function ($scope, $http,cusModalFactory,$mo
                     }
                 }
             });
+        }else if(actionString == '取消预定'){
+            show('待开发');
         }
         /*********************************          merchandise          **************************************/
         else if(actionString == '商品购买'){

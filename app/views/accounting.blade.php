@@ -1,51 +1,51 @@
 <!doctype html>
-
 <div class="col-sm-12" ng-show="ready">
     <div class="card card-default">
         <div class="card-actions">
             <div class="ctrlArea" xmlns="http://www.w3.org/1999/html">
                 <div class="col-sm-6">
-                    <div class="col-sm-5">
-                        <label class="col-sm-1" style="line-height: 31px;">从</label>
-                        <div class="input-group datePick col-sm-11" ng-controller="Datepicker" >
-                            <input type="text" class="form-control" show-weeks="false" datepicker-popup="yyyy-MM-dd"
+                    <div class="col-sm-4">
+                        <div class="input-group datePick" ng-controller="Datepicker" >
+                            <input type="text" class="form-control input-lg" show-weeks="false" datepicker-popup="yyyy-MM-dd"
                                    ng-model="QueryDates.startDate" is-open="opened1" min-date="twoDaysBefore" max-date="QueryDates.endDate"
                                    datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
                                    ng-required="true " close-text="Close" datepicker-append-to-body="true"/>
                             <span class="input-group-btn">
-                                <button type="button" class="btn btn-default" ng-click="open1($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                <button type="button" class="btn btn-default btn-lg" ng-click="open1($event)"><i class="glyphicon glyphicon-calendar"></i></button>
                             </span>
                         </div>
                     </div>
-                    <div class="col-sm-5">
-                        <label class="col-sm-1" style="line-height: 31px;">到</label>
-                        <div class="input-group datePick col-sm-11" ng-controller="Datepicker" >
-                            <input type="text" class="form-control" show-weeks="false" datepicker-popup="yyyy-MM-dd"
+                    <div class="col-sm-1">
+                        <label style="margin:10px 0 0 20%">至</label>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="input-group datePick" ng-controller="Datepicker" >
+                            <input type="text" class="form-control input-lg" show-weeks="false" datepicker-popup="yyyy-MM-dd"
                                    ng-model="QueryDates.endDate" is-open="opened2" min-date="QueryDates.startDate" max-date="QueryDates.today"
                                    datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
                                    ng-required="true" close-text="Close"
                                    datepicker-append-to-body="true"/>
                             <span class="input-group-btn">
-                                <button type="button" class="btn btn-default" ng-click="open2($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                <button type="button" class="btn btn-default btn-lg" ng-click="open2($event)"><i class="glyphicon glyphicon-calendar"></i></button>
                             </span>
                         </div>
                     </div>
                     <div class="col-sm-2">
-                        <button class="btn btn-primary" ng-click="refreshResult()">
+                        <button class="btn btn-primary btn-lg" ng-click="refreshResult()">
                             刷新
                         </button>
                     </div>
                 </div>
                 <div class="ctrlRight col-sm-6">
                     <div class="col-sm-2">
-                        <select class="btn btn-default form-control" ng-model="Type" ng-init="Type='';">
+                        <select class="btn btn-default form-control btn-lg" ng-model="Type" ng-init="Type='';">
                             <option value="">费用或结算</option>
                             <option value="CON">费用</option>
                             <option value="PAY">结算</option>
                         </select>
                     </div>
                     <div class=" col-sm-2">
-                        <select class="btn btn-default form-control" ng-model="class" >
+                        <select class="btn btn-default btn-lg form-control" ng-model="class" >
                             <option value="">所有类别</option>
                             <option value="存入押金">存入押金</option>
                             <option value="退还押金">退还押金</option>
@@ -55,7 +55,7 @@
                         </select>
                     </div>
                     <div class="col-sm-2">
-                        <select class="btn btn-default form-control" ng-model="payMethod" >
+                        <select class="btn btn-default btn-lg form-control" ng-model="payMethod" >
                             <option value="">所有付费法</option>
                             <option value="现金">现金</option>
                             <option value="信用卡">信用卡</option>
@@ -64,7 +64,7 @@
                         </select>
                     </div>
                     <div class=" col-sm-2">
-                        <select class="btn btn-default form-control" ng-model="sorter" >
+                        <select class="btn btn-default btn-lg form-control" ng-model="sorter" >
                             <option value="">排序</option>
                             <option value="ACCT_ID">帐单号</option>
                             <option value="TSTMP">发生时间</option>
@@ -77,7 +77,7 @@
                         </select>
                     </div>
                     <div class=" col-sm-3">
-                        <input class="form-control" type="text"  ng-model = "searchAll" placeholder="智能搜索">
+                        <input class="form-control searchBox input-lg" type="text"  ng-model = "searchAll" placeholder="智能搜索">
                     </div>
                 </div>
             </div>
@@ -98,18 +98,19 @@
             			<th>备注</th>
             		</tr>
                     <tr ng-repeat = "acct in acctInfo  | filter : {CLASS: class,PAY_METHOD: payMethod}
-                    | filter:TypeFilter  | filter:searchAll | orderBy:sorter as collections "
+                    | filter:TypeFilter  | filter:searchAll | orderBy:sorter:true as collections "
                         ng-mouseenter="LightUp(acct)"
                         ng-mouseleave = 'LightBack(acct)'
-                        ng-click="open(acct)" ng-class="acct.blockClass" >
+                        ng-dblclick="open(acct)" ng-class="acct.blockClass"
+                        onclick="event.preventDefault();">
 <!--                            <td >-->
 <!--                                <button class="btn btn-default btn-xs" ng-click="modify(acct)">调整</button>-->
 <!--                            </td>-->
                         <td >
                             {{acct.ACCT_ID}}
                         </td>
-                        <td >
-                            {{acct.TSTMP}}
+                        <td>
+                            {{acct.adjustedTSTMP}}
                         </td>
                         <td >
                             {{acct.RM_ID}}
@@ -139,13 +140,13 @@
                          </td>
                          <td >
                          </td>
-                         <td style="font-weight:bold; font-size: medium">
+                         <td>
                              总计
                          </td>
-                         <td style="font-weight: bold;font-size: medium">
+                         <td>
                              消费: {{toFixed(Conaddup)}}
                          </td>
-                         <td style="font-weight: bold;font-size: medium">
+                         <td>
                              结算入账: {{toFixed(Payaddup)}}
                          </td>
                          <td >
@@ -156,6 +157,10 @@
         </div>
     </div>
 </div>
-<div style="margin-top: 20%; margin-left: 50%" ng-hide="ready">
-    <img src="assets/dummy/pageloading.gif" />
+<div class="loader loader-main" ng-hide="ready">
+    <div class="loader-inner ball-scale-multiple">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
 </div>

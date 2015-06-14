@@ -11,7 +11,14 @@ class AccountingController extends BaseController{
     public function summerize(){
         // get last shift info, last end time is the start time
         $lastShiftId = DB::table('Shifts')->max("SHFT_ID");
-        $lastShift = DB::table('Shifts')->where("SHFT_ID",$lastShiftId)->get()[0];
+        if($lastShiftId != null){
+            $lastShift = DB::table('Shifts')->where("SHFT_ID",$lastShiftId)->get()[0];
+        }else{
+            $lastShift = (Object)Array(
+                                "SHFT_END_PSS2_CSH"=> 0,
+                                "SHFT_END_TSTMP" => (new DateTime())->format("Y-m-d H:i:s")
+                        );
+        }
         $sum = array();
         $endTS = "'".(new DateTime())->format("Y-m-d H:i:s")."'";
         $startTS ="'".($lastShift->SHFT_END_TSTMP)."'";
@@ -179,6 +186,9 @@ class AccountingController extends BaseController{
         return Response::json($allAcct);
     }
 
+    public function getRoomAcct($DB,$ACCT_ID){
+
+    }
 
     public function getTargetAcct($DB,$ACCT_ID){
         $targetAcct="";
@@ -197,9 +207,7 @@ class AccountingController extends BaseController{
             RoomDepositAcct.PAY_METHOD as PAY_METHOD,
             '' as 'CONSUME_PAY_AMNT',RoomDepositAcct.DEPO_AMNT as 'SUBMIT_PAY_AMNT',''as RMRK"))
                 ->get();
-
         }elseif($DB == "PenaltyAcct"){
-
             $targetAcct =  DB::table('PenaltyAcct')
                 ->where("PenaltyAcct.PEN_BILL_ID","$ACCT_ID")
                 ->leftjoin('RoomTran','RoomTran.RM_TRAN_ID','=','PenaltyAcct.RM_TRAN_ID')
@@ -209,9 +217,7 @@ class AccountingController extends BaseController{
             '' as PAY_METHOD,PenaltyAcct.PNLTY_PAY_AMNT as 'CONSUME_PAY_AMNT','' as 'SUBMIT_PAY_AMNT',
             PenaltyAcct.BRK_EQPMT_RMRK as RMRK"))
                 ->get();
-
         }elseif($DB == "RoomAcct"){
-
             $targetAcct =  DB::table('RoomAcct')
                 ->where("RoomAcct.RM_BILL_ID","$ACCT_ID")
                 ->leftjoin('RoomTran','RoomTran.RM_TRAN_ID','=','RoomAcct.RM_TRAN_ID')
@@ -220,9 +226,7 @@ class AccountingController extends BaseController{
             RoomAcct.RM_TRAN_ID as RM_TRAN_ID,'' as PAYER_NM,'' as PAYER_PHONE,
             '' as PAY_METHOD,RoomAcct.RM_PAY_AMNT as 'CONSUME_PAY_AMNT','' as 'SUBMIT_PAY_AMNT',''as RMRK" ))
                 ->get();
-
         }elseif($DB == "StoreTransaction"){
-
             $targetAcct =  DB::table('StoreTransaction')
                 ->where("StoreTransaction.STR_TRAN_ID","$ACCT_ID")
                 ->leftjoin('RoomStoreTran','RoomStoreTran.STR_TRAN_ID','=','StoreTransaction.STR_TRAN_ID')
@@ -236,7 +240,6 @@ class AccountingController extends BaseController{
             END AS 'SUBMIT_PAY_AMNT','' as RMRK"))
                 ->get();
         }
-
         return Response::json($targetAcct);
     }
 

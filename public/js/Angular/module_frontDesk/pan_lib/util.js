@@ -81,18 +81,26 @@ var util = {
     ,     //脏房菜单
     mendIconAction : [{icon:"glyphicon glyphicon-send",action:"入住办理"},
         {icon:"glyphicon glyphicon-cog",action:"维修完毕"}]
-    ,     //维修房菜单
+    //,     //维修房菜单
+    //infoIconAction :  [{icon:"glyphicon glyphicon-barcode",action:"制门卡"},
+    //    {icon:"glyphicon glyphicon-send",action:"客人修改"},
+    //    {icon:"glyphicon glyphicon-shopping-cart",action:"商品购买"},
+    //    {icon:"glyphicon glyphicon-pencil",action:"换房"},
+    //    {icon:"glyphicon glyphicon-list-alt  ",action:"房价调整"},
+    //    {icon:"glyphicon glyphicon-arrow-left",action:"退房办理"}]
+    ,
     infoIconAction :  [{icon:"glyphicon glyphicon-barcode",action:"制门卡"},
-        {icon:"glyphicon glyphicon-send",action:"客人修改"},
+        {icon:"glyphicon glyphicon-pencil",action:"信息修改"},
         {icon:"glyphicon glyphicon-shopping-cart",action:"商品购买"},
-        {icon:"glyphicon glyphicon-pencil",action:"房间更改"},
-        {icon:"glyphicon glyphicon-list-alt  ",action:"房价调整"},
+        {icon:"glyphicon glyphicon-list-alt  ",action:"账目查看"},
         {icon:"glyphicon glyphicon-arrow-left",action:"退房办理"}]
     //--------------------   预定页面  ---------------------------
     ,
     resvIconAction : [{icon:"glyphicon glyphicon-send",action:"预定入住"},
         {icon:"glyphicon glyphicon-pencil",action:"预定修改"},
         {icon:"glyphicon glyphicon-pencil",action:"取消预定"}]
+    ,
+    iconAndActionDisabled : [{icon:"glyphicon glyphicon-pencil",action:"预定修改"}]
 
     //--------------------   会员页面  ---------------------------
     ,

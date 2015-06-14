@@ -1,10 +1,19 @@
 /**
  * Created by Xharlie on 12/22/14.
  */
-app.controller('MultiCheckInModalController', function($scope, $http, newCheckInFactory,
+app.controller('MultiCheckInModalController', function($scope, $http, newCheckInFactory,focusInSideFactory,
                                                        $modalInstance, $timeout, roomST,initialString,RESV){
 
     /********************************************     utility     ***************************************************/
+
+    $scope.hasError = function(btnPass){
+        if(eval("$scope."+btnPass)==null) eval("$scope."+btnPass+"=0");
+        eval("$scope."+btnPass+"++");
+    }
+    $scope.noError = function(btnPass){
+        eval("$scope."+btnPass+"--");
+    }
+
     var today = new Date();
     var tomorrow = new Date(today.getTime()+86400000);
     $scope.dateTime = new Date((tomorrow).setHours(12,0,0));
@@ -223,7 +232,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
 //    };
 
     var multiReserve = function(roomST){
-        $scope.BookCommonInfo.CHECK_OT_DT = (RESV.CHECK_OT_DT == "")? $scope.BookCommonInfo.CHECK_OT_DT: RESV.CHECK_OT_DT;
+        $scope.BookCommonInfo.CHECK_OT_DT = (RESV.CHECK_OT_DT == "")? $scope.BookCommonInfo.CHECK_OT_DT: new Date(RESV.CHECK_OT_DT);
         newCheckInFactory.getRoomInfo().success(function(data){
             $scope.RoomAllinfo = data;
             $scope.BookCommonInfo.roomSource=RESV.roomSource;
@@ -276,15 +285,17 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
     $scope.disable = {searchDisable:false};
     $scope.Members =[];
     $scope.Treaties =[];
-    $scope.Connected=false;
+    $scope.Connected=true;
     $scope.roomsAndRoomTypes = [];
     $scope.roomsDisableList = {};
     $scope.BookRoom = [];
     $scope.BookRoomByTP = {};   //  only for multi walk in or multi checkin
     createBookRoom(roomST.length);
     $scope.check= {checkInput: ""};
-//    show(roomST)
-
+    focusInSideFactory.tabInit('wholeModal');
+    $timeout(function(){
+        focusInSideFactory.manual('wholeModal');
+    },0)
 
 
     /**********************************/
@@ -538,7 +549,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
     $scope.editRoomAndGuest = function(){
         $scope.viewClick = "roomInfo";
         if ($scope.Connected && $scope.BookCommonInfo.Master.CONN_RM_ID != ""){
-            for(var i = 0; i<$scope.BookRoom.length; i++){
+            for(var i = 0; i < $scope.BookRoom.length; i++){
                 if ($scope.BookRoom[i].RM_ID == $scope.BookCommonInfo.Master.CONN_RM_ID){
                     if (!$scope.BookRoom[i].check) {
                         $scope.BookCommonInfo.Master.CONN_RM_ID = "";
@@ -547,6 +558,12 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
                 }
             }
         }
+        if ($scope.Connected && $scope.BookCommonInfo.Master.CONN_RM_ID == ""){
+            if($scope.BookRoom.length > 1){
+                $scope.BookCommonInfo.Master.CONN_RM_ID = $scope.BookRoom[0].RM_ID;
+            }
+        }
+
     }
 
     $scope.cancel = function () {
@@ -573,9 +590,10 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
 
     $scope.submit = function(){
         if (testFail()) return;
+        $scope.submitLoading = true;
         $scope.SubmitInfo=[];
-        var CHECK_IN_DT =  $scope.BookCommonInfo.CHECK_IN_DT;
-        var CHECK_OT_DT =  $scope.BookCommonInfo.CHECK_OT_DT;
+        var CHECK_IN_DT =  util.dateFormat($scope.BookCommonInfo.CHECK_IN_DT);
+        var CHECK_OT_DT =  util.dateFormat($scope.BookCommonInfo.CHECK_OT_DT);
         var j = 0;
         for (var i = 0; i<$scope.BookRoom.length; i++){
             var room = $scope.BookRoom[i];
@@ -639,6 +657,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
 //        show(unfilled);
         newCheckInFactory.submit(JSON.stringify({SubmitInfo:$scope.SubmitInfo,RESV:RESV,unfilled:unfilled})).success(function(data){
             show("办理成功!");
+            $scope.submitLoading = false;
             $modalInstance.close("checked");
             util.closeCallback();
         });

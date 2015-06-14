@@ -5,8 +5,9 @@
 
 @mixin button-variant($color, $background, $border) {
   color: $color;
-  @include gradient-directional($background,darken($background,5%),180deg);
+  //@include gradient-directional($background,darken($background,5%),180deg);
   border-color: $border;
+  background-color: $background;
 
   &:hover,
   &:focus,

@@ -1,4 +1,4 @@
-var app = angular.module('Operationer',['ngRoute','ngAnimate','ui.bootstrap','ui']);
+var app = angular.module('Operationer',['ngRoute','ngAnimate','ui.bootstrap','ui','ui.bootstrap.position']);
 app.config(['$routeProvider',function ($routeProvider){
     $routeProvider
         .when('/roomStatus',
@@ -31,7 +31,7 @@ app.config(['$routeProvider',function ($routeProvider){
             controller:'customerController',
             templateUrl: '../app/views/customer.blade.php'
         })
-        .when('/accounting',
+        .when('/accounting/',
         {
             controller:'accountingController',
             templateUrl: '../app/views/accounting.blade.php'

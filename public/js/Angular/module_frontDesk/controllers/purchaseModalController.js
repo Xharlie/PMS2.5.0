@@ -1,9 +1,17 @@
 /**
  * Created by Xharlie on 3/7/15.
  */
-app.controller('purchaseModalController', function($scope, $http,$modalInstance, merchandiseFactory,
+app.controller('purchaseModalController', function($scope, $http,$modalInstance, merchandiseFactory,focusInSideFactory,
                                                    $timeout, paymentRequest,buyer_RM_TRAN_ID,owner ){
 
+    /********************************************     validation     ***************************************************/
+    $scope.hasError = function(btnPass){
+        if(eval("$scope."+btnPass)==null) eval("$scope."+btnPass+"=0");
+        eval("$scope."+btnPass+"++");
+    }
+    $scope.noError = function(btnPass){
+        eval("$scope."+btnPass+"--");
+    }
     /********************************************     utility     ***************************************************/
     var createNewPayByMethod = function(){
         var payByMethod =  {payAmount:"",payMethod:"",rmIdClass:null,RM_TRAN_ID:null,TKN_RM_TRAN_ID:null,roomId:null};
@@ -51,6 +59,11 @@ app.controller('purchaseModalController', function($scope, $http,$modalInstance,
     var testFail = function(){
         return false;
     };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+
     /********************************************     init     ***************************************************/
     var commonInit = function(){
         $scope.BookCommonInfo.Master.payment.paymentRequest = paymentRequest;
@@ -59,6 +72,11 @@ app.controller('purchaseModalController', function($scope, $http,$modalInstance,
         $scope.BookCommonInfo.Master.payment.base = paymentRequest;
         merchandiseFactory.merchanRoomShow().success(function(data){
             $scope.rooms = data;
+            if(buyer_RM_TRAN_ID == null){
+                allMethodsInit();
+            }else{
+                roomMethodInit();
+            }
         });
     }
 
@@ -71,6 +89,14 @@ app.controller('purchaseModalController', function($scope, $http,$modalInstance,
     var roomMethodInit = function(){
         $scope.BookCommonInfo.Methods = ['房间挂账'];
         $scope.BookCommonInfo.Master.payment.payByMethods[0].payMethod = "房间挂账";
+        for(var i=0; i<$scope.rooms.length; i++){
+            if(buyer_RM_TRAN_ID == $scope.rooms[i].RM_TRAN_ID){
+                $scope.BookCommonInfo.Master.payment.payByMethods[0].RM_TRAN_ID  = $scope.rooms[i].RM_TRAN_ID;
+                $scope.BookCommonInfo.Master.payment.payByMethods[0].roomId  = $scope.rooms[i].RM_ID;
+                $scope.BookCommonInfo.Master.payment.payByMethods[0].TKN_RM_TRAN_ID
+                    = ($scope.rooms[i].CONN_RM_TRAN_ID == null)?$scope.rooms[i].RM_TRAN_ID:$scope.rooms[i].CONN_RM_TRAN_ID;
+            }
+        }
     }
 
     /********************************************     common variables     ***************************************************/
@@ -78,16 +104,16 @@ app.controller('purchaseModalController', function($scope, $http,$modalInstance,
     $scope.Connected = true;
     $scope.BookCommonInfo={Master:{payment:createNewPayment()},Methods:[]};
     commonInit();
-    if(buyer_RM_TRAN_ID == null){
-        allMethodsInit();
-    }else{
-        roomMethodInit();
-    }
 
+    focusInSideFactory.tabInit('wholeModal');
+    $timeout(function(){
+        focusInSideFactory.manual('wholeModal');
+    },0)
     /********************************************     submission    ***************************************************/
 
     $scope.submit = function(){
         if(testFail()) return;
+        $scope.submitLoading = true;
         var today = new Date();
         var pay = $scope.BookCommonInfo.Master.payment;
         var RoomStoreTranArray = null;
@@ -115,6 +141,7 @@ app.controller('purchaseModalController', function($scope, $http,$modalInstance,
 
         merchandiseFactory.buySubmit(StoreTransactionArray,RoomStoreTranArray,ProductInTran).success(function(data){
             show("办理成功!");
+            $scope.submitLoading = false;
             $modalInstance.close("checked");
             util.closeCallback();
         });

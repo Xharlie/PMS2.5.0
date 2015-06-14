@@ -36,11 +36,13 @@
 						</div>
 						<div class="form-group"></div>
 						<div class="form-group">
-							<input type="submit" value="登陆" class="btn btn-primary btn-lg col-sm-10 col-sm-offset-1" />
+                            <!-- inline style change!!!!!!! -->
+							<input type="submit" value="登陆" class="btn btn-primary btn-lg col-sm-10 col-sm-offset-1" style="margin:0 36px"/>
+                            <!-- inline style change!!!!!!! -->
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	<body>
+	</body>
 </html>

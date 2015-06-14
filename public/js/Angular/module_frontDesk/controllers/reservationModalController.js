@@ -1,13 +1,28 @@
-app.controller('reservationModalController', function($scope, $http,$modalInstance,$timeout,
+app.controller('reservationModalController', function($scope, $http,$modalInstance,focusInSideFactory,
                                                       $timeout, roomTPs,initialString, newCheckInFactory,newResvFactory){
 
+    /********************************************     validation     ***************************************************/
+
+    $scope.hasError = function(btnPass){
+        if(eval("$scope."+btnPass)==null) eval("$scope."+btnPass+"=0");
+        eval("$scope."+btnPass+"++");
+    }
+    $scope.noError = function(btnPass){
+        eval("$scope."+btnPass+"--");
+    }
+
     /********************************************     utility     ***************************************************/
+
     var today = new Date();
     var tomorrow = new Date(today.getTime()+86400000);
-    $scope.dateTime = new Date((tomorrow).setHours(12,0,0));
+    $scope.dateTime = new Date((tomorrow).setHours(18,0,0));
     $scope.dateFormat = function(rawDate){
         return util.dateFormat(rawDate);
     }
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
 
     var createBookRoom = function(len){
         for (var i=0; i<len; i++){
@@ -20,14 +35,14 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
             $scope.BookRoomByTP[singleRoom.RM_TP].rooms.push(singleRoom);
             $scope.BookRoomByTP[singleRoom.RM_TP].roomAmount++;
         }else{
-            $scope.BookRoomByTP[singleRoom.RM_TP] = {SUGG_PRICE:singleRoom.SUGG_PRICE,
+            $scope.BookRoomByTP[singleRoom.RM_TP] = {SUGG_PRICE:singleRoom.SUGG_PRICE,AVAIL_QUAN:singleRoom.AVAIL_QUAN,
                 discount:singleRoom.discount,finalPrice:singleRoom.finalPrice,rooms:[singleRoom],roomAmount:1};
         }
     }
 
-    $scope.createNewTP = function(TP,SUGG_PRICE,discount,finalPrice,roomArray,roomAmount){
+    $scope.createNewTP = function(TP,SUGG_PRICE,discount,finalPrice,roomArray,roomAmount,AVAIL_QUAN){
         $scope.BookRoomByTP[TP] =
-        {SUGG_PRICE:SUGG_PRICE,discount:discount,finalPrice:finalPrice,rooms:roomArray,roomAmount:roomAmount};
+        {SUGG_PRICE:SUGG_PRICE,discount:discount,finalPrice:finalPrice,rooms:roomArray,roomAmount:roomAmount,AVAIL_QUAN:AVAIL_QUAN};
     }
 
     $scope.syncSingleRoomTP = function(TP,singleTP){
@@ -246,7 +261,6 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
         createBookRoom(1);
         $scope.Members =[];
         $scope.Treaties =[];
-
         newResvFactory.getRMInfoWithAvail(CHECK_IN_DT,CHECK_OT_DT).success(function(data){
             $scope.RoomAllinfo = data;
             initRoomsAndRoomTypes();
@@ -255,6 +269,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
                 $scope.BookRoom[0].RM_ID = "";
                 $scope.BookRoom[0].SUGG_PRICE = $scope.roomsAndRoomTypes[key][0].SUGG_PRICE;
                 $scope.BookRoom[0].finalPrice = $scope.roomsAndRoomTypes[key][0].SUGG_PRICE;
+                $scope.BookRoom[0].AVAIL_QUAN = $scope.roomsAndRoomTypes[key][0].AVAIL_QUAN;
                 break;
             }
             createBookRoomByTP($scope.BookRoom[0]);
@@ -271,7 +286,6 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
             call_back();
         });
     }
-
 
     var initialMemCheck = function(checkInput,call_back){
         newCheckInFactory.searchMember(checkInput,["MEM_ID"]).success(function(data){
@@ -363,14 +377,18 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
     $scope.reserver = createNewReserver();
     $scope.check = {"checkInput": ""};
     $scope.watcher={"treaty":true,"member":true,"finalPrice":true,"discount":true,"paymentRequest":true};
+
+    focusInSideFactory.tabInit('wholeModal');
+    $timeout(function(){
+        focusInSideFactory.manual('wholeModal');
+    },0)
     /**********************************/
     /************** ********************************** Initialized by conditions ********************************** *************/
     if(initialString == "newReservation"){
-        newReservation(util.dateFormat(today),util.dateFormat(tomorrow));
+        newReservation(today,tomorrow);
     }else if(initialString == "editReservation"){
         editReservation(roomTPs);
     }
-
     /**********************************/
     /************** ********************************** Page Logical Confinement ********************************** *************/
 
@@ -518,6 +536,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
                 newRoom.RM_ID = "";
                 newRoom.discount = $scope.BookCommonInfo.discount4ALL;
                 newRoom.SUGG_PRICE = $scope.roomsAndRoomTypes[RmTp][0].SUGG_PRICE;
+                newRoom.AVAIL_QUAN = $scope.roomsAndRoomTypes[RmTp][0].AVAIL_QUAN;
                 $scope.BookRoom.push(newRoom);
                 updateFinalPrice(newRoom);
                 //create corresponding roomType
@@ -629,6 +648,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
 
     $scope.submit = function(){
         if (testFail()) return;
+        $scope.submitLoading = true;
         clearZeroRM_QUAN($scope.BookRoomByTP,"roomAmount",["0",0,null]);
         var newResv = {
             "roomSource": $scope.BookCommonInfo.roomSource,
@@ -658,6 +678,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
 //        show(newResv);
 
         newResvFactory.resvSubmit(newResv,payment).success(function(data){
+            $scope.submitLoading = false;
             if(JSON.stringify(data)!= null){
                 show("成功预定");
                 $modalInstance.close("checked");
@@ -670,6 +691,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
 
     $scope.editSubmit = function(PAY_DIFF){
         if (testFail()) return;
+        $scope.submitLoading = true;
         clearZeroRM_QUAN($scope.BookRoomByTP,"roomAmount",["0",0,null]);
         var PRE_PAID =  util.Limit((util.isNum(roomTPs[0]["PRE_PAID"]))? roomTPs[0]["PRE_PAID"] : 0) + util.Limit(PAY_DIFF);
         var reResv = {
@@ -696,6 +718,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
         var payment = (PAY_DIFF != 0)? $scope.BookCommonInfo.payment : null;
 //
         newResvFactory.resvEditSubmit(reResv,payment,roomTPs).success(function(data){
+            $scope.submitLoading = false;
             if(JSON.stringify(data)!= null){
                 show("修改成功!");
                 $modalInstance.close("checked");
@@ -741,7 +764,8 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
                             ,$scope.$parent.BookRoomByTP[oldValue].discount
                             ,roomsAndRoomTypes[newValue][0].SUGG_PRICE
                             ,$scope.$parent.BookRoomByTP[oldValue].rooms
-                            ,$scope.$parent.BookRoomByTP[oldValue].roomAmount);
+                            ,$scope.$parent.BookRoomByTP[oldValue].roomAmount
+                            ,roomsAndRoomTypes[newValue][0].AVAIL_QUAN);
                 $scope.$parent.updateFinalPrice4TP($scope.$parent.BookRoomByTP[newValue]);
                 $scope.$parent.syncSingleRoomTP(newValue,$scope.$parent.BookRoomByTP[newValue]);
                 $scope.$parent.BookRoomByTP[oldValue]["rooms"]="";

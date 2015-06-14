@@ -7,48 +7,34 @@
 // --------------------------------------------------
 
 .infoCenterArea{
-	box-shadow: $content-shadow;
-	background-color: $content-bg;
+//	box-shadow: $content-shadow;
 	text-align: left;
-	border-radius: $content-corner-radius;
-	z-index: 0;
-	background-color: $infoCenter-bg;
+	z-index: 100;
+	width: $infoCenter-width;
+	position: fixed;
+	top: $title-height+2px;
+	left: 100% - $infoCenter-width;
 }
 
 .infoCenter{
-	color: darken($infoCenter-color,30%);
-	font-size: 11px;
 
-	.infoContainer{
-	padding: 0 $infoCenter-padding-horizontal;
-		.infoItem{
+	.card{
+		height: $infoCenter-height;
+
+		.infoTitle{
+			font-weight: 600;
+		}
+
+		.infoTime{
 			font-weight: 300;
-			border-bottom: $content-border-width $content-border-style #777;
-			padding: $content-padding-vertical*0.5 0;
-
-			.infoTitle{
-				min-height: 20px;
-			}
-
-			.infoTime{
-				font-size: 10px;
-				font-weight: bold;
-				text-align: right;
-			}
-
-			&:hover{
-				color: $infoCenter-color;
-				text-decoration: line-through;
-				cursor: pointer;
-			}
+			color: #d0d0d0;
 
 		}
+
+		.infoContent{
+			font-weight: 300;
+			color: #b6b6b6;
+			padding-top: 12px;
+		}
 	}
-
-	.infoHeader{
-		height: $sideNav-title-height;
-		padding: $infoCenter-padding;
-	}
-
-
 }

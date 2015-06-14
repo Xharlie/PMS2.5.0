@@ -2,11 +2,17 @@
  * Created by Xharlie on 3/12/15.
  */
 
-app.controller('modifyAcctModalController', function($scope, $http, $modalInstance,$timeout,initialString, accountingFactory,acct){
+app.controller('modifyAcctModalController', function($scope, $http, focusInSideFactory,$modalInstance,$timeout,initialString, accountingFactory,acct){
 
+    /********************************************     validation     ***************************************************/
+    $scope.hasError = function(btnPass){
+        if(eval("$scope."+btnPass)==null) eval("$scope."+btnPass+"=0");
+        eval("$scope."+btnPass+"++");
+    }
+    $scope.noError = function(btnPass){
+        eval("$scope."+btnPass+"--");
+    }
     /********************************************     utility     ***************************************************/
-
-
     var testFail = function(){
         return false;
     }
@@ -34,7 +40,10 @@ app.controller('modifyAcctModalController', function($scope, $http, $modalInstan
     $scope.oriAcct = acct;
     $scope.oriAmountShow = 0;
     $scope.modifyAcct = {changeType:'-1',payAmount:0,payMethod:'',RMRK:""};
-
+    focusInSideFactory.tabInit('wholeModal');
+    $timeout(function(){
+        focusInSideFactory.manual('wholeModal');
+    },0)
     /************** ********************************** Initialize by conditions ********************************** *************/
     if(initialString == "modifyAcct"){
         initModifyAcct();
@@ -51,7 +60,7 @@ app.controller('modifyAcctModalController', function($scope, $http, $modalInstan
 
     $scope.submit = function(){
         if (testFail()) return;
-
+        $scope.submitLoading = true;
         var Amount = util.Limit( Number($scope.modifyAcct.changeType)*
                                  Number($scope.modifyAcct.payAmount)*
                                  ((Number($scope.oriAmount)>0)?1:-1)
@@ -70,22 +79,15 @@ app.controller('modifyAcctModalController', function($scope, $http, $modalInstan
         };
 
         accountingFactory.submitModifyAcct($scope.submitInfo).success(function(){
+            $scope.submitLoading = false;
             $modalInstance.close("checked");
             util.closeCallback();
         });
     }
 
-    $scope.close = function(moneyInvolved){
-        if (testFail()) return;
-        if(!moneyInvolved) $scope.memPay.payment = null;
-        customerFactory.editMemberSubmit($scope.BookCommonInfo, $scope.memPay.payment).success(function(data){
-//            show(data);
-            $modalInstance.close("checked");
-            util.closeCallback();
-        });
-    }
-
-
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
     /*********************************************/
 
 })

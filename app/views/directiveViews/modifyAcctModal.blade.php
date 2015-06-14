@@ -1,7 +1,7 @@
-<div>
+<div id="wholeModal">
     <div class="modal-header">
         <span class="glyphicon glyphicon-send"></span>
-        <label style="font-size: 15px;">新入住</label>{{}}
+        <label style="font-size: 15px;">账目修改</label>
         <span class="pull-right btn" ng-click="cancel()">&#x2715</span>
     </div>
     <div class="col-sm-12" style="padding: 30px 60px 45px 60px;">
@@ -17,7 +17,9 @@
         </div>
         <div class="col-sm-12" style="padding: 20px 0px 0px 0px; ">
             <div class="col-sm-4 ">
-                <label>{{labelMapping(modifyAcct.changeType)}}{{oriAcct.CLASS}}数目</label>
+                <label xlabel ng-transclude checker="isNotEmpty|isNumber|isLargerEqualThan0" checkee="modifyAcct.payAmount" btn-pass="payError">
+                    {{labelMapping(modifyAcct.changeType)}}{{oriAcct.CLASS}}数目
+                </label>
                 <input class="form-control" ng-model="modifyAcct.payAmount" />
             </div>
             <div class="col-sm-4 ">
@@ -43,11 +45,14 @@
             <label>入账备注</label>
             <textarea class="form-control" ng-model="modifyAcct.RMRK"></textarea>
         </div>
-        <button class="pull-right"
-                style="margin-top:25px;padding: 10px 30px 10px 30px; background-color:grey; color: #ffffff"
-                ng-click="submit()">确认</button>
-        <button class="pull-right"
-                style="margin-top:25px;padding: 10px 30px 10px 30px; background-color:#69B4F5; color: #ffffff"
-                ng-click="close()">取消</button>
+        <button class="pull-right btn btn-primary btn-lg"
+                ng-click="submit()"
+                btn-loading="submitLoading"
+                loading-gif= 'assets/dummy/buttonProcessing.gif'
+                ng-if="payError == '0' || payError == null "
+                >确认</button>
+        <button class="pull-right btn btn-alert btn-lg" ng-if=" payError != '0' && payError != null ">请更正错误信息</button>
+        <button class="pull-right btn btn-primary btn-lg"
+                ng-click="cancel()">取消</button>
     </div>
 </div>

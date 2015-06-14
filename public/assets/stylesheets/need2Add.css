@@ -1,0 +1,25 @@
+.connRoomBlock {
+    opacity: 0.3;
+}
+
+.connRoomBlockAdd {
+    border:2px solid #FF9933;
+}
+
+.roomBlockSelected{
+    border:2px solid red;
+}
+.timeOutResv {
+    color: #ff0000;
+}
+
+
+
+/*.greenOut > td, .greenOut {*/
+    /*opacity: 0.1;*/
+    /*background-color: #79C3F7!important;*/
+/*}*/
+
+.enableOverFlow {
+    overflow: visible;!important;
+}

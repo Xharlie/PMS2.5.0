@@ -8,10 +8,9 @@
 
     # Redirect Trailing Slashes...
     RewriteRule ^(.*)/$ /$1 [L,R=301]
-    RewriteBase "/~charlie/PMS.2.5.0/public"
+    RewriteBase "/~charlie/PMS_xharlie/public"
     # Handle Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
-

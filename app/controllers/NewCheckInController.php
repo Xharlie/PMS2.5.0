@@ -23,11 +23,6 @@ class NewCheckInController extends BaseController{
         return Response::json($RoomInfo);
     }
 
-
-
-
-
-
     public function searchMembers(){
         $comparer = Input::get('comparer');
         $columns = Input::get('columns');
@@ -48,7 +43,6 @@ class NewCheckInController extends BaseController{
             ->get();
         return Response::json($members);
     }
-
 
     public function searchTreaties(){
         $comparer = Input::get('comparer');
@@ -144,6 +138,8 @@ class NewCheckInController extends BaseController{
 
 
 **************/
+
+
     public function submitModify(){
         $info = Input::get('SubmitInfo');
         $RM_TRAN_ID = Input::get('RM_TRAN_ID');
@@ -177,9 +173,7 @@ class NewCheckInController extends BaseController{
                     // 1 prepare RoomTran array no matter new or old
                 $RoomTranArray = $this->roomTranPrepare($room,$ori->CONN_RM_TRAN_ID);
                     // if add more money,
-                if ($moneyInvolved){
-                    $RoomTranArray["DPST_RMN"] = $RoomTranArray["DPST_RMN"] + $ori->DPST_RMN;
-                }
+                $RoomTranArray["DPST_RMN"] = $RoomTranArray["DPST_RMN"] + $ori->DPST_RMN;
                     // 2 not  within one day  nor temp   -------------------------------*/
                 if($ori->CHECK_IN_DT != (new DateTime())->format('Y-m-d')){    // if today just check in, or even temp room
                         // 2.1. update the original roomTran to terminate
