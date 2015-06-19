@@ -8,7 +8,7 @@
 
     # Redirect Trailing Slashes...
     RewriteRule ^(.*)/$ /$1 [L,R=301]
-    RewriteBase "/~charlie/PMS_xharlie/public"
+    RewriteBase "/~charlie/PMS_Ben_Dev_0517/public"
     # Handle Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f

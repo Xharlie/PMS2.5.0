@@ -113,13 +113,13 @@ var util = {
     merchIconAction : [{icon:"glyphicon glyphicon-shopping-cart",action:"商品购买"}]
     //
     // --------------------   商品历史  ---------------------------
-    ,
-    merchIconAction : [{icon:"glyphicon glyphicon-barcode",action:"制门卡"},
-        {icon:"glyphicon glyphicon-send",action:"客人修改"},
-        {icon:"glyphicon glyphicon-shopping-cart",action:"商品购买"},
-        {icon:"glyphicon glyphicon-pencil",action:"房间更改"},
-        {icon:"glyphicon glyphicon-list-alt  ",action:"房价调整"},
-        {icon:"glyphicon glyphicon-arrow-left",action:"退房办理"}]
+    //,
+    //merchIconAction : [{icon:"glyphicon glyphicon-barcode",action:"制门卡"},
+    //    {icon:"glyphicon glyphicon-send",action:"客人修改"},
+    //    {icon:"glyphicon glyphicon-shopping-cart",action:"商品购买"},
+    //    {icon:"glyphicon glyphicon-pencil",action:"房间更改"},
+    //    {icon:"glyphicon glyphicon-list-alt  ",action:"房价调整"},
+    //    {icon:"glyphicon glyphicon-arrow-left",action:"退房办理"}]
     //
 
     //--------------------- input check --------------------------

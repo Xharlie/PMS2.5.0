@@ -158,6 +158,7 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
     $scope.dateChange = function(){
         return;
     }
+
     $scope.updatePayInDue = function(singleRoom){
         var totalDue= parseFloat(singleRoom.payment.paymentRequest);
         for (var i=0; i<singleRoom.payment.payByMethods.length; i++){

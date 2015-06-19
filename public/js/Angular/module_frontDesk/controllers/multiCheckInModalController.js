@@ -4,7 +4,7 @@
 app.controller('MultiCheckInModalController', function($scope, $http, newCheckInFactory,focusInSideFactory,
                                                        $modalInstance, $timeout, roomST,initialString,RESV){
 
-    /********************************************     utility     ***************************************************/
+    /********************************************     validation     ***************************************************/
 
     $scope.hasError = function(btnPass){
         if(eval("$scope."+btnPass)==null) eval("$scope."+btnPass+"=0");
@@ -13,6 +13,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
     $scope.noError = function(btnPass){
         eval("$scope."+btnPass+"--");
     }
+    /********************************************     utility     ***************************************************/
 
     var today = new Date();
     var tomorrow = new Date(today.getTime()+86400000);
@@ -36,10 +37,19 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
             }
     }
 
-    var createNewRoom = function(){
+    function createNewRoom(){
         var newRoom =  {RM_TP:"", RM_ID:"",finalPrice:"",SUGG_PRICE:"",discount:"",deposit:"",MasterRoom:'fasle',
             GuestsInfo:[createNewGuest()],payment:createNewPayment(), check:true};
         return newRoom;
+    }
+
+    function preAssignRM_ID(){
+        for(var tp in $scope.BookRoomByTP){
+            for(var i =0; i < $scope.BookRoomByTP[tp].rooms.length; i++){
+                if($scope.roomsAndRoomTypes[tp][i] == null) break;
+                $scope.BookRoomByTP[tp].rooms[i].RM_ID = $scope.roomsAndRoomTypes[tp][i].RM_ID;
+            }
+        }
     }
 
     var createNewGuest = function(){
@@ -62,12 +72,13 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
         for (var i = 0; i <$scope.RoomAllinfo.length; i++ ){
             var RM_TP = $scope.RoomAllinfo[i]["RM_TP"];
             if ($scope.RoomAllinfo[i].RM_CONDITION != "空房") continue;
-            if($scope.roomsAndRoomTypes[RM_TP] == undefined){
+            if($scope.roomsAndRoomTypes[RM_TP] == null){
                 $scope.roomsAndRoomTypes[RM_TP]=[$scope.RoomAllinfo[i]];
             }else{
                 $scope.roomsAndRoomTypes[RM_TP].push($scope.RoomAllinfo[i]);
             }
             $scope.roomsDisableList[$scope.RoomAllinfo[i].RM_ID] = false;  // all room enabled
+
         }
     }
 
@@ -217,19 +228,10 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
         return false;
     }
 
+
+
     /**********************************/
     /************** ********************************** Initial functions ******************************************* *************/
-//    var singleWalkInInit = function(RM_ID){
-//        newCheckInFactory.getSingleRoomInfo(RM_ID).success(function(data){
-//            $scope.RoomAllinfo = data;
-//            $scope.BookCommonInfo.roomSource="普通散客";
-//            $scope.BookRoom[0].RM_TP = $scope.RoomAllinfo[0].RM_TP;
-//            $scope.BookRoom[0].RM_ID = $scope.RoomAllinfo[0].RM_ID;
-//            $scope.BookRoom[0].SUGG_PRICE = $scope.RoomAllinfo[0].SUGG_PRICE;
-//            $scope.BookRoom[0].finalPrice = $scope.RoomAllinfo[0].SUGG_PRICE;
-//            $scope.roomsAndRoomTypes[$scope.RoomAllinfo[0].RM_TP]=[$scope.RoomAllinfo[0]];
-//        });
-//    };
 
     var multiReserve = function(roomST){
         $scope.BookCommonInfo.CHECK_OT_DT = (RESV.CHECK_OT_DT == "")? $scope.BookCommonInfo.CHECK_OT_DT: new Date(RESV.CHECK_OT_DT);
@@ -239,11 +241,11 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
             initRoomsAndRoomTypes();
             for (var i=0; i< roomST.length; i++){
                 $scope.BookRoom[i].RM_TP = roomST[i].RM_TP;
-                $scope.BookRoom[i].RM_ID = roomST[i].RM_ID;
                 $scope.BookRoom[i].SUGG_PRICE = roomST[i].finalPrice;
 //                updateFinalPrice($scope.BookRoom[i]);
                 createBookRoomByTP($scope.BookRoom[i]);
             }
+            preAssignRM_ID();
         });
     };
 
@@ -274,7 +276,6 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
 //            }
 //        });
 //    }
-    /**********************************/
     /********************************************     common initial setting     *****************************************/
     $scope.viewClick = "Info";
     $scope.initialString=initialString;
@@ -286,7 +287,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
     $scope.Members =[];
     $scope.Treaties =[];
     $scope.Connected=true;
-    $scope.roomsAndRoomTypes = [];
+    $scope.roomsAndRoomTypes = {};
     $scope.roomsDisableList = {};
     $scope.BookRoom = [];
     $scope.BookRoomByTP = {};   //  only for multi walk in or multi checkin
@@ -523,6 +524,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
         var sum4master = 0;
         var sum4distribute = 0;   // sum of basic room price
         for(var i = 0; i < $scope.BookRoom.length; i++){
+            if (!$scope.BookRoom[i].check) continue;
             var payment = $scope.BookRoom[i].payment;
             payment.base = basicPrice($scope.BookRoom[i]);
             payment.paymentRequest = depositMethod(payment.base);
@@ -548,6 +550,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
 
     $scope.editRoomAndGuest = function(){
         $scope.viewClick = "roomInfo";
+        $scope.roomError = 0;
         if ($scope.Connected && $scope.BookCommonInfo.Master.CONN_RM_ID != ""){
             for(var i = 0; i < $scope.BookRoom.length; i++){
                 if ($scope.BookRoom[i].RM_ID == $scope.BookCommonInfo.Master.CONN_RM_ID){

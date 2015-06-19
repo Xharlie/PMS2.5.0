@@ -233,14 +233,6 @@
                                 ng-click="backward('RoomChoose')">
                             上一步:选择房间</button>
                     </div>
-                    <div class="form-group col-sm-12">
-                        <button class="pull-right btn btn-primary btn-lg"
-                                ng-click="confirm('Pay')">
-                            确认办理</button>
-                        <button class="pull-right btn btn-primary btn-lg" ng-if="BookRoom.length>1"
-                                ng-click="backward('RoomChoose')">
-                            上一步:选择房间</button>
-                    </div>
                 </div>
             </div>
             <div class="padded-form" ng-show ="viewClick=='Pay'">

@@ -93,11 +93,12 @@
                         </label>
                     </div>
                     <div class="from-group">
-                        <input type="submit"
-                               class="buyButton btn btn-primary btn-block btn-lg"
+                        <button
+                               class="buyButton btn  btn-block btn-lg"
                                ng-class="buyButtonClass"
-                               value = "购买"
-                               ng-click="buySubmit()" ng-disabled="showNotice"/>
+                               ng-click="buySubmit()" ng-disabled="showNotice">
+                            购买
+                        </button>
                     </div>
                 </div>
             </div>
