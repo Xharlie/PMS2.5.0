@@ -1,20 +1,18 @@
 <!doctype html>
 <div class="col-sm-12" ng-show="ready">
-    <div class="card card-default">
-        <div class="card-actions">
-            <div class="ctrlArea">
-                <div class="ctrlLeft">
-                    <button ng-click = "addNew()" class="btn btn-primary btn-lg">新预定</button>
-                </div>
-                <div class="ctrlRight">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-control">
+                <button ng-click = "addNew()" class="btn btn-primary btn-lg">新预定</button>
+                <div class="pull-right">
                     <input type="text"  ng-model = "resvName" placeholder="预订人" class="searchBox input-lg">
-                    <select ng-model="roomType" class="btn btn-default btn-lg">
+                    <select ng-model="roomType" class="form-control btn btn-default btn-lg">
                         <option value="">所有房型</option>>
                         <option value="Single">单人床房</option>
                         <option value="Double">双人床房</option>
                         <option value="Kingbed">大床房</option>
                     </select>
-                    <select ng-model="sorter" class="btn btn-default btn-lg" >
+                    <select ng-model="sorter" class="form-control btn btn-default btn-lg" >
                         <option value="">排序</option>
                         <option value="GUEST_NM">住客姓名</option>
                         <option value="RESVER_CARDNM">预定卡号</option>
@@ -33,66 +31,62 @@
                 </div>
             </div>
         </div>
-        <div class="card-body">
-            <div class=" tableArea CrossTab">
-            	<table class="table table-striped table-acct">
-            		<tr>
-                        <th>订单号</th>
-                        <th>姓名</th>
-                        <th>来源协议</th>
-            			<th>联系电话</th>
-            			<th>预达日期</th>
-                        <th>保留至</th>
-            			<th>房型</th>
-                        <th>房间数量</th>
-                        <th>每晚价格</th>
-            			<th>备注</th>
-                        <th>状态</th>
-            		</tr>
-            			<tr ng-repeat = "reserve in resvInfo | filter : {RESVER_NAME: resvName, RM_TP: roomType} | orderBy:sorter "
-                            ng-mouseenter="sameIDLightUp(reserve)"
-                            ng-mouseleave = 'sameIDLightBack(reserve)'
-                            ng-dblclick="fastAction(reserve)"
-                            sglclick="open(reserve)" onclick="event.preventDefault();" ng-class="reserve.blockClass" block-class="blockClass"
-                            not-show ="menuNoshow" pop-menu  menu-type="'small-menu'" owner="reserve"
-                            icon-n-action="reserve.iconAndAction.resvIconAction" ng-transclude>
-                            <td >
-                                {{reserve.RESV_ID}}
-                            </td>
-                            <td >
-                                {{reserve.RESVER_NAME}}
-                            </td>
-                            <td >
-                                {{reserve.RESV_WAY}}
-                            </td>
-                            <td >
-                                {{reserve.RESVER_PHONE}}
-                            </td>
-                            <td ng-class="reserve.timeOutClass">
-                                {{reserve.CHECK_IN_DT}}
-                            </td>
-                            <td ng-class="reserve.timeOutClass">
-                                {{reserve.RESV_LATEST_TIME}}
-                            </td>
-                            <td >
-                                {{reserve.RM_TP}}
-                            </td>
-                            <td >
-                                {{reserve.RM_QUAN}}
-                            </td>
-                            <td >
-                                {{reserve.RESV_DAY_PAY}}元
-                            </td>
-                            <td >
-                                {{reserve.RMRK}}
-                            </td>
-                            <td >
-                                {{reserve.STATUS}}
-                            </td>
-                        </tr>
-            	</table>
-            </div>
-        </div>
+    	<table class="table table-striped table-acct">
+    		<tr>
+                <th>订单号</th>
+                <th>姓名</th>
+                <th>来源协议</th>
+    			<th>联系电话</th>
+    			<th>预达日期</th>
+                <th>保留至</th>
+    			<th>房型</th>
+                <th>房间数量</th>
+                <th>每晚价格</th>
+    			<th>备注</th>
+                <th>状态</th>
+    		</tr>
+    			<tr ng-repeat = "reserve in resvInfo | filter : {RESVER_NAME: resvName, RM_TP: roomType} | orderBy:sorter "
+                    ng-mouseenter="sameIDLightUp(reserve)"
+                    ng-mouseleave = 'sameIDLightBack(reserve)'
+                    ng-dblclick="fastAction(reserve)"
+                    sglclick="open(reserve)" onclick="event.preventDefault();" ng-class="reserve.blockClass" block-class="blockClass"
+                    not-show ="menuNoshow" pop-menu  menu-type="'small-menu'" owner="reserve"
+                    icon-n-action="reserve.iconAndAction.resvIconAction" ng-transclude>
+                    <td >
+                        {{reserve.RESV_ID}}
+                    </td>
+                    <td >
+                        {{reserve.RESVER_NAME}}
+                    </td>
+                    <td >
+                        {{reserve.RESV_WAY}}
+                    </td>
+                    <td >
+                        {{reserve.RESVER_PHONE}}
+                    </td>
+                    <td ng-class="reserve.timeOutClass">
+                        {{reserve.CHECK_IN_DT}}
+                    </td>
+                    <td ng-class="reserve.timeOutClass">
+                        {{reserve.RESV_LATEST_TIME}}
+                    </td>
+                    <td >
+                        {{reserve.RM_TP}}
+                    </td>
+                    <td >
+                        {{reserve.RM_QUAN}}
+                    </td>
+                    <td >
+                        {{reserve.RESV_DAY_PAY}}元
+                    </td>
+                    <td >
+                        {{reserve.RMRK}}
+                    </td>
+                    <td >
+                        {{reserve.STATUS}}
+                    </td>
+                </tr>
+    	</table>
     </div>
 </div>
 <div class="loader loader-main" ng-hide="ready">

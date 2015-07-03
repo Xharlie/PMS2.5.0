@@ -12,12 +12,20 @@ app.factory('newCheckOutFactory',function($http){
                 data: Room_Array
             })
         },
-        checkOT: function(RoomArray,MasterRoomNpay,editAcct,addAcct,addDepoArray){
+        checkOT: function(submitObj){
             return $http({
                 method: 'POST',
                 heasders: {'content-Type':'application/json'},
                 url: 'checkOutSubmit',
-                data:  {RoomArray:RoomArray,MasterRoomNpay:MasterRoomNpay,editAcct:editAcct,addAcct:addAcct,addDepoArray:addDepoArray}
+                data: submitObj
+            })
+        },
+        checkLedgerOT: function(submitObj){
+            return $http({
+                method: 'POST',
+                heasders: {'content-Type':'application/json'},
+                url: 'checkLedgerSubmit',
+                data: submitObj
             })
         }
 
@@ -42,13 +50,5 @@ app.factory('newCheckOutFactory',function($http){
 //                url: 'getProductPrice/'+NM
 //            });
 //        },
-//        checkOT: function(RoomNumArray,MASTER_RM_ID){
-//            return $http({
-//                method: 'POST',
-//                heasders: {'content-Type':'application/json'},
-//                url: 'checkOutSubmit',
-//                data: [RoomNumArray,MASTER_RM_ID]
-//            })
-//        }
     }
 });

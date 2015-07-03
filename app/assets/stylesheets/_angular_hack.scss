@@ -13,19 +13,18 @@
 }
 
 .removeArrow input, .removeArrow button {
+	border-radius: $content-border-radius;
     font-size: 12px;
-    line-height: 1.33;
     padding: 10px 16px;
-    height: 38px;
+    height: 42px;
 
 }
 
 .reserveClick  > td{
-    background-color: #d9edf7 !important;
+    background-color: $pop-menu-hover-bkg !important;
 }
 
 .greenOut > td, .greenOut {
     opacity: 0.1;
     background-color: #79C3F7!important;
 }
-

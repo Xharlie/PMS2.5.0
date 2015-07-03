@@ -44,6 +44,20 @@ class ReservationController extends BaseController{
         return Response::json($resvShow);
     }
 
+    public function showComResv($today){
+        $resvShow = DB::table('Reservations')
+            ->join('ReservationRoom', 'Reservations.RESV_ID','=','ReservationRoom.RESV_ID')
+            ->whereNotIn("ReservationRoom.STATUS",["Filled","Cancelled","NoShowExpired"])
+            ->where("Reservations.CHECK_IN_DT","=",$today)
+            ->select('Reservations.RESV_ID as RESV_ID','Reservations.RESVER_PHONE as RESVER_PHONE',
+                'Reservations.RESVER_NAME as RESVER_NAME','Reservations.RESV_LATEST_TIME as RESV_LATEST_TIME',
+                'ReservationRoom.RM_TP as RM_TP','ReservationRoom.RM_QUAN as RM_QUAN',
+                'Reservations.RMRK as RMRK','ReservationRoom.STATUS as STATUS',
+                'Reservations.PRE_PAID as PRE_PAID')
+            ->get();
+        return Response::json($resvShow);
+    }
+
     public function storeResv(){
 
     }

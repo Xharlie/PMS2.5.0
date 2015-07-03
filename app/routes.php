@@ -102,6 +102,8 @@ Route::get('/getRoomAndRoomType/{RM_CONDITION}', 'RoomStatusController@getRoomAn
 
 Route::get('/showReservation', 'ReservationController@showResv');
 
+Route::get('/showComResv/{today}', 'ReservationController@showComResv');
+
 Route::get('/showRoomStatus', 'RoomStatusController@showRoom');
 
 Route::get('/showOccupied/{RM_TRAN_ID}', 'RoomStatusController@showOccupied');
@@ -200,6 +202,7 @@ Route::get('/getProductPrice/{NM}', 'NewCheckOutController@getProductPrice');
 
 // submit the checkOut room, accts
 Route::post('/checkOutSubmit', 'NewCheckOutController@checkOutSubmit');
+Route::post('/checkLedgerSubmit', 'NewCheckOutController@checkLedgerSubmit');
 
 
 // new reservation submit

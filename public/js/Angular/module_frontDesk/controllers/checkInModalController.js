@@ -174,8 +174,8 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
         var sum = 0
         if($scope.BookCommonInfo.rentType=="全日租"){
             sum = parseFloat(singleRoom.finalPrice) *
-                Math.round(((new Date($scope.BookCommonInfo.CHECK_OT_DT)).getTime()
-                          - (new Date($scope.BookCommonInfo.CHECK_IN_DT)).getTime())/86400000);
+                Math.round((    (new Date($scope.BookCommonInfo.CHECK_OT_DT)).getTime()
+                                - (today.getTime())   )/86400000);
         }else{
             sum =  parseFloat(singleRoom.finalPrice);
         }
@@ -239,17 +239,17 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
             $scope.BookRoom[0].RM_ID = roomST[0]["RM_ID"];
             if (roomST[0]["LEAVE_TM"] != null &&roomST[0]["LEAVE_TM"] != "" )$scope.BookRoom[0].leaveTime = roomST[0]["LEAVE_TM"];
             $scope.BookCommonInfo.CHECK_OT_DT = new Date(roomST[0]["CHECK_OT_DT"]);
-            $scope.BookCommonInfo.CHECK_IN_DT = roomST[0]["CHECK_IN_DT"];
+            $scope.BookCommonInfo.CHECK_IN_DT = new Date(roomST[0]["CHECK_IN_DT"]);
             $scope.BookRoom[0].SUGG_PRICE = $scope.roomsAndRoomTypes[roomST[0]["RM_TP"]][0]["SUGG_PRICE"];
-            for(var i = 0; i < roomST[0]["customer"].length; i++){
+            for(var i = 0; i < roomST[0]["customers"].length; i++){
                 if($scope.BookRoom[0].GuestsInfo.length <= i) $scope.BookRoom[0].GuestsInfo.push(createNewGuest());
-                $scope.BookRoom[0].GuestsInfo[i].Name = roomST[0]["customer"][i].CUS_NAME;
-                $scope.BookRoom[0].GuestsInfo[i].MemberId = roomST[0]["customer"][i].MEM_ID;
-                $scope.BookRoom[0].GuestsInfo[i].Phone = roomST[0]["customer"][i].PHONE;
-                $scope.BookRoom[0].GuestsInfo[i].SSN = roomST[0]["customer"][i].SSN;
-                $scope.BookRoom[0].GuestsInfo[i].MEM_TP = roomST[0]["customer"][i].MEM_TP;
-                $scope.BookRoom[0].GuestsInfo[i].Points = roomST[0]["customer"][i].POINTS;
-                $scope.BookRoom[0].GuestsInfo[i].RemarkInput = roomST[0]["customer"][i].RMRK;
+                $scope.BookRoom[0].GuestsInfo[i].Name = roomST[0]["customers"][i].CUS_NAME;
+                $scope.BookRoom[0].GuestsInfo[i].MemberId = roomST[0]["customers"][i].MEM_ID;
+                $scope.BookRoom[0].GuestsInfo[i].Phone = roomST[0]["customers"][i].PHONE;
+                $scope.BookRoom[0].GuestsInfo[i].SSN = roomST[0]["customers"][i].SSN;
+                $scope.BookRoom[0].GuestsInfo[i].MEM_TP = roomST[0]["customers"][i].MEM_TP;
+                $scope.BookRoom[0].GuestsInfo[i].Points = roomST[0]["customers"][i].POINTS;
+                $scope.BookRoom[0].GuestsInfo[i].RemarkInput = roomST[0]["customers"][i].RMRK;
             }
             $scope.watcher.member=false;
             $scope.watcher.treaty=false;
@@ -428,10 +428,9 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
         },
         function(newValue, oldValue) {
             if(newValue == oldValue || $scope.watcher.rentType===false) return;
-//            show($scope.BookRoom[0].finalPrice);
             if(newValue != "全日租"){
             //    $scope.$apply(function(){
-                $scope.BookCommonInfo.CHECK_OT_DT = util.dateFormat(today);
+                $scope.BookCommonInfo.CHECK_OT_DT = today;
                 $scope.BookCommonInfo.leaveTime = new Date($scope.plansOBJ[newValue].PLAN_COV_MIN*60*1000 + today.getTime());
             }else {
                 $scope.BookCommonInfo.CHECK_OT_DT = util.dateFormat(tomorrow);
@@ -549,21 +548,7 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
                 payment.payByMethods[0].payMethod = "现金";
             }
         }else if($scope.initialString == "edit"){
-            var sum=0;
-            for(var i = 0; i < $scope.BookRoom.length; i++){
-                var payment = $scope.BookRoom[i].payment;
-                payment['backUppaid'] = depositMethod($scope.BookRoom[i]);
-                payment.paymentRequest = payment.backUppaid - roomST[0].DPST_RMN;
-                payment.payByMethods[0].payAmount = payment.paymentRequest;
-                payment.payInDue = 0;
-                payment.payByMethods[0].payMethod = "现金";
-                sum = sum + payment.paymentRequest;
-            }
-            if(sum != 0){
-                $scope.viewClick = "Pay";
-            }else{
                 $scope.editSubmit(false);
-            }
         }
     }
 
@@ -585,6 +570,45 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
         singleRoom.payment.payByMethods.push(createNewPayByMethod());
     }
 
+    /************** ********************************** printer  ********************************** *************/
+
+    function printerInfo(CONN_RM_TRAN_ID, RM_TRAN_ID){
+        //{"guestname": "赵臻", "misc": "无贵重物品！", "number": "531564", "indate": "2015-06-01", "IDNumber": "310112198308122718",
+        //    "estimateoutdate": "2015-06-01", "outdate": "2015-05-29", "foodticket": "无", "DOB": "1983-08-12", "roomstyle": "标准房",
+        //    "estimateouttime": "14:00:00", "Address": "上海市闵行区", "outtime": "11:40", "transactionnumber": "514453", "company": "未录入",
+        //    "securitydeposit": "296.0", "roomnumber": "8803", "hotelpartner": "未录入", "controller": "zhangruitao", "membernumber": "95001822",
+        //    "roomprice": "98.0", "hotelname": "京华保定火车站店", "deposit": "100.00", "securitycredit": "无", "intime": "14:00"}
+
+        var room = $scope.BookRoom[0];
+        var guest = room.GuestsInfo[0];
+        var newGuest =  {Name:"",MemberId:"",Phone:"",SSN:"",SSNType:"二代身份证",MEM_TP:"",Points:"",RemarkInput:"",TIMES:""}
+
+        var checkInStr =  "hotelname#"+"&"
+        +"guestname#"+guest.Name+"&"
+        +"company#"+""+"&"
+        //+"DOB#"+"&"
+        +"IDNumber#"+guesto.SSN+"&"
+        //+"Address#"+guest+"&"
+        +"indate#"+room.CHECK_IN_DT+"&"
+        +"intime#"+room.GuestsInfo.Name+"&"
+        +"estimateoutdate#"+room.CHECK_OT_DT+"&"
+        +"estimateouttime#"+util.timeFormat($scope.BookCommonInfo.leaveTime)+"&"
+        +"membernumber#"+guest.MemberId+"&"
+        +"roomstyle#"+room.RM_TP+"&"
+        +"roomprice#"+room.finalPrice+"&"
+        +"roomnumber#"+room.RM_ID+"&"
+        +"securitydeposit#"+(room["pay"]["paymentRequest"]=="" || room["pay"]["paymentRequest"] == null)?0:room["pay"]["paymentRequest"]+"&"
+        //+"securitycredit#"+"无"+"&";
+        //+"foodticket#"+"无"+"&"
+        +"misc#"+"&"
+        //+"controller#"+"&"
+        +"number#"+CONN_RM_TRAN_ID+"&"
+        +"transactionnumber#"+RM_TRAN_ID+"&";
+
+        var depositStr = "";
+
+    }
+
     /************************************************/
     /************** ********************************** submit  ********************************** *************/
 
@@ -598,7 +622,7 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
             var CHECK_IN_DT =  util.dateFormat($scope.BookCommonInfo.CHECK_IN_DT);
             var CHECK_OT_DT =  util.dateFormat($scope.BookCommonInfo.CHECK_OT_DT);
             $scope.SubmitInfo.push({roomSelect:room.RM_ID, roomType:room.RM_TP, CHECK_IN_DT: CHECK_IN_DT
-                ,CHECK_OT_DT: CHECK_OT_DT, leaveTime:util.toLocal($scope.BookCommonInfo.leaveTime), finalPrice: room.finalPrice,
+                ,CHECK_OT_DT: CHECK_OT_DT, leaveTime: util.toLocal($scope.BookCommonInfo.leaveTime), finalPrice: room.finalPrice,
                 roomSource:$scope.BookCommonInfo.roomSource, GuestsInfo: room.GuestsInfo,pay:room.payment});
 
             if ($scope.BookCommonInfo.roomSource == "协议" && $scope.BookCommonInfo.Treaty != ""){
@@ -635,10 +659,10 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
             }
         }
 
-        alert(JSON.stringify($scope.SubmitInfo));
         newCheckInFactory.submit(JSON.stringify({SubmitInfo:$scope.SubmitInfo,RESV_ID:null,unfilled:null})).success(function(data){
             $scope.submitLoading = false;
             show("办理成功!");
+            //printerInfo();
             $modalInstance.close("checked");
             util.closeCallback();
         });
@@ -651,12 +675,12 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
         $scope.submitLoading = true;
         for (var i = 0; i<$scope.BookRoom.length; i++){
             var room = $scope.BookRoom[i];
-            var CHECK_IN_DT =  util.dateFormat(today);
+            var CHECK_IN_DT =  util.dateFormat($scope.BookCommonInfo.CHECK_IN_DT);
             var CHECK_OT_DT =  util.dateFormat($scope.BookCommonInfo.CHECK_OT_DT);
             $scope.SubmitInfo=[];
             $scope.SubmitInfo.push({roomSelect:room.RM_ID, roomType:room.RM_TP, CHECK_IN_DT: CHECK_IN_DT
                 ,CHECK_OT_DT: CHECK_OT_DT, leaveTime:util.toLocal($scope.BookCommonInfo.leaveTime), finalPrice: room.finalPrice,
-                roomSource:$scope.BookCommonInfo.roomSource, GuestsInfo: room.GuestsInfo,pay:room.payment});
+                roomSource:$scope.BookCommonInfo.roomSource, GuestsInfo: room.GuestsInfo});
 
             if ($scope.BookCommonInfo.roomSource == "协议" && $scope.BookCommonInfo.Treaty != ""){
                 $scope.SubmitInfo[i]["TREATY_ID"]= $scope.BookCommonInfo.Treaty.TREATY_ID;
@@ -670,20 +694,6 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
                 $scope.SubmitInfo[i]["TMP_PLAN_ID"]='';
             }
 
-            if ($scope.BookCommonInfo.Master.CONN_RM_ID != ""){
-                $scope.SubmitInfo[i]["CONN_RM_ID"]=$scope.BookCommonInfo.Master.CONN_RM_ID;
-                if( $scope.SubmitInfo[i]["roomSelect"] == $scope.BookCommonInfo.Master.CONN_RM_ID){
-                    // master room pay all deposit
-                    $scope.SubmitInfo[i]["pay"]["payByMethods"] = $scope.BookCommonInfo.Master.payment["payByMethods"];
-                }else{
-                    // non-master room pay no deposit
-                    $scope.SubmitInfo[i]["pay"]["payByMethods"] = [];
-                }
-
-            }else{
-                $scope.SubmitInfo[i]["CONN_RM_ID"]="";
-            }
-
             // always move master room to the front
             if( i!=0 && $scope.SubmitInfo[i]["roomSelect"] == $scope.BookCommonInfo.Master.CONN_RM_ID){
                 var temp = JSON.parse(JSON.stringify($scope.SubmitInfo[0]));
@@ -691,8 +701,8 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
                 $scope.SubmitInfo[i] = temp;
             }
 
-            newCheckInFactory.modify(JSON.stringify({SubmitInfo:$scope.SubmitInfo,
-                    RM_TRAN_ID:roomST[0].RM_TRAN_ID,initialString:$scope.initialString,moneyInvolved:moneyInvolved})).success(function(data){
+            newCheckInFactory.modify(JSON.stringify({SubmitInfo:$scope.SubmitInfo,today:util.dateFormat(today),
+                    RM_TRAN_ID:roomST[0].RM_TRAN_ID,initialString:$scope.initialString})).success(function(data){
                 $scope.submitLoading = false;
                 show("办理成功!");
                 $modalInstance.close("checked");

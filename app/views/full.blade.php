@@ -2,6 +2,7 @@
 <html ng-app="Operationer" >
 	<head>
 		<meta charset="UTF-8">
+        <meta http-equiv="X-UA-COMPATIBLE" content="IE-edge">
 		<title>Pantheo BI</title>
 
             <link href="assets/stylesheets/application.css" rel="stylesheet">
@@ -10,7 +11,8 @@
         <!-- Javascript -->
         <script src="assets/javascripts/application.js"></script>
 
-
+        <!----      IE detection          --->
+        <!--[if lt IE 9]><script src="js/Angular/module_frontDesk/pan_lib/browserDetection.js"></script><![endif]-->
 	</head>
 	<body >
 		<div class="sideNavArea" ng-controller="sideBarController">
@@ -35,25 +37,25 @@
 
         <script src="Scripts/jquery/jquery-1.11.1.js"></script>
         <script src="Scripts/angularjs/angular.min.js"></script>
-<!--        <script src="Scripts/angularjs/ui-bootstrap-tpls-0.11.0.js"></script>-->
-        <script src="Scripts/angularjs/ui-bootstrap-tpls-0.12.1.js"></script>
+        <!--  <script src="Scripts/angularjs/ui-bootstrap-tpls-0.11.0.js"></script>     any problem, try change back to this version-->
+                <script src="Scripts/angularjs/ui-bootstrap-tpls-0.13.0.min.js"></script>
 
-        <script src="Scripts/angularjs/angular-route.js"></script>
-        <script src="Scripts/angularjs/angular-animate-1.3.0.js"></script>
-        <script src="Scripts/angularjs/angular-ui-0.4.0.min.js"></script>
+                <script src="Scripts/angularjs/angular-route.js"></script>
+                <script src="Scripts/angularjs/angular-animate-1.3.0.js"></script>
+                <script src="Scripts/angularjs/angular-ui-0.4.0.min.js"></script>
 
 
 
-        <!-- JS Angular for front Desk-->
+                <!-- JS Angular for front Desk-->
         <script src="js/Angular/module_frontDesk/module.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/frontDeskController.js"></script>
         <!--  <script src="js/Angular/module_frontDesk/controllers/frontDeskModals.js"></script> -->
         <script src="js/Angular/module_frontDesk/controllers/menu/smallMenuController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/menu/largeMenuController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/menu/contentMenuController.js"></script>
-        <script src="js/Angular/module_frontDesk/controllers/CheckInModalController.js"></script>
-        <script src="js/Angular/module_frontDesk/controllers/CheckOutModalController.js"></script>
-        <script src="js/Angular/module_frontDesk/controllers/MultiCheckInModalController.js"></script>
+        <script src="js/Angular/module_frontDesk/controllers/checkInModalController.js"></script>
+        <script src="js/Angular/module_frontDesk/controllers/checkOutModalController.js"></script>
+        <script src="js/Angular/module_frontDesk/controllers/multiCheckInModalController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/reservationModalController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/buildInDirController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/addMemberModalController.js"></script>

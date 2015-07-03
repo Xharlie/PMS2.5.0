@@ -7,7 +7,7 @@ app.controller('sideBarController', function($scope, $http){
         $scope.tab = pathArray[pathArray.length-2].substring(0, 4);
     }
     $scope.tabClassObj={'room':'','rese':'','merc':'','cust':'','acco':'','prob':'',
-                        'oneK':'','sett':''};
+        'oneK':'','sett':''};
     $scope.tabClassObj[$scope.tab]='tabChosen';
     $scope.emphasize = function(tabName){
         for(key in $scope.tabClassObj){
@@ -130,19 +130,37 @@ app.controller('reservationController', function($scope, $http, resrvFactory,$mo
 });
 
 
-app.controller('roomStatusController', function($scope,$compile, $http, roomStatusFactory, $modal,cusModalFactory){
-/* Database version */
-
+app.controller('roomStatusController', function($scope,$compile, $http, roomStatusFactory, $modal,cusModalFactory,resrvFactory){
+    /* Database version */
+    var today = new Date();
     $scope.connectClick = "toStart";
     $scope.master2BranchStyle = {};
     $scope.master2BranchID = {};
     $scope.ready=false;
     $scope.blockClass="roomBlockSelected";
-
+    $scope.roomSummary = {};
+    $scope.roomFloor = {};
+    $scope.roomCount = function(room,summary){
+        if(room.RM_TP in summary){
+            summary[room.RM_TP]['total']++;
+            summary[room.RM_TP][room.RM_CONDITION]++;
+        }else{
+            summary[room.RM_TP] = {total:1,'空房':0,'有人':0,'维修':0,'脏房':0};
+            summary[room.RM_TP][room.RM_CONDITION]++;
+        }
+    }
+    $scope.floorify = function(room,floors){
+        if(room.FLOOR_ID in floors){
+            floors[room.FLOOR_ID].rooms.push(room);
+        }else{
+            floors[room.FLOOR_ID] = {FLOOR_ID:room.FLOOR_ID,FLOOR:room.FLOOR,rooms:[room]};
+        }
+    }
     roomStatusFactory.roomShow().success(function(data){
         $scope.roomStatusInfo =data;
         for (var i=0; i<$scope.roomStatusInfo.length; i++){
-
+            $scope.roomCount($scope.roomStatusInfo[i],$scope.roomSummary);
+            $scope.floorify($scope.roomStatusInfo[i],$scope.roomFloor);
             switch($scope.roomStatusInfo[i].RM_CONDITION){
                 case '空房':
                     $scope.roomStatusInfo[i].menuType = 'small-menu';
@@ -166,20 +184,20 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
             }
 
             if($scope.roomStatusInfo[i]['CONN_RM_TRAN_ID'] != null){
-                 $scope.roomStatusInfo[i]['connLightUp'] = [];
-                 if($scope.roomStatusInfo[i]['CONN_RM_TRAN_ID'] in $scope.master2BranchStyle){
-                     $scope.master2BranchStyle[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']].push($scope.roomStatusInfo[i].blockClass);
-                     $scope.master2BranchID[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']].push($scope.roomStatusInfo[i].RM_TRAN_ID);
-                 }else{
-                     $scope.master2BranchStyle[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']] = [$scope.roomStatusInfo[i].blockClass];
-                     $scope.master2BranchID[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']]=[$scope.roomStatusInfo[i].RM_TRAN_ID];
-                 }
+                $scope.roomStatusInfo[i]['connLightUp'] = [];
+                if($scope.roomStatusInfo[i]['CONN_RM_TRAN_ID'] in $scope.master2BranchStyle){
+                    $scope.master2BranchStyle[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']].push($scope.roomStatusInfo[i].blockClass);
+                    $scope.master2BranchID[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']].push($scope.roomStatusInfo[i].RM_TRAN_ID);
+                }else{
+                    $scope.master2BranchStyle[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']] = [$scope.roomStatusInfo[i].blockClass];
+                    $scope.master2BranchID[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']]=[$scope.roomStatusInfo[i].RM_TRAN_ID];
+                }
             }
         }
         for (var i=0; i<$scope.roomStatusInfo.length; i++){
             if($scope.roomStatusInfo[i]['connLightUp'] != undefined){
-               $scope.roomStatusInfo[i]['connLightUp'] = $scope.master2BranchStyle[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']];
-               $scope.roomStatusInfo[i]['connRM_TRAN_IDs'] = $scope.master2BranchID[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']];
+                $scope.roomStatusInfo[i]['connLightUp'] = $scope.master2BranchStyle[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']];
+                $scope.roomStatusInfo[i]['connRM_TRAN_IDs'] = $scope.master2BranchID[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']];
             }else{
                 $scope.roomStatusInfo[i]['connRM_TRAN_IDs'] = [$scope.roomStatusInfo[i]['RM_TRAN_ID']];
             }
@@ -187,7 +205,11 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
         $scope.ready=true;
     });
 
-   $scope.connLightUp = function(roomST){
+    resrvFactory.showComResv(util.dateFormat(today)).success(function(data){
+        $scope.resvComInfo =data;
+    })
+
+    $scope.connLightUp = function(roomST){
         if(roomST['connLightUp'] != undefined){
             for (var i=0; i< roomST['connLightUp'].length; i++){
                 roomST['connLightUp'][i].push("connRoomBlock");
@@ -270,11 +292,11 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
         || (roomST['customers'] != null && roomST['customers'][0].CUS_NAME.match(test) != null) );
     };
 
-/* Room Click Modal is here !*/
+    /* Room Click Modal is here !*/
 
 
-   $scope.open = function (roomST) {
-       if($scope.connectFlag == true) {
+    $scope.open = function (roomST) {
+        if($scope.connectFlag == true) {
             if( roomST.RM_CONDITION == "空房"){
                 if (roomST.blockClass.indexOf('connRoomBlockAdd')<0){
                     roomST.blockClass.push("connRoomBlockAdd");
@@ -286,9 +308,9 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
                 }
             }
         }else if($scope.connectFlag == false){
-           if (roomST.blockClass.indexOf('roomBlockSelected')<0){
-               roomST.blockClass.push("roomBlockSelected");
-           }
+            if (roomST.blockClass.indexOf('roomBlockSelected')<0){
+                roomST.blockClass.push("roomBlockSelected");
+            }
         }
     };
 
@@ -310,25 +332,39 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
                 }
             });
         }else if($scope.connectFlag == false && roomST.RM_CONDITION == "有人"){
+            // check out
+            //var modalInstance = $modal.open({
+            //    windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+            //    templateUrl: 'directiveViews/checkOutModal',
+            //    controller: 'checkOutModalController',
+            //    resolve: {
+            //        connRM_TRAN_IDs: function () {
+            //            return roomST.connRM_TRAN_IDs;
+            //        },
+            //        initialString: function () {
+            //            return "checkOut";
+            //        },
+            //        RM_TRAN_IDFortheRoom: function() {
+            //            return roomST.RM_TRAN_ID;
+            //        },
+            //        ori_Mastr_RM_TRAN_ID: function() {
+            //            return roomST.CONN_RM_TRAN_ID;
+            //        }
+            //    }
+            //})
             var modalInstance = $modal.open({
                 windowTemplateUrl: 'directiveViews/modalWindowTemplate',
-                templateUrl: 'directiveViews/checkOutModal',
-                controller: 'checkOutModalController',
+                templateUrl: 'directiveViews/singleCheckInModal',
+                controller: 'checkInModalController',
                 resolve: {
-                    connRM_TRAN_IDs: function () {
-                        return roomST.connRM_TRAN_IDs;          // leave flexibility to have multiple parameters or rooms
+                    roomST: function () {
+                        return [roomST];          // leave flexibility to have multiple parameters or rooms
                     },
                     initialString: function () {
-                        return "checkOut";
-                    },
-                    RM_TRAN_IDFortheRoom: function() {
-                        return roomST.RM_TRAN_ID;
-                    },
-                    ori_Mastr_RM_TRAN_ID: function() {
-                        return roomST.CONN_RM_TRAN_ID;
+                        return "editRoom";
                     }
                 }
-            })
+            });
         }else if($scope.connectFlag == false && roomST.RM_CONDITION == "脏房"){
             cusModalFactory.Change2Cleaned(roomST.RM_ID).success(function(data){
                 roomST.RM_CONDITION = "空房";
@@ -482,7 +518,8 @@ app.controller('accountingController', function($scope, $http, accountingFactory
             for (var i =0 ; i< $scope.acctInfo.length; i++){
                 $scope.acctInfo[i].blockClass=[];
                 var date = new Date($scope.acctInfo[i].TSTMP);
-                $scope.acctInfo[i].adjustedTSTMP = util.tstmpFormat(new Date(Number(date) - date.getTimezoneOffset()*1000*60));
+                //$scope.acctInfo[i].adjustedTSTMP = util.tstmpFormat(new Date(Number(date) - date.getTimezoneOffset()*1000*60));
+                $scope.acctInfo[i].adjustedTSTMP = util.tstmpFormat(date);
                 $scope.acctInfo[i]['CONSUME_PAY_AMNT'] = parseFloat($scope.acctInfo[i]['CONSUME_PAY_AMNT']);
                 $scope.acctInfo[i]['SUBMIT_PAY_AMNT'] = parseFloat($scope.acctInfo[i]['SUBMIT_PAY_AMNT']);
             }
@@ -743,7 +780,7 @@ app.controller('merchandiseHistoController', function($scope, $http, merchandise
 
 app.controller('merchandiseController', function($scope, $http, merchandiseFactory,$modal){
 
-/****************************************************  utilities *******************************************************/
+    /****************************************************  utilities *******************************************************/
 
 
 
@@ -818,7 +855,7 @@ app.controller('merchandiseController', function($scope, $http, merchandiseFacto
             $scope.showNotice = true;
         }
     }
-/****************************************************  init *******************************************************/
+    /****************************************************  init *******************************************************/
     $scope.ready=false;
     $scope.menuNoshow = false;
     $scope.iconAndAction = {"merchIconAction":util.merchIconAction};
@@ -845,7 +882,7 @@ app.controller('merchandiseController', function($scope, $http, merchandiseFacto
         buyer_RM_TRAN_ID = paramsArray[paramsArray.length - 1];
     }
 
-/****************************************************  confinement *******************************************************/
+    /****************************************************  confinement *******************************************************/
 
 
     $scope.removeBuy = function($index){
@@ -956,18 +993,18 @@ app.controller('merchandiseController', function($scope, $http, merchandiseFacto
 
 })
 /************************                       single Master Pay sub controller                      ***********************/
-.controller('eachBuyCtrl', function ($scope) {
-    $scope.$watch('buy.AMOUNT',
-        function(newValue, oldValue) {
-            if($scope.buy.PROD_AVA_QUAN >= $scope.buy.AMOUNT){
-                $scope.buy.amountClass = "blackNum";
-            }else{
-                $scope.buy.amountClass = "redNum";
-            }
-        },
-        true
-    );
-});
+    .controller('eachBuyCtrl', function ($scope) {
+        $scope.$watch('buy.AMOUNT',
+            function(newValue, oldValue) {
+                if($scope.buy.PROD_AVA_QUAN >= $scope.buy.AMOUNT){
+                    $scope.buy.amountClass = "blackNum";
+                }else{
+                    $scope.buy.amountClass = "redNum";
+                }
+            },
+            true
+        );
+    });
 
 
 app.controller('dialogController', function ($scope, $modalInstance, content,type) {
@@ -1014,18 +1051,18 @@ app.controller('settingRoomTpController', function($scope, $http, settingRoomFac
 
     $scope.focus = function(rmTp){
         if($scope.editRecorder == ""){
-                rmTp.focusedCss = "focusedRow";
-                $scope.editRecorder = rmTp;
-                $scope.editInitRecorder= JSON.parse(JSON.stringify(rmTp));
+            rmTp.focusedCss = "focusedRow";
+            $scope.editRecorder = rmTp;
+            $scope.editInitRecorder= JSON.parse(JSON.stringify(rmTp));
         }else if($scope.editRecorder != rmTp){
-                alert("您将修改下一种房型设置,确认取消对当前房型的修改");
-                for (key in $scope.editInitRecorder){
-                    $scope.editRecorder[key]=$scope.editInitRecorder[key];
-                }
-                rmTp.focusedCss = "focusedRow";
-                $scope.editRecorder.focusedCss="";
-                $scope.editRecorder = rmTp;
-                $scope.editInitRecorder= JSON.parse(JSON.stringify(rmTp));
+            alert("您将修改下一种房型设置,确认取消对当前房型的修改");
+            for (key in $scope.editInitRecorder){
+                $scope.editRecorder[key]=$scope.editInitRecorder[key];
+            }
+            rmTp.focusedCss = "focusedRow";
+            $scope.editRecorder.focusedCss="";
+            $scope.editRecorder = rmTp;
+            $scope.editInitRecorder= JSON.parse(JSON.stringify(rmTp));
         }
     };
 
@@ -1034,9 +1071,9 @@ app.controller('settingRoomTpController', function($scope, $http, settingRoomFac
             return;
         }
         if(confirm("确认修改?")){
-                settingRoomFactory.roomTpEdit(JSON.stringify([$scope.editInitRecorder.RM_TP,rmTp])).success(function(data){
-                    reset();
-                });
+            settingRoomFactory.roomTpEdit(JSON.stringify([$scope.editInitRecorder.RM_TP,rmTp])).success(function(data){
+                reset();
+            });
         };
     };
 
@@ -1360,7 +1397,7 @@ app.controller('settingRoomsController', function($scope, $http, settingRoomFact
         settingRoomFactory.roomsAdd($scope.newRoom).success(function(data){
             $scope.rooms[$scope.selectedFloor.FLOOR_ID].push($scope.newRoom);
             $scope.newRoom = {RM_ID:'',RM_TRAN_ID:null,RM_CONDITION:'空房',RM_TP:'',
-                            RM_CHNG_TSTMP:null,FLOOR:'',FLOOR_ID:'',PHONE:'',RMRK:''};
+                RM_CHNG_TSTMP:null,FLOOR:'',FLOOR_ID:'',PHONE:'',RMRK:''};
             $scope.editRecorder == "";
         });
     }
@@ -1401,14 +1438,14 @@ app.controller('settingTempRoomController', function($scope, $http, settingTempR
             $scope.editRecorder = plan;
             $scope.editInitRecorder= JSON.parse(JSON.stringify(plan));
         }else if($scope.editRecorder != plan){
-                alert("您将修改下一种套餐,确认取消对当前套餐的修改")
-                for (key in $scope.editInitRecorder){
-                    $scope.editRecorder[key]=$scope.editInitRecorder[key];
-                }
-                plan.focusedCss = "focusedRow";
-                $scope.editRecorder.focusedCss="";
-                $scope.editRecorder = plan;
-                $scope.editInitRecorder= JSON.parse(JSON.stringify(plan));
+            alert("您将修改下一种套餐,确认取消对当前套餐的修改")
+            for (key in $scope.editInitRecorder){
+                $scope.editRecorder[key]=$scope.editInitRecorder[key];
+            }
+            plan.focusedCss = "focusedRow";
+            $scope.editRecorder.focusedCss="";
+            $scope.editRecorder = plan;
+            $scope.editInitRecorder= JSON.parse(JSON.stringify(plan));
         }
     };
 
@@ -1418,8 +1455,8 @@ app.controller('settingTempRoomController', function($scope, $http, settingTempR
         }
         if(confirm("确认修改?")){
             settingTempRoomFactory.planEdit(JSON.stringify([$scope.editInitRecorder.PLAN_ID,plan])).success(function(data){
-                    reset();
-                });
+                reset();
+            });
         };
     };
 

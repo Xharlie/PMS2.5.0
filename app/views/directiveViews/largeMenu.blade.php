@@ -1,8 +1,8 @@
 
-<div class="menu-large container-fluid"  id="largeMenu">
+<div class="pop pop-group"  id="largeMenu">
     <!--  在这个div container 内可随意修改,div 外不可加内容包括comment,会被认为是dom sub root,
     另外 id largeMenu不可删去，用作destroy identifier-->
-    <div class="pull-left">
+    <div class="pop-menu">
         <ul>
             <li ng-repeat="action in iconNAction">
                 <span>
@@ -15,8 +15,8 @@
             </li>
         </ul>
     </div>
-    <div ng-switch on="RMviewClick" class="pull-left padded-block">
-        <div class="infoAction" ng-switch-when ="infoAction">
+    <div class="pop-panel">
+        <div class="infoAction">
             <table>
                     <tr>
                         <td>客人</td>
@@ -55,7 +55,7 @@
                     </tr>
                     <tr>
                         <td>押金余额</td>
-                        <td><label>{{owner.DPST_RMN}}元</label></td>
+                        <td><label>{{owner.CONN_DPST_RMN}}元</label></td>
                     </tr>
             </table>
         </div>
@@ -88,67 +88,5 @@
 <!--            </div>-->
 <!--        </div>-->
 
-
-        <div ng-switch-when ="infoAccounting">
-
-            <div class="roomAccounting">
-                <!--                            <h4>住房帐</h4> -->
-                <div class="CrossTab">
-                    <!--                                <label>押金</label> -->
-                    <ul class="table table-striped table-bordered">
-                        <li>
-                            <th>时间</th>
-                            <th>房单号</th>
-                            <th>金额</th>
-                            <th>类型</th>
-                        </li>
-                        <li  ng-repeat = "depo in AcctDepo | orderBy: DEPO_TSTAMP  ">
-                            <span>{{depo.DEPO_TSTMP}}</span>
-                            <span>{{depo.RM_TRAN_ID}}</span>
-                            <span>{{depo.DEPO_AMNT}}</span>
-                            <!--                                        <span>{{PayMethod(depo.PAY_METHOD)}}</span> -->
-                            <span>押金</span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="CrossTab">
-                    <!--                                <label>房费</label> -->
-                    <ul class="table table-striped table-bordered">
-                        <!--                                     <li>
-                                                                <th>时间</th>
-                                                                <th>房单号</th>
-                                                                <th>金额</th>
-                                                                <th>类型</th>
-                                                            </li> -->
-                        <li  ng-repeat = "bill in AcctPay | orderBy: BILL_TSTMP  ">
-                            <span>{{bill.BILL_TSTMP}}</span>
-                            <span>{{bill.RM_TRAN_ID}}</span>
-                            <span>{{bill.RM_PAY_AMNT}}</span>
-                            <!--                                         <span>{{PayMethod(bill.RM_PAY_METHOD)}}</span> -->
-                            <span>房费</span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="CrossTab">
-                    <!--                                 <h4>商品帐</h4> -->
-                    <ul class="table table-striped table-bordered">
-                        <!--                                  <li>
-                                                           <th>时间</th>
-                                                                <th>房单号</th>
-                                                                <th>金额</th>
-                                                                <th>类型</th>
-                                                            </li> -->
-                        <li  ng-repeat = "store in AcctStore | orderBy: STR_TRAN_TSTAMP  ">
-                            <span>{{store.STR_TRAN_TSTAMP}}</span>
-                            <span>{{store.RM_TRAN_ID}}</span>
-                            <span>{{store.STR_PAY_AMNT}}</span>
-                            <!--                                         <span>{{PayMethod(store.STR_PAY_METHOD)}}</span> -->
-                            <span>商品</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-        </div>
     </div>
 </div>

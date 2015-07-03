@@ -21,14 +21,16 @@ class RoomStatusController extends BaseController{
     public function showRoom(){
         $roomShow = DB::table('Rooms')
             ->leftjoin('RoomTran', 'Rooms.RM_TRAN_ID','=','RoomTran.RM_TRAN_ID')
+            ->leftjoin('RoomTran as Conn', 'Conn.RM_TRAN_ID','=','RoomTran.CONN_RM_TRAN_ID')
             ->select('Rooms.RM_ID as RM_ID','Rooms.RM_TRAN_ID as RM_TRAN_ID' ,
                 'Rooms.RM_CONDITION as RM_CONDITION', 'Rooms.RM_TP as RM_TP',
+                'Rooms.FLOOR_ID as FLOOR_ID','Rooms.FLOOR as FLOOR',
                 'RoomTran.CHECK_IN_DT as CHECK_IN_DT','RoomTran.CHECK_OT_DT as CHECK_OT_DT',
                 'RoomTran.RM_AVE_PRCE as RM_AVE_PRCE','RoomTran.DPST_RMN as DPST_RMN',
                 'RoomTran.RSRV_PAID_DYS as RSRV_PAID_DYS','RoomTran.CONN_RM_TRAN_ID as CONN_RM_TRAN_ID',
                 'RoomTran.LEAVE_TM as LEAVE_TM','RoomTran.CHECK_TP as CHECK_TP',
                 'RoomTran.TMP_PLAN_ID as TMP_PLAN_ID','RoomTran.TREATY_ID as TREATY_ID',
-                'RoomTran.MEM_ID as MEM_ID')
+                'RoomTran.MEM_ID as MEM_ID',DB::raw('COALESCE(Conn.DPST_RMN,RoomTran.DPST_RMN) as CONN_DPST_RMN'))
             ->orderBy('Rooms.RM_ID', 'ASC')
             ->get();
 //        foreach($roomShow as $room){
@@ -38,6 +40,11 @@ class RoomStatusController extends BaseController{
 //        }
         $cusShow = DB::table('Rooms')
             ->join('Customers','Customers.RM_TRAN_ID','=','Rooms.RM_TRAN_ID')
+            ->select('Customers.SSN as SSN','Customers.CUS_NAME as CUS_NAME',
+                'Customers.MEM_ID as MEM_ID','Customers.TREATY_ID as TREATY_ID',
+                'Customers.PHONE as PHONE','Customers.PROVNCE as PROVNCE',
+                'Customers.POINTS as POINTS','Customers.MEM_TP as MEM_TP',
+                'Customers.RMRK as RMRK','Customers.RM_ID as RM_ID')
             ->orderBy('Rooms.RM_ID', 'ASC')
             ->get();
         $cLen = count($cusShow);

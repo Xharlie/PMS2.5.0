@@ -1,0 +1,47 @@
+//Global Style 
+//---------------------
+//Overrides some of the bootstrap standards
+
+//List
+//
+
+ul{
+	list-style: none;
+	margin:0;
+	padding:0;
+}
+
+//Text
+//Change of font size has to be made by changing bootstrap varaibles. Base font size was set to 12pt;
+
+.text-lg{
+	font-size: 2em;
+	font-weight: 600;
+}
+
+//Scaffolding
+//
+
+.main{
+	padding-top: 60px;
+}
+
+//Background Color
+//
+
+body, .main{
+	background-color: #efefef;
+}
+
+//Splitter
+//
+
+.splitter{
+	width: 100%;
+	height: $splitter-height;
+	margin: $splitter-margin;
+	background-color: $splitter-bkg;
+}
+
+//Table
+//

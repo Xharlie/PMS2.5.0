@@ -1,5 +1,5 @@
 <!doctype html>
-<div class="infoCenter">
+<div class="infoCenter hidden">
 	<div class="card card-default">
 		<div class="card-actions">
 			<h4><div class="title-decor title-decor-md"></div>消息中心</h4>

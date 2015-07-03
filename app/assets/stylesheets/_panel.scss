@@ -1,0 +1,62 @@
+//Panel Style 
+//---------------------
+//Overrides some of the bootstrap standards
+
+.panel{
+	border-radius: 2px;
+
+	.table{
+		margin-bottom: 0;
+		
+		th,td{
+			vertical-align: middle;
+			.glyphicon{
+				padding: 0;
+			}
+			padding: 15px 16px;
+		}
+	}
+
+	.panel-heading{
+		height: 64px;
+		.panel-title{
+			padding: 15px 0;
+			font-weight: 600;
+			font-size: 14px;
+		}
+	}
+
+	.panel-body{
+		padding: 20px 16px;
+	}
+}
+
+.panel-default{
+	background-color: #fafafa;
+	border: $content-border;
+
+	.panel-heading{
+		background-color: #f6f6f6;
+		.panel-title{
+			color: #aaa;
+		}
+	}
+}
+
+
+.panel-control{
+	overflow: hidden;
+	padding:6px 0;
+	.form-control{
+		width:auto;
+	}
+
+	 input{
+	 	height: 31px;
+	 	border: $content-border;
+	 }
+
+	 button{
+	 	padding: 6px 16px;
+	 }
+}

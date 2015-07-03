@@ -32,7 +32,8 @@ app.controller('modifyAcctModalController', function($scope, $http, focusInSideF
     var initModifyAcct = function(){
         if(acct.PAY) $scope.modifyAcct.payMethod='现金';
         $scope.oriAmount = util.Limit( (acct.SUBMIT_PAY_AMNT =='')? acct.CONSUME_PAY_AMNT : acct.SUBMIT_PAY_AMNT);
-        $scope.oriAmountShow = util.Limit( Math.abs((acct.SUBMIT_PAY_AMNT =='')? acct.CONSUME_PAY_AMNT : acct.SUBMIT_PAY_AMNT));
+        $scope.oriAmountShow = util.Limit( Math.abs((filterAlert.isNotEmpty(acct.SUBMIT_PAY_AMNT) != null
+        || filterAlert.isNumber(acct.SUBMIT_PAY_AMNT) != null )? acct.CONSUME_PAY_AMNT : acct.SUBMIT_PAY_AMNT));
     }
 
     /************** ********************************** Common initial setting  ******************************************* ********/
@@ -62,9 +63,9 @@ app.controller('modifyAcctModalController', function($scope, $http, focusInSideF
         if (testFail()) return;
         $scope.submitLoading = true;
         var Amount = util.Limit( Number($scope.modifyAcct.changeType)*
-                                 Number($scope.modifyAcct.payAmount)*
-                                 ((Number($scope.oriAmount)>0)?1:-1)
-                                );
+            Number($scope.modifyAcct.payAmount)*
+            ((Number($scope.oriAmount)>0)?1:-1)
+        );
 
         $scope.submitInfo={
             TABLE : $scope.oriAcct.TABLE,

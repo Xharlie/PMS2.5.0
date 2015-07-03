@@ -1,12 +1,12 @@
 app.factory('cusModalFactory',function($http){
     return{
-        OccupiedShow: function(RM_TRAN_ID){
-            return $http({
-                method: 'GET',
-                heasders: {'content-Type':'application/json'},
-                url: 'showOccupied/'+RM_TRAN_ID
-            });
-        },
+        //OccupiedShow: function(RM_TRAN_ID){
+        //    return $http({
+        //        method: 'GET',
+        //        heasders: {'content-Type':'application/json'},
+        //        url: 'showOccupied/'+RM_TRAN_ID
+        //    });
+        //},
 
         EmptyShow: function(RM_TP){
             return $http({

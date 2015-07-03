@@ -10,7 +10,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
     var defaultTimeString="13:00:00";
 
     var createNewRMProduct = function(){
-        var newProduct={"newRProductNM":"", "newRProductQUAN":"", "newRProductPAY":"","PROD_ID":""};
+        var newProduct={PROD_ID:"",PROD_NM:"", PROD_PRICE:"", PROD_QUAN:"",PROD_PAY:""};
         return newProduct;
     }
 
@@ -42,7 +42,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
         }
         for(var i = 0; i < $scope.addedItems.length; i++){
             if(!$scope.addedItems[i]['transfer']){
-                sumation = sumation + util.Limit($scope.addedItems[i].PAY_AMNT);
+                sumation = sumation + util.Limit($scope.addedItems[i].PAY_AMNT) // * (($scope.addedItems[i].itemCategory=="newDepo")?-1:1);
             }
         }
         $scope.BookCommonInfo.Master.payment.paymentRequest = sumation;
@@ -82,9 +82,9 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
         return Payment;
     }
 
-    var createNewAddedItem = function(){
-        var newAddedItem = {RM_TRAN_ID:RM_TRAN_IDFortheRoom, itemCategory:"merchant", paymentRequest:"",RMRK:"",
-                             penalty:createItemPenalty(), prodInfo:createProdInfo(),showup:"未选",isopen:false};
+    var createNewAddedItem = function(category){
+        var newAddedItem = {RM_TRAN_ID:RM_TRAN_IDFortheRoom, itemCategory:category, paymentRequest:"",RMRK:""
+                            ,prodInfo:createNewRMProduct(), penalty:createItemPenalty()};
         return newAddedItem;
     }
 
@@ -96,72 +96,44 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
         return newPenalty;
     }
 
-    var createProdInfo = function(){
-            return JSON.parse(JSON.stringify($scope.prodInfo));
-    }
 
-    $scope.updateItemCommentSelection = function(item){
-        var showUpString="";
-        if(item.itemCategory=='merchant'){
-            for(var i =0; i<item.prodInfo.length;i++){
-                if(item.prodInfo[i].PROD_SELECTED && item.prodInfo[i].PROD_QUAN >0){
-                    showUpString=showUpString+item.prodInfo[i].PROD_NM+"X"+item.prodInfo[i].PROD_QUAN+"; " ;
-                }
-            }
-            item.RMRK="";
-        }else if(item.itemCategory=='penalty' ){
-            if(item.penalty.PAY_AMNT!='' && item.penalty.PENALTY_ITEM!='' && item.penalty.PAYER_PHONE!=''){
-                showUpString = "赔偿:"+item.penalty.PENALTY_ITEM;
-                item.RMRK = item.penalty.PENALTY_ITEM+" (赔偿"+item.penalty.PAY_AMNT+"元)";
-            }
-        }
-        if (showUpString=="") showUpString = "未选";
-        item.showup = showUpString;
+    function checkQuanInvalid(quan){
+        return   (filterAlert.isNotEmpty(quan)!=null
+            || filterAlert.isNumber(quan)!=null
+            || filterAlert.isLargerEqualThan1(quan)!=null);
     }
 
     $scope.updateItemPrice = function(item){
-        var addUp=0;
         if(item.itemCategory=='merchant'){
-            for(var i =0; i<item.prodInfo.length;i++){
-                if(item.prodInfo[i].PROD_SELECTED && item.prodInfo[i].PROD_QUAN >0){
-                    addUp = addUp + util.Limit(item.prodInfo[i].PROD_PRICE) * parseInt(item.prodInfo[i].PROD_QUAN);
-                }
+            if(filterAlert.isNotEmpty(item.prodInfo.PROD_PRICE)!=null
+                || checkQuanInvalid(item.prodInfo.PROD_QUAN)){
+                return null;
+            }else{
+                return util.Limit(item.prodInfo.PROD_QUAN*item.prodInfo.PROD_PRICE);
             }
-            item.RMRK="";
-        }else if(item.itemCategory=='penalty' ){
-            if(item.penalty.PAY_AMNT!='' && item.penalty.PENALTY_ITEM!='' && item.penalty.PAYER_PHONE!=''){
-                addUp=item.penalty.PAY_AMNT;
-            }
-        }else if(item.itemCategory=='newAcct' ){
-            show(1)
         }
-        item.paymentRequest = (addUp == 0)? 'n/a' : util.Limit(addUp);
     }
 
-//    var syncToList = function(item){
-//        addNewItemsInList(item);
-//    }
+
 
     var addNewItemsInList = function(item,newIds){
         if(item.itemCategory == "merchant"){
-            for(var i=0; i<item.prodInfo.length; i++){
-                var prod = item.prodInfo[i];
-                if(prod.PROD_SELECTED && prod.PROD_QUAN !=0){
-                    $scope.addedItems.push({
-                        "itemCategory": "merchant",
-                        "ID": ++$scope.newItemID,
-                        "transfer": false,
-                        "TSTMP": util.tstmpFormat(today),
-                        "RM_ID": $scope.TRAN2RMmapping[item.RM_TRAN_ID],
-                        "showUp":prod.PROD_NM+"X"+prod.PROD_QUAN,
-                        "RM_TRAN_ID":item.RM_TRAN_ID,
-                        "PAY_AMNT": util.Limit(prod.PROD_PRICE * prod.PROD_QUAN),
-                        "PROD_ID":prod.PROD_ID,
-                        "PROD_QUAN": prod.PROD_QUAN,
-                        "RMRK": item.RMRK
-                    })
-                    newIds.push("newItem"+$scope.newItemID.toString());
-                }
+            var prod = item.prodInfo;
+            if(prod.PROD_QUAN !=0){
+                $scope.addedItems.push({
+                    "itemCategory": "merchant",
+                    "ID": ++$scope.newItemID,
+                    "transfer": false,
+                    "TSTMP": util.tstmpFormat(today),
+                    "RM_ID": $scope.TRAN2RMmapping[item.RM_TRAN_ID],
+                    "showUp":prod.PROD_NM+"X"+prod.PROD_QUAN,
+                    "RM_TRAN_ID":item.RM_TRAN_ID,
+                    "PAY_AMNT": util.Limit(prod.PROD_PAY),
+                    "PROD_ID":prod.PROD_ID,
+                    "PROD_QUAN": prod.PROD_QUAN,
+                    "RMRK": item.RMRK
+                })
+                newIds.push("newItem"+$scope.newItemID.toString());
             }
         }
         else if(item.itemCategory == "penalty"){
@@ -179,6 +151,21 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
                     "PENALTY_ITEM": pen.PENALTY_ITEM ,
                     "PAYER": pen.PAYER,
                     "PAYER_PHONE": pen.PAYER_PHONE,
+                    "RMRK": item.RMRK
+                })
+                newIds.push("newItem"+$scope.newItemID.toString());
+            }
+        }else if(item.itemCategory == "newAcct"){
+            if(filterAlert.isNotEmpty(item.RMRK) == null){
+                $scope.addedItems.push({
+                    "itemCategory": "newAcct",
+                    "ID": ++$scope.newItemID,
+                    "transfer": false,
+                    "TSTMP": util.tstmpFormat(today),
+                    "RM_ID": $scope.TRAN2RMmapping[item.RM_TRAN_ID],
+                    "showUp":"补录房费:",
+                    "RM_TRAN_ID":item.RM_TRAN_ID,
+                    "PAY_AMNT": util.Limit(item.paymentRequest),
                     "RMRK": item.RMRK
                 })
                 newIds.push("newItem"+$scope.newItemID.toString());
@@ -215,6 +202,73 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
         }
         $scope.BookCommonInfo.transferable = false;
     };
+
+    $scope.loadSelectedProd = function(prod){
+        $scope.newItem.prodInfo.PROD_ID = prod.PROD_ID;
+        $scope.newItem.prodInfo.PROD_PRICE = prod.PROD_PRICE;
+        $scope.newItem.prodInfo.PROD_QUAN = (checkQuanInvalid($scope.newItem.prodInfo.PROD_QUAN))?1:$scope.newItem.prodInfo.PROD_QUAN;
+        $scope.newItem.prodInfo.PROD_PAY = $scope.updateItemPrice($scope.newItem);
+
+    }
+    $scope.cleanSelectedProd = function(){
+        $scope.newItem.prodInfo.PROD_ID = null;
+        $scope.newItem.prodInfo.PROD_NM = null;
+        $scope.newItem.prodInfo.PROD_PRICE = null;
+        $scope.newItem.prodInfo.PROD_QUAN = (checkQuanInvalid($scope.newItem.prodInfo.PROD_QUAN))?null:$scope.newItem.prodInfo.PROD_QUAN;
+        $scope.newItem.prodInfo.PROD_PAY = null;
+    }
+
+    var setMasterRmId =function(){
+        // master ID if is connected room
+        if(ori_Mastr_RM_TRAN_ID != null && ori_Mastr_RM_TRAN_ID !=""){
+            $scope.BookCommonInfo.Master.mastr_RM_TRAN_ID = ori_Mastr_RM_TRAN_ID;
+            // if master room has been checked out ,but still some room left
+            if(initialString == "checkOut" && $scope.RM_TRAN_ID_SelectedList[ori_Mastr_RM_TRAN_ID]){
+                for (var key in $scope.RM_TRAN_ID_SelectedList) {
+                    if (!$scope.RM_TRAN_ID_SelectedList[key]) {
+                        $scope.BookCommonInfo.Master.mastr_RM_TRAN_ID = key;
+                        break;
+                    }
+                }
+            }
+        }else{
+            // master ID if is connected room
+            $scope.BookCommonInfo.Master.mastr_RM_TRAN_ID = RM_TRAN_IDFortheRoom;
+        }
+    }
+
+    var setAcctShow = function(){
+        for( var key in $scope.acct){
+            for(var i = 0; i < $scope.acct[key].length; i++){
+                if(key == 'AcctDepo' || key == 'exceedPay'){
+                    $scope.acct[key][i]['show'] = $scope.RM_TRAN_ID_SelectedList[$scope.acct[key][i]['RM_TRAN_ID']] ;
+                }else{
+                    $scope.acct[key][i]['show'] = $scope.RM_TRAN_ID_SelectedList[$scope.acct[key][i]['TKN_RM_TRAN_ID']];
+                }
+            }
+        }
+    }
+
+    var setExTimeAcct = function(){
+            $scope.acct["exceedPay"] = [];
+            for (var i = 0; i < $scope.BookRoom.length; i++) {
+                if(!$scope.RM_TRAN_ID_SelectedList[$scope.BookRoom[i].RM_TRAN_ID]) continue;
+                var expectedOut = ($scope.BookRoom[i].LEAVE_TM != undefined && $scope.BookRoom[i].LEAVE_TM.length == 8) ?
+                    $scope.BookRoom[i].LEAVE_TM : defaultTimeString;
+
+                var diff = util.Limit((Number(today) - Number(new Date(util.dateFormat(today) + "T" + expectedOut + ".000Z"))) / 1000 / 60
+                - today.getTimezoneOffset());
+                if (diff > 0) {
+                    $scope.acct["exceedPay"].push({
+                        "BILL_TSTMP": util.tstmpFormat(today),
+                        "RM_TRAN_ID": $scope.BookRoom[i]["RM_TRAN_ID"],
+                        RM_ID: $scope.BookRoom[i]["RM_ID"],
+                        "RM_PAY_AMNT": exceedPayMethod(diff),
+                        exceedTime: parseInt(diff)
+                    });
+                }
+            }
+    }
     /************** ********************************** Initial functions ******************************************* *************/
     var initGetAllAcct= function(){
         newCheckOutFactory.getAllInfo(connRM_TRAN_IDs).success(function(data){
@@ -222,29 +276,19 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
             $scope.acct = data['acct'];
             $scope.acct["exceedPay"] = [];
             for (var i = 0; i < $scope.BookRoom.length; i++){
-                initNewRoomAcct($scope.BookRoom[i]);
-                if(initialString == 'checkOut'){
-                    var expectedOut = ($scope.BookRoom[i].LEAVE_TM != undefined && $scope.BookRoom[i].LEAVE_TM.length==8)?
-                        $scope.BookRoom[i].LEAVE_TM : defaultTimeString;
-
-                    var diff = util.Limit((Number(today) - Number(new Date(util.dateFormat(today)+"T"+expectedOut+".000Z")))/1000/60
-                    - today.getTimezoneOffset());
-                    if (diff > 0){
-                        $scope.acct["exceedPay"].push({"BILL_TSTMP":util.tstmpFormat(today),"RM_TRAN_ID":$scope.BookRoom[i]["RM_TRAN_ID"],
-                            RM_ID:$scope.BookRoom[i]["RM_ID"],"RM_PAY_AMNT":exceedPayMethod(diff),exceedTime:parseInt(diff)});
-                    }
-                }
                 $scope.BookRoom[i]["selected"] = ($scope.BookRoom[i].RM_TRAN_ID==RM_TRAN_IDFortheRoom);
                 $scope.RM_TRAN_ID_SelectedList[$scope.BookRoom[i].RM_TRAN_ID] = ($scope.BookRoom[i].RM_TRAN_ID==RM_TRAN_IDFortheRoom);
                 $scope.TRAN2RMmapping[$scope.BookRoom[i].RM_TRAN_ID] = $scope.BookRoom[i].RM_ID;
+                initNewRoomAcct($scope.BookRoom[i]);
             }
             for( var key in $scope.acct){
                 for(var i = 0; i < $scope.acct[key].length; i++){
                     $scope.acct[key][i]['transfer'] = false;
-                    $scope.acct[key][i]['show'] = $scope.RM_TRAN_ID_SelectedList[$scope.acct[key][i]['RM_TRAN_ID']] ; // initialize the shown acct
+                    $scope.acct[key][i]['show'] = $scope.RM_TRAN_ID_SelectedList[$scope.acct[key][i]['TKN_RM_TRAN_ID']]; // initialize the shown acct
                     switch(key){
                         case 'AcctDepo':
                             $scope.acct[key][i]["payAmount"] = $scope.acct[key][i]["DEPO_AMNT"];
+                            $scope.acct[key][i]['show'] = $scope.RM_TRAN_ID_SelectedList[$scope.acct[key][i]['RM_TRAN_ID']] ;
                             break;
                         case 'AcctPay':
                             $scope.acct[key][i]["payAmount"] = $scope.acct[key][i]["RM_PAY_AMNT"];
@@ -263,25 +307,31 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
                             break;
                         case 'exceedPay':
                             $scope.acct[key][i]["payAmount"] = $scope.acct[key][i]["RM_PAY_AMNT"];
+                            $scope.acct[key][i]['show'] = $scope.RM_TRAN_ID_SelectedList[$scope.acct[key][i]['RM_TRAN_ID']] ;
                             break;
                     }
                 }
             }
+
+            setMasterRmId();
+            if(initialString == 'checkOut') setExTimeAcct();
+            setAcctShow();
+
             $scope.updateSumation();
             $scope.viewClick=($scope.BookRoom.length>1)?'RoomChoose':'Info';
             $scope.ready=true;
+
         });
     }
 
     var initGetRoomProduct = function(){
         merchandiseFactory.productShow().success(function(data){
             $scope.prodInfo = data;
-            for(var i=0; i< data.length; i++){
-                $scope.prodInfo[i].PROD_QUAN = 0;
-                $scope.prodInfo[i].PROD_SELECTED=false;
-            }
-                $scope.newItem = createNewAddedItem();
-
+            //for(var i=0; i< data.length; i++){
+            //    $scope.prodInfo[i].PROD_QUAN = 0;
+            //    $scope.prodInfo[i].PROD_SELECTED=false;
+            //}
+            $scope.newItem = createNewAddedItem("merchant");
         });
     };
     /************** ********************************** Common initial setting  ******************************************* ********/
@@ -289,7 +339,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
     $scope.newItemID = 0;
     $scope.BookCommonInfo = {selectAll:false,Master:{mastr_RM_TRAN_ID:"",transferable:false,
                              ori_Mastr_RM_TRAN_ID:ori_Mastr_RM_TRAN_ID, payment:createNewPayment()}};
-    $scope.watcher = {member:true, selected:true, selectAll:true, isopen:true, addedItems:true,exceedPay:true};
+    $scope.watcher = {member:true, selected:true, selectAll:true, addedItems:true,exceedPay:true};
     $scope.TRAN2RMmapping = {};
     $scope.addedItems=[];
     $scope.RM_TRAN_ID_SelectedList={};
@@ -332,33 +382,31 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
         true
     );
 
-    $scope.$watch('newItem.isopen',
+    $scope.$watch('newItem.prodInfo.PROD_QUAN',
         function(newValue, oldValue) {
-            if(newValue == oldValue || !$scope.watcher.isopen ) return;
-            if(!newValue){  // when closeing
-                $scope.updateItemCommentSelection($scope.newItem);
-                $scope.updateItemPrice($scope.newItem);
+            if(newValue == oldValue) return;
+            if(filterAlert.isNotEmpty($scope.newItem.prodInfo.PROD_PRICE)!=null
+                || checkQuanInvalid(newValue)){
+                $scope.newItem.prodInfo.PROD_PAY = null;
+            }else{
+                $scope.newItem.prodInfo.PROD_PAY = util.Limit(newValue * $scope.newItem.prodInfo.PROD_PRICE);
             }
         },
         true
     );
 
     // item, category
-    $scope.changeCategory = function(item,category){
-        item.itemCategory = category;
-        item.paymentRequest = "";
-    }
+    //$scope.changeCategory = function(item){
+    //    item.paymentRequest = null;
+    //}
 
 
     $scope.addItem = function(newItem){
-        if(newItem.showup == null || newItem.showup == "未选") return;
-        // clean transition effect Ids
-        delete $scope.newAddedIds;
         $scope.newAddedIds = [];
         // insert to addedItems list
         addNewItemsInList(newItem,$scope.newAddedIds);
-        delete $scope.newItem;
-        $scope.newItem = createNewAddedItem();
+        // newItem category stay same
+        $scope.newItem = createNewAddedItem(newItem.itemCategory);
         // fire the transition
         $timeout(function() {
             $scope.ItemScrollTo = "newItem"+$scope.newItemID.toString();
@@ -402,6 +450,10 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
         for(var i = $scope.addedItems.length-1; i>=0; i--){
             if(!$scope.RM_TRAN_ID_SelectedList[$scope.addedItems[i].RM_TRAN_ID]) $scope.addedItems.splice(i,1);
         }
+        $scope.addedItems=[];
+        setMasterRmId();
+        if(initialString == 'checkOut') setExTimeAcct();
+        setAcctShow();
         $scope.viewClick=target;
     }
 
@@ -411,22 +463,6 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
 
     $scope.confirm = function(page){
         $scope.viewClick = page;
-        // master ID if is connected room
-        if(ori_Mastr_RM_TRAN_ID != null && ori_Mastr_RM_TRAN_ID!=""){
-            $scope.BookCommonInfo.Master.mastr_RM_TRAN_ID = ori_Mastr_RM_TRAN_ID;
-            // if master room has been checked out ,but still some room left
-            if($scope.RM_TRAN_ID_SelectedList[ori_Mastr_RM_TRAN_ID]){
-                for (var key in $scope.RM_TRAN_ID_SelectedList) {
-                    if (!$scope.RM_TRAN_ID_SelectedList[key]) {
-                        $scope.BookCommonInfo.Master.mastr_RM_TRAN_ID = key;
-                        break;
-                    }
-                }
-            }
-        }else{
-            // master ID if is connected room
-            $scope.BookCommonInfo.Master.mastr_RM_TRAN_ID = RM_TRAN_IDFortheRoom;
-        }
 
         // Master's paymentRequested has already bound to summation
         $scope.BookCommonInfo.Master.payment.payByMethods[0].payAmount =  $scope.BookCommonInfo.Master.payment.paymentRequest;
@@ -435,9 +471,35 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
     }
     /************** ********************************** submit  ********************************** *************/
 
-    $scope.submit = function(){
+    $scope.checkOTSubmit = function(){
         $scope.submitLoading = true;
-        var today = new Date();
+        var submitObj = {RoomArray:$scope.submitPrepRoom(),
+                        MasterRoomNpay:$scope.BookCommonInfo.Master,
+                        editAcct:$scope.submitPrepEditAcct(),
+                        addAcct:$scope.submitPrepAddAcct(),
+                        addDepoArray:$scope.submitPrepAddDepo()};
+        newCheckOutFactory.checkOT(submitObj).success(function(data){
+                $scope.submitLoading = false;
+                show("办理成功!");
+                $modalInstance.close("checked");
+                util.closeCallback();
+        });
+    }
+
+    $scope.checkLedgerSubmit = function(){
+        $scope.submitLoading = true;
+        var submitObj = {addAcct:$scope.submitPrepAddAcct(),
+            depoDeduction:{RM_TRAN_ID:$scope.BookCommonInfo.Master.mastr_RM_TRAN_ID,DPST_RMN_DEDCUTION:$scope.submitPrepDepoDeduction()} };
+        newCheckOutFactory.checkLedgerOT(submitObj).success(function(data){
+                $scope.submitLoading = false;
+                show("办理成功!");
+                $modalInstance.close("checked");
+                util.closeCallback();
+            });
+    }
+
+
+    $scope.submitPrepEditAcct = function(){
         var editAcct = {RoomAcct:[],PenaltyAcct:[],RoomStoreTran:[],RoomDepositAcct:[]};
         for( var key in $scope.acct){
             for(var i = 0; i < $scope.acct[key].length; i++){
@@ -463,44 +525,71 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
                 }
             }
         }
+        return editAcct;
+    }
+
+    $scope.submitPrepAddAcct = function(){
         var addAcct = {RoomAcct:[],PenaltyAcct:[],RoomStore:[]};
         for(var i = 0; i < $scope.addedItems.length; i++){
             var ac = $scope.addedItems[i];
             switch(ac.itemCategory){
                 case 'merchant':
-                    if(addAcct.RoomStore)
                     addAcct.RoomStore.push({
-                                            RoomStoreTran:   {TKN_RM_TRAN_ID:$scope.BookCommonInfo.Master.mastr_RM_TRAN_ID,
-                                                              RM_TRAN_ID:ac.RM_TRAN_ID,
-                                                              RM_ID: $scope.TRAN2RMmapping[ac.RM_TRAN_ID],
-                                                              FILLED: (!ac.transfer)?'T':'F'},
-                                            StoreTransaction:{STR_TRAN_TSTAMP:ac.TSTMP,
-                                                              STR_PAY_AMNT:ac.PAY_AMNT,
-                                                              RMRK:ac.RMRK,
-                                                              UID:null,
-                                                              EMP_ID:null},
-                                            ProductInTran:   {PROD_ID: ac.PROD_ID,
-                                                              PROD_QUAN: ac.PROD_QUAN}
-                                           });
+                        RoomStoreTran:   {TKN_RM_TRAN_ID:$scope.BookCommonInfo.Master.mastr_RM_TRAN_ID,
+                            RM_TRAN_ID:ac.RM_TRAN_ID,
+                            RM_ID: $scope.TRAN2RMmapping[ac.RM_TRAN_ID],
+                            FILLED: (!ac.transfer && initialString == "checkOut" )?'T':'F'},
+                        StoreTransaction:{STR_TRAN_TSTAMP:ac.TSTMP,
+                            STR_PAY_AMNT:ac.PAY_AMNT,
+                            STR_PAY_METHOD:'房间挂账',
+                            RMRK:ac.RMRK,
+                            EMP_ID:null},
+                        ProductInTran:   {PROD_ID: ac.PROD_ID,
+                            PROD_QUAN: ac.PROD_QUAN}
+                    });
                     break;
                 case 'penalty':
                     addAcct.PenaltyAcct.push({RM_TRAN_ID:ac.RM_TRAN_ID,TKN_RM_TRAN_ID:$scope.BookCommonInfo.Master.mastr_RM_TRAN_ID,
-                                           BRK_EQPMT_RMRK: ac.RMRK, PNLTY_PAY_AMNT: ac.PAY_AMNT,PAYER_NM:ac.PAYER,PAYER_PHONE:ac.PAYER_PHONE,
-                                           BILL_TSTMP:ac.TSTMP,FILLED: (!ac.transfer)?'T':'F' });
+                        BRK_EQPMT_RMRK: ac.RMRK, PNLTY_PAY_AMNT: ac.PAY_AMNT,PAYER_NM:ac.PAYER,PAYER_PHONE:ac.PAYER_PHONE,
+                        BILL_TSTMP:ac.TSTMP,FILLED: (!ac.transfer && initialString == "checkOut")?'T':'F' });
                     break;
-                case 'exceedPay':
+                case 'newAcct':
                     addAcct.RoomAcct.push({RM_TRAN_ID:ac.RM_TRAN_ID,TKN_RM_TRAN_ID:$scope.BookCommonInfo.Master.mastr_RM_TRAN_ID,
-                                           RMRK: '超时房费', RM_PAY_AMNT: ac.RM_PAY_AMNT,BILL_TSTMP:ac.BILL_TSTMP,
-                                           FILLED: (!ac.transfer)?'T':'F' });
+                        RMRK: '手入房费', RM_PAY_AMNT: ac.PAY_AMNT,BILL_TSTMP:ac.TSTMP,
+                        FILLED: (!ac.transfer && initialString == "checkOut")?'T':'F' });
                     break;
+
             }
         }
+        for(var i = 0; i < $scope.acct['exceedPay'].length; i++){
+            var ac = $scope.acct['exceedPay'][i];
+            addAcct.RoomAcct.push({RM_TRAN_ID:ac.RM_TRAN_ID,TKN_RM_TRAN_ID:$scope.BookCommonInfo.Master.mastr_RM_TRAN_ID,
+                RMRK: '超时房费', RM_PAY_AMNT: ac.RM_PAY_AMNT,BILL_TSTMP:ac.BILL_TSTMP,
+                FILLED: (!ac.transfer && initialString == "checkOut" )?'T':'F' });
+        }
+        return addAcct;
+    }
+
+    $scope.submitPrepDepoDeduction = function(){
+        var depoDeduction = 0;
+        for (var i = 0; i < $scope.addedItems.length; i++) {
+            depoDeduction = depoDeduction + $scope.addedItems[i].PAY_AMNT;
+        }
+        return depoDeduction;
+    }
+
+    $scope.submitPrepAddDepo = function(){
+        var today = new Date();
         var addDepoArray =[];
         for(var i = 0; i < $scope.BookCommonInfo.Master.payment.payByMethods.length; i++){
             var me = $scope.BookCommonInfo.Master.payment.payByMethods[i];
             addDepoArray.push({RM_TRAN_ID:$scope.BookCommonInfo.Master.mastr_RM_TRAN_ID,DEPO_AMNT:me.payAmount,
-                               PAY_METHOD:me.payMethod,DEPO_TSTMP:util.tstmpFormat(today),RMRK:"结算金额"});
+                               PAY_METHOD:me.payMethod,DEPO_TSTMP:util.tstmpFormat(today),RMRK:"结算金额",FILLED:'T'});
         }
+        return addDepoArray;
+    }
+
+    $scope.submitPrepRoom = function(){
         var RoomArray = [];
         for (var i = 0; i < $scope.BookRoom.length; i++){
             var rm = $scope.BookRoom[i];
@@ -512,15 +601,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
                 });
             }
         }
-
-        newCheckOutFactory.checkOT(RoomArray,$scope.BookCommonInfo.Master,editAcct,addAcct,addDepoArray).success(function(data){
-            $scope.submitLoading = false;
-            show("办理成功!");
-            $modalInstance.close("checked");
-            util.closeCallback();
-
-        });
-
+        return RoomArray;
     }
 })
 

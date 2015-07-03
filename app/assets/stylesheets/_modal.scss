@@ -1,0 +1,66 @@
+//Modal Style 
+//---------------------
+//Overrides some of the bootstrap standards
+
+//Nav
+//
+
+.modal{
+	width: 720px;
+	height: 80%;
+	margin: 64px auto;
+
+	.modal-control{
+		margin-top: 32px;
+		margin-bottom: 5px;
+		.btn{
+			margin-left: 10px;
+		}
+	}
+
+	.modal-content{
+		border: none;
+		box-shadow: none;
+		background-color: transparent;
+	}
+
+	.panel{
+		background-color: #FBFBFB;
+		margin: 0;
+
+		.table{
+			th,td{
+				border-top: none;
+				border-bottom: 1px solid #E2E2E2;
+
+				input{
+					height: auto;
+				}
+
+				a:hover{
+					cursor: pointer;
+				}
+			}
+		}
+
+		.panel-heading{
+			width: 718px;
+			border-bottom: 1px solid #E2E2E2;
+		}
+
+		.panel-body{
+			padding-left: 50px;
+			padding-right: 50px;
+
+			.form-group{
+				overflow: hidden;
+				label{
+					font-weight: 300;
+					color: #aaa;
+				}
+			}
+		}
+	}
+}
+
+

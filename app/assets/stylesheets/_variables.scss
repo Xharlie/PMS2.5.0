@@ -15,8 +15,11 @@ $content-border-style:				  solid;
 $content-border-width:				  1px;
 $content-border-color:				  rgba(226,226,226,1);
 $content-border:					  $content-border-width $content-border-style $content-border-color;
+$content-border-radius:				  2px;
 
-$splitter:							  1px solid rgba(255,255,255,0.1);
+$splitter-height:					  1px;
+$splitter-bkg:						  #E2E2E2;
+$splitter-margin:					  16px 0;
 
 // Padding
 
@@ -30,47 +33,8 @@ $content-inner-padding:				  $content-padding-vertical*0.5 $content-padding-hori
 $table-border:						  $content-padding-horizontal solid #666;
 $table-cell-border:					  1px solid	#666;
 
-//** Cards
 
-$card-spacing:						  7px;
-$card-shadow:						  none;
-$card-bg:							  #fafafa;
-$card-border-color:					  #E0E0E0;
-$card-padding-vertical:				  $content-padding-vertical;
-$card-padding-horizontal:			  $content-padding-horizontal;
-$card-padding:						  $card-padding-vertical $card-padding-horizontal;
-$card-radius:						  3px;
-$card-header-color:					  #aaaaaa;
-$card-header-bg:					  #f6f6f6;
-$card-header-border-color:			  $card-border-color;
+// Text
 
-//** Title
-
-$title-bg:							  darken($brand-primary,10%);
-$title-height:						  64px;
-
-
-//** Controls
-//
-
-// Searchbox
-
-$searchBox-radius:			 		  40px;
-$searchBox-border:			 		  solid 1px rgba(226,226,226,1);
-$searchBox-width:					  150px;
-
-// Tabs
-
-$tab-border-radius:					  0px;
-$tab-border-style:					  none;
-$tab-padding-vertical:				  $padding-base-vertical*1.25;
-$tab-padding-horizontal:			  $content-padding-horizontal*2;
-
-$tab-active-color:					  #fff;
-$tab-active-bg:						  $brand-primary;
-$tab-inactive-color:				  #fff;
-$tab-inactive-bg:					  darken($brand-primary, 10%);
-
-$control-padding:					  0 0;
-
+$content-font-size:					  12px;
 

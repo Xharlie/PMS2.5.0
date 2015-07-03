@@ -1,0 +1,18 @@
+//Input Style 
+//---------------------
+//Overrides some of the bootstrap standards
+
+.input-lg, .input, .input-sm, .input-xs, select{
+	border: $content-border;
+	border-radius: $content-border-radius;
+	font-size: $content-font-size;
+}
+
+.input-disabled{
+	background-color: #aaa;
+	color: white;
+	&:hover{
+		color: white;
+		cursor: not-allowed;
+	}
+}

@@ -66,6 +66,7 @@ var filterAlert = {
     }
     ,
     isSSN : function(Num){
+        if(Num==null || Num =="") return null;
         var SNum = Num.toString();
         if((SNum.length == 18) && (!isNaN(SNum.substring(0,17))) &&
             (!isNaN(SNum.substring(17,18)) || (SNum.substring(17,18)).toUpperCase() == 'X')) return null;

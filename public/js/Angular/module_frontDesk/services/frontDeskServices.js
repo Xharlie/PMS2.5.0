@@ -132,6 +132,13 @@ app.factory('resrvFactory',function($http){
                 heasders: {'content-Type':'application/json'},
                 url: 'showReservation'
             });
+        },
+        showComResv: function(today){
+            return $http({
+                method: 'GET',
+                heasders: {'content-Type':'application/json'},
+                url: 'showComResv/'+today
+            });
         }
     }
 });

@@ -1,6 +1,6 @@
 
 
-<div class="menu-small"  id="smallMenu">
+<div class="pop pop-menu"  id="smallMenu">
     <!--  在这个div container 内可随意修改,div 外不可加内容包括comment,会被认为是dom sub root.
      另外 id smallMenu不可删去，用作destroy identifier-->
     <ul>

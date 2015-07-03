@@ -1,0 +1,46 @@
+//Styles for Pop menus
+//------------------------------
+//Not related to bootstrap
+
+
+//General Styles
+.pop{
+	position: absolute;
+	border: $pop-border;
+	border-radius: $pop-border-radius;
+
+	a{
+		color: $gray-dark;
+		width: 100%;
+		text-align: left;
+		&:hover{
+			background-color: $pop-menu-hover-bkg;
+		}
+
+	}
+}
+
+.pop-menu{
+	background-color: $pop-menu-bkg;
+	width: $pop-menu-width;
+}
+
+.pop-panel{
+	background-color: $pop-panel-bkg;
+	width: $pop-panel-width;
+}
+
+.pop-group{
+	width: $pop-menu-width + $pop-panel-width + 2px; //2px is border width
+	height: $pop-group-height;
+	.pop-menu{
+		border-right: $pop-border;
+		float: left;
+		height: 100%;
+	}
+	.pop-panel{
+		float:left;
+		height: 100%;
+	}
+}
+
