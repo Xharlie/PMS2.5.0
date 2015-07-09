@@ -151,6 +151,13 @@ app.factory('roomStatusFactory',function($http){
                 heasders: {'content-Type':'application/json'},
                 url: 'showRoomStatus'
             })
+        },
+        getAllRoomTypes: function(){
+            return $http({
+                method: 'GET',
+                heasders: {'content-Type':'application/json'},
+                url: 'getAllRoomTypes'
+            })
         }
     };
 });

@@ -75,7 +75,7 @@
                         <td>{{bill.BILL_TSTMP}}</td>
                         <td>BIL-{{bill.RM_BILL_ID}}</td>
                         <td>{{bill.RM_ID}}</td>
-                        <td>房费</td>
+                        <td>{{bill.RMRK}}</td>
                         <td>{{twoDigit(bill.RM_PAY_AMNT)}}元</td>
                         <td></td>
                     </tr>
@@ -145,7 +145,7 @@
                             <option value="penalty">赔偿</option>
                         </select>
                     </div>
-                    <div ng-include="'../app/views/parts/accountType.php'">
+                    <div ng-include="'../app/views/parts/accountType.blade.php'">
                     </div>
                     <div class="row">
                         <a class="pull-right btn btn-link btn-lg" ng-click="addItem(newItem)">添加到账目</a>

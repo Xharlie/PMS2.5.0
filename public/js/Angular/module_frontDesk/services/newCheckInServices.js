@@ -56,6 +56,14 @@ app.factory('newCheckInFactory',function($http){
                 data: SubmitInfo
             });
         },
+        deposit: function(SubmitInfo){
+            return $http({
+                method: 'POST',
+                heasders: {'content-Type':'application/json'},
+                url: 'submitDeposit',
+                data: SubmitInfo
+            });
+        },
 
 /******************************** obselete ***********************************************/
         RoomSoldOut: function(checkInDt,checkOtDt){

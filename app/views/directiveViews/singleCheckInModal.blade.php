@@ -42,14 +42,28 @@
                 <div class="row">
                     <div class="form-group col-sm-6">
                         <label>客人来源</label>
-                        <select class="form-control input-lg" name="sourceSelection" ng-model="BookCommonInfo.roomSource"
-                                ng-change="sourceChange()" >
+                           <select class="form-control input-lg" name="sourceSelection" ng-model="BookCommonInfo.roomSource">
                             <option value="普通散客">普通散客</option>
                             <option value="会员">会员</option>
                             <option value="协议">协议</option>
                             <option value="活动码">活动码</option>
                             <option value="预定">预定</option>
+                            <option value="免费房">免费房</option>
                         </select>
+                        <!-- <div class="btn-group" dropdown is-open="payMethod.isopen" on-togggle="sourceChange()"
+                             ng-init="selectValue('普通散客',BookCommonInfo,'roomSource')" dropdown-append-to-body>
+                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                                {{BookCommonInfo.roomSource}} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href ng-click="selectValue('普通散客',BookCommonInfo,'roomSource')">普通散客</a></li>
+                                <li><a href ng-click="selectValue('会员',BookCommonInfo,'roomSource')">会员</a></li>
+                                <li><a href ng-click="selectValue('协议',BookCommonInfo,'roomSource')">协议</a></li>
+                                <li><a href ng-click="selectValue('活动码',BookCommonInfo,'roomSource')" >活动码</a></li>
+                                <li><a href ng-click="selectValue('预定',BookCommonInfo,'roomSource')" >预定</a></li>
+                                <li><a href ng-click="selectValue('免费房',BookCommonInfo,'roomSource')" >免费房</a></li>
+                            </ul>
+                        </div> -->
                     </div>
                     <div class="form-group col-sm-6">
                         <label>出租类型</label>
@@ -57,7 +71,7 @@
                             <option value="全日租">全日租</option>
                             <option ng-repeat=" plan in plans | filter:{RM_TP: BookRoom[0].RM_TP}:true  | orderBy: ['PLAN_COV_MIN','PLAN_COV_PRCE'] "
                                 value="{{plan.PLAN_ID}}" ng-selected="plan.PLAN_ID == BookCommonInfo.rentType" >
-                                {{(plan.RM_TP+': '+plan.PLAN_COV_MIN+'分钟 '+plan.PLAN_COV_PRCE+'元')}}
+                                {{(plan.RM_TP+': '+plan.PLAN_COV_MIN+'分钟 '+plan.PLAN_COV_PRCE+'元'+'('+plan.PLAN_NM+')')}}
                             </option>
                         </select>
                     </div>
@@ -179,56 +193,20 @@
                         请修改错误信息</button>
                 </div>
             </div>
-            <div class="" ng-show ="viewClick=='Pay'">
-                <div ng-repeat="singleRoom in BookRoom" ng-controller="scheckSingleRoomPayCtrl">
-                    <div class="row">
-                        <div class="form-group col-sm-6">
-                            <label xlabel ng-transclude checker="isNotEmpty|isNumber" checkee="singleRoom.payment.paymentRequest" btn-pass="payError">应收数目</label>
-                            <input class="form-control input-lg" ng-model="singleRoom.payment.paymentRequest" />
-                        </div>
-                        <div class="form-group col-sm-6">
-                            <label>账目类型</label>
-                            <select class="form-control input-lg"  ng-model="singleRoom.payment.paymentType"
-                                    ng-change="sourceChange()">
-                                <option value="住房押金">住房押金</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row"
-                            ng-repeat="singlePay in singleRoom.payment.payByMethods" ng-controller="scheckSinglePayCtrl" >
-                        <div class="form-group col-sm-6">
-                            <label xlabel ng-transclude checker="isNotEmpty|isNumber" checkee="singlePay.payAmount" btn-pass="payError">实收数目</label>
-                            <input class="form-control input-lg" ng-model="singlePay.payAmount" />
-                        </div>
-                        <div class="form-group col-sm-6">
-                            <label>支付方式</label>
-                            <select class="form-control input-lg"  ng-model="singlePay.payMethod" >
-                                <option value="现金">现金</option>
-                                <option value="银行卡">银行卡</option>
-                                <option value="信用卡">信用卡</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <a class="pull-right btn btn-link btn-lg" ng-click="addNewPayByMethod(singleRoom)">添加支付方式</a>
-                    </div>
-                    <div class="splitter"></div>
-                    <div class="row">
-                        <label>未收数目</label>
-                        <label class="text-danger text-lg">{{singleRoom.payment.payInDue}}元</label>
-                    </div>
-                    </div>
-                    <div class="row modal-control">
-                        <button class="pull-right btn btn-primary btn-lg"
-                                ng-if="initialString == 'singleWalkIn' && (payError == '0' || payError == null) "
-                                ng-click="submit()"
-                                btn-loading="submitLoading"
-                                loading-text = '处理中请您稍候...'
-                                loading-gif= 'assets/dummy/buttonProcessing.gif'>确认入住并打印押金单</button>
-                        <button class="pull-right btn btn-disabled btn-lg" ng-if=" payError != '0' && payError != null ">请更正错误信息</button>
-                        <button class="pull-right btn btn-primary btn-lg"
-                                ng-click="backward()">返回修改</button>
-                    </div>
+            <div ng-show ="viewClick=='Pay'">
+                <!-- payment directive as here, php under part, controller under partControllers -->
+                <div payment  book-room="BookRoom" pay-method-options="payMethodOptions" pay-error="payError"></div>
+                <div class="row modal-control">
+                    <button class="pull-right btn btn-primary btn-lg"
+                            ng-if="initialString == 'singleWalkIn' && (payError == '0' || payError == null) "
+                            ng-click="submit()"
+                            btn-loading="submitLoading"
+                            loading-text = '处理中请您稍候...'
+                            loading-gif= 'assets/dummy/buttonProcessing.gif'>确认入住并打印押金单</button>
+                    <button class="pull-right btn btn-disabled btn-lg" ng-if=" payError != '0' && payError != null ">请更正错误信息</button>
+                    <button class="pull-right btn btn-primary btn-lg"
+                            ng-click="backward()">返回修改</button>
+                </div>
              </div>
         </div>
     </div>

@@ -33,6 +33,14 @@ Route::group(array('prefix' => 'directiveViews'), function()
     });
 });
 
+Route::group(array('prefix' => 'parts'), function()
+{
+    Route::get('{all}', function($all)
+    {
+        return View::make("parts".".".$all);
+    });
+});
+
 
 Route::get('/logon', function()
 {
@@ -106,6 +114,8 @@ Route::get('/showComResv/{today}', 'ReservationController@showComResv');
 
 Route::get('/showRoomStatus', 'RoomStatusController@showRoom');
 
+Route::get('/getAllRoomTypes', 'RoomStatusController@getAllRoomTypes');
+
 Route::get('/showOccupied/{RM_TRAN_ID}', 'RoomStatusController@showOccupied');
 
 Route::get('/showCusInRoom/{RM_ID}', 'NewCheckInController@showCusInRoom');
@@ -170,6 +180,9 @@ Route::post('/submitCheckIn','NewCheckInController@submitCheckIn');
 
 // room check in modify
 Route::post('/submitModify','NewCheckInController@submitModify');
+
+// room deposit
+Route::post('/submitDeposit','NewCheckInController@submitDeposit');
 
 
 

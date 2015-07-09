@@ -1,8 +1,8 @@
 /**
  * Created by Xharlie on 3/7/15.
  */
-app.controller('purchaseModalController', function($scope, $http,$modalInstance, merchandiseFactory,focusInSideFactory,
-                                                   $timeout, paymentRequest,buyer_RM_TRAN_ID,owner ){
+app.controller('purchaseModalController', function($scope, $http,$modalInstance, merchandiseFactory, paymentFactory,
+                                                   focusInSideFactory,$timeout, paymentRequest,buyer_RM_TRAN_ID,owner ){
 
     /********************************************     validation     ***************************************************/
     $scope.hasError = function(btnPass){
@@ -12,49 +12,9 @@ app.controller('purchaseModalController', function($scope, $http,$modalInstance,
     $scope.noError = function(btnPass){
         eval("$scope."+btnPass+"--");
     }
+    $scope.payError = 0;
     /********************************************     utility     ***************************************************/
-    var createNewPayByMethod = function(){
-        var payByMethod =  {payAmount:"",payMethod:"",rmIdClass:null,RM_TRAN_ID:null,TKN_RM_TRAN_ID:null,roomId:null};
-        return payByMethod;
-    }
 
-    var createNewPayment = function(){
-        var Payment =  {paymentRequest:"", paymentType:"住房押金", payInDue:"",payByMethods:[createNewPayByMethod()]};
-        return Payment;
-    }
-
-    $scope.addNewPayByMethod = function(singleRoom){
-        singleRoom.payment.payByMethods.push(createNewPayByMethod());
-    }
-
-    $scope.updatePayInDue = function(singleRoom){
-        var totalDue= parseFloat(singleRoom.payment.paymentRequest);
-        for (var i=0; i<singleRoom.payment.payByMethods.length; i++){
-            totalDue = totalDue - singleRoom.payment.payByMethods[i].payAmount;
-        }
-        singleRoom.payment.payInDue = util.Limit(parseFloat(totalDue));
-        singleRoom.payment.payInDue = (isNaN(singleRoom.payment.payInDue))? 0.00: singleRoom.payment.payInDue;
-    };
-
-    $scope.roomIdHit = function(singlePay, room){
-        singlePay.rmIdClass='greenNum';
-        singlePay.RM_TRAN_ID  = room.RM_TRAN_ID;
-        singlePay.TKN_RM_TRAN_ID = (room.CONN_RM_TRAN_ID == null)?room.RM_TRAN_ID:room.CONN_RM_TRAN_ID;
-    }
-
-    $scope.roomIdClear = function(singlePay){
-            singlePay.rmIdClass='redNum';
-            singlePay.RM_TRAN_ID = null;
-            singlePay.TKN_RM_TRAN_ID = null;
-            for(var i =0; i< $scope.rooms.length; i++){
-                if(singlePay.roomId == $scope.rooms[i].RM_ID){
-                    if($scope.rooms[i].RM_CONDITION == "有人"){
-                        $scope.roomIdHit(singlePay,$scope.rooms[i]);
-                    }
-                    break;
-                }
-            }
-    }
 
     var testFail = function(){
         return false;
@@ -66,11 +26,13 @@ app.controller('purchaseModalController', function($scope, $http,$modalInstance,
 
     /********************************************     init     ***************************************************/
     var commonInit = function(){
-        $scope.BookCommonInfo.Master.payment.paymentRequest = paymentRequest;
-        $scope.BookCommonInfo.Master.payment.payByMethods[0].payAmount = paymentRequest;
-        $scope.BookCommonInfo.Master.payment.payInDue = 0;
-        $scope.BookCommonInfo.Master.payment.base = paymentRequest;
         merchandiseFactory.merchanRoomShow().success(function(data){
+            $scope.BookCommonInfo={Master:{payment:paymentFactory.createNewPayment('商品付款'),check:true}};
+            $scope.BookRoomMaster = [$scope.BookCommonInfo.Master];
+            $scope.BookCommonInfo.Master.payment.paymentRequest = paymentRequest;
+            $scope.BookCommonInfo.Master.payment.payByMethods[0].payAmount = paymentRequest;
+            $scope.BookCommonInfo.Master.payment.payInDue = 0;
+            $scope.BookCommonInfo.Master.payment.base = paymentRequest;
             $scope.rooms = data;
             if(buyer_RM_TRAN_ID == null){
                 allMethodsInit();
@@ -82,12 +44,12 @@ app.controller('purchaseModalController', function($scope, $http,$modalInstance,
 
 
     var allMethodsInit = function(){
-        $scope.BookCommonInfo.Methods = ['现金','银行卡', '信用卡', '房间挂账'];
+        $scope.payMethodOptions=paymentFactory.dumbPurchasePayMethodOptions();
         $scope.BookCommonInfo.Master.payment.payByMethods[0].payMethod = "现金";
     }
 
     var roomMethodInit = function(){
-        $scope.BookCommonInfo.Methods = ['房间挂账'];
+        $scope.payMethodOptions=paymentFactory.roomPurchasePayMethodOptions();
         $scope.BookCommonInfo.Master.payment.payByMethods[0].payMethod = "房间挂账";
         for(var i=0; i<$scope.rooms.length; i++){
             if(buyer_RM_TRAN_ID == $scope.rooms[i].RM_TRAN_ID){
@@ -101,10 +63,7 @@ app.controller('purchaseModalController', function($scope, $http,$modalInstance,
 
     /********************************************     common variables     ***************************************************/
     $scope.viewClick ='Pay';
-    $scope.Connected = true;
-    $scope.BookCommonInfo={Master:{payment:createNewPayment()},Methods:[]};
     commonInit();
-
     focusInSideFactory.tabInit('wholeModal');
     $timeout(function(){
         focusInSideFactory.manual('wholeModal');
@@ -148,33 +107,3 @@ app.controller('purchaseModalController', function($scope, $http,$modalInstance,
     };
 
 })
-
-/************************                       singleRoomPay sub controller                      ***********************/
-.controller('purchaseSingleRoomPayCtrl', function ($scope) {
-    $scope.$watch('singleRoom.payment.paymentRequest',
-        function(newValue, oldValue) {
-            $scope.$parent.updatePayInDue($scope.singleRoom);
-        },
-        true
-    );
-})
-
-/************************                       singlePay sub controller                      ***********************/
-.controller('purchaseSinglePayCtrl', function ($scope) {
-    $scope.$watch('singlePay.payAmount',
-        function(newValue, oldValue) {
-            $scope.$parent.$parent.updatePayInDue($scope.$parent.singleRoom);
-        },
-        true
-    );
-})
-
-/************************                       single Master Pay sub controller                      ***********************/
-.controller('purchaseSingleMasterPayCtrl', function ($scope) {
-    $scope.$watch('singlePay.payAmount',
-        function(newValue, oldValue) {
-            $scope.$parent.updatePayInDue($scope.$parent.BookCommonInfo.Master);
-        },
-        true
-    );
-});

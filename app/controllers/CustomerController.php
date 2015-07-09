@@ -13,7 +13,7 @@ class CustomerController extends BaseController{
             ->join('Customers', 'Rooms.RM_TRAN_ID', '=', 'Customers.RM_TRAN_ID')
             ->select('Rooms.RM_ID as RM_ID','Customers.SSN as SSN','Customers.CUS_NAME as CUS_NM',
                 'RoomTran.CHECK_TP as CHECK_TP','Customers.MEM_ID as MEM_ID','Customers.MEM_TP as MEM_TP',
-                'Customers.PROVNCE as PROVNCE','Customers.PHONE as PHONE','Customers.RMRK as RMRK',
+                'Customers.PHONE as PHONE','Customers.RMRK as RMRK',
                 'RoomTran.CHECK_IN_DT as CHECK_IN_DT','RoomTran.CHECK_OT_DT as CHECK_OT_DT')
             ->get();
         return Response::json($customerShow);

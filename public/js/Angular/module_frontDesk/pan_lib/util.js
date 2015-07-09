@@ -92,7 +92,8 @@ var util = {
     infoIconAction :  [{icon:"glyphicon glyphicon-barcode",action:"制门卡"},
         {icon:"glyphicon glyphicon-pencil",action:"信息修改"},
         {icon:"glyphicon glyphicon-shopping-cart",action:"商品购买"},
-        {icon:"glyphicon glyphicon-list-alt  ",action:"账目查看"},
+        {icon:"glyphicon glyphicon-list-alt",action:"账目查看"},
+        {icon:"glyphicon glyphicon-piggy-bank",action:"入押金"},
         {icon:"glyphicon glyphicon-arrow-left",action:"退房办理"}]
     //--------------------   预定页面  ---------------------------
     ,

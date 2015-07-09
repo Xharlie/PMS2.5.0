@@ -1,9 +1,8 @@
 <!doctype html>
-
-
-<div class="mode col-sm-12" xmlns="http://www.w3.org/1999/html">
+<!-- <div class="mode col-sm-12" xmlns="http://www.w3.org/1999/html">
     <button class="buttonUnClicked tab tab-active" ng-class ="buttonClicked">购买记录</button>
-</div>
+</div>  -->
+
 <div ng-show="ready" class="col-sm-12">
     <div class="card card-default">
         <div class="card-body">

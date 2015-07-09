@@ -1,30 +1,41 @@
 <!doctype html>
 
-
-<div class="mode col-sm-12 hidden" xmlns="http://www.w3.org/1999/html">
+<!--<div class="mode col-sm-12 hidden" xmlns="http://www.w3.org/1999/html">
     <button class="buttonUnClicked tab tab-active" ng-class ="buttonClicked" >购买商品</button>
-</div>
+</div>  -->
 <div ng-show="ready">
     <div class="col-md-8">
         <div class="productBoard panel panel-default">
             <div class="panel-heading">
                 <div class="panel-control">
                     <div class="prodSearch pull-right">
-                        <select ng-model="prodTypeFilter" ng-change="nullify(prodTypeFilter);" class="form-control btn btn-default btn-lg">
-                            <option value="">全部商品类别</option>
-                            <option value="烟">烟类</option>
-                            <option value="酒">酒类</option>
-                            <option value="零食">零食类</option>
-                            <option value="用具">用具类</option>
-                        </select>
-                        <select ng-model="prodSorter" class="form-control btn btn-default btn-lg">
-                            <option value="">排序</option>
-                            <option value="PROD_TP">类别</option>
-                            <option value="PROD_NM">商品名称</option>
-                            <option value="PROD_ID">编号</option>
-                            <option value="PROD_PRICE">零售价</option>
-                            <option value="PROD_AVA_QUAN">存量</option>
-                        </select>
+                        <div class="btn-group" dropdown is-open="prodTypeFilter.isopen" on-toggle="nullify(prodTypeFilter.value);"
+                             ng-init="selectTo('','全部商品类别',prodTypeFilter)" dropdown-append-to-body>
+                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle >
+                                {{prodTypeFilter.caption}} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href ng-click="selectTo('','全部商品类别',prodTypeFilter)">全部商品类别</a></li>
+                                <li ng-repeat="(PROD_TP,value) in prodType">
+                                    <a href ng-click="selectTo(value,value,prodTypeFilter)">{{value}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="btn-group" dropdown is-open="prodSorter.isopen" dropdown-append-to-body ng-init="selectTo('','排序',prodSorter);">
+                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle >
+                                {{prodSorter.caption}} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href ng-click="selectTo('','排序',prodSorter)">排序</a></li>
+                                <li><a href ng-click="selectTo('PROD_TP','类别',prodSorter)">类别</a></li>
+                                <li><a href ng-click="selectTo('PROD_NM','商品名称',prodSorter)">商品名称</a></li>
+                                <li><a href ng-click="selectTo('PROD_ID','编号',prodSorter)">编号</a></li>
+                                <li><a href ng-click="selectTo('PROD_PRICE','零售价',prodSorter)">零售价</a></li>
+                                <li><a href ng-click="selectTo('PROD_AVA_QUAN','零售价',prodSorter)">零售价</a></li>
+                            </ul>
+                        </div>
+
+
                         <input class="searchBox input-lg" type="text"  ng-change = "nullify(prodNameFilter);"
                                ng-model = "prodNameFilter" placeholder="按产品名搜索">
                     </div>
@@ -39,7 +50,7 @@
                     <th>零售价</th>
                     <th>库存</th>
                 </tr>
-                <tr  ng-repeat = "prod in prodInfo | filter : {PROD_TP: prodTypeFilter, PROD_NM: prodNameFilter} | orderBy:prodSorter:false"
+                <tr  ng-repeat = "prod in prodInfo | filter : {PROD_TP: prodTypeFilter.value, PROD_NM: prodNameFilter.value} | orderBy:prodSorter.value:false"
                      ng-mouseenter="lightUp(prod)"  ng-mouseleave = 'lightBack(prod)'
                      ng-dblclick="addBuy(prod)"
                      sglclick="open(prod)" onclick="event.preventDefault();" ng-class="prod.blockClass" block-class="blockClass"

@@ -55,13 +55,27 @@ app.controller('largeMenuController',function ($scope, $http, $modal, cusModalFa
                         return $scope.owner.connRM_TRAN_IDs;          // leave flexibility to have multiple parameters or rooms
                     },
                     initialString: function () {
-                        return "checkOut";
+                        return "singleDeposit";
                     },
                     RM_TRAN_IDFortheRoom: function() {
                         return $scope.owner.RM_TRAN_ID;
                     },
                     ori_Mastr_RM_TRAN_ID: function() {
                         return $scope.owner.CONN_RM_TRAN_ID;
+                    }
+                }
+            });
+        }else if(actionString == '入押金'){
+            var modalInstance = $modal.open({
+                windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+                templateUrl: 'directiveViews/depositModal',
+                controller: 'depositModalController',
+                resolve: {
+                    roomST: function () {
+                        return [$scope.owner];          // leave flexibility to have multiple parameters or rooms
+                    },
+                    initialString: function () {
+                        return "singleDepositIn";
                     }
                 }
             });

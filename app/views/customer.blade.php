@@ -19,19 +19,25 @@
                             <input class="input-lg searchBox" type="text"  ng-change = "clearMEMIDfilter()" ng-model = "memberID" placeholder="会员编号">
                             <input class="input-lg searchBox" type="text" ng-model = "CustomerNM" placeholder="客人姓名">
                             <input class="input-lg searchBox" type="text" ng-model = "RoomID" placeholder="房间号">
-                            <select class="btn btn-default btn-lg" ng-model="sorter" >
-                                <option value="">排序</option>
-                                <option value="GUEST_NM">姓名</option>
-                                <option value="RM_ID">房号</option>
-                                <option value="SSN">证件号</option>
-                                <option value="CHECK_TP">类型</option>
-                                <option value="MEM_ID">会员卡号</option>
-                                <option value="MEM_TP">会员级别</option>
-                                <option value="PRVNCE">省份</option>
-                                <option value="PHONE">手机号码</option>
-                                <option value="CHECK_IN_DT">入住日期</option>
-                                <option value="CHECK_OT_DT">离店日期</option>
-                            </select>
+                            <!-------------------------------------------   sorter   ------------------------------------------->
+                            <div class="btn-group" dropdown is-open="sorter.isopen"
+                                 ng-init="selectTo('','排序',sorter)" dropdown-append-to-body>
+                                <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                                    {{sorter.caption}} <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href ng-click="selectTo('','排序',sorter)">排序</a></li>
+                                    <li><a href ng-click="selectTo('GUEST_NM','姓名',sorter)">姓名</a></li>
+                                    <li><a href ng-click="selectTo('RM_ID','房号',sorter)">房号</a></li>
+                                    <li><a href ng-click="selectTo('SSN','证件号',sorter)">证件号</a></li>
+                                    <li><a href ng-click="selectTo('CHECK_TP','类型',sorter)">类型</a></li>
+                                    <li><a href ng-click="selectTo('MEM_ID','会员卡号',sorter)">会员卡号</a></li>
+                                    <li><a href ng-click="selectTo('MEM_TP','会员级别',sorter)">会员级别</a></li>
+                                    <li><a href ng-click="selectTo('PHONE','手机号码',sorter)">手机号码</a></li>
+                                    <li><a href ng-click="selectTo('CHECK_IN_DT','入住日期',sorter)">入住日期</a></li>
+                                    <li><a href ng-click="selectTo('CHECK_OT_DT','离店日期',sorter)">离店日期</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -43,20 +49,20 @@
                         <th>类型</th>
                         <th>会员卡号</th>
                         <th>会员级别</th>
-                        <th>省份</th>
+                        <!--<th>省份</th>-->
                         <th>手机号码</th>
                         <th>入住日期</th>
                         <th>离店日期</th>
                         <th>备注</th>
                     </tr>
-                    <tr ng-repeat = "customer in customerInfo | filter : {MEM_ID: memberID, CUS_NM: CustomerNM, RM_ID: RoomID} | orderBy:sorter ">
+                    <tr ng-repeat = "customer in customerInfo | filter : {MEM_ID: memberID, CUS_NM: CustomerNM, RM_ID: RoomID} | orderBy:sorter.value ">
                         <td>{{customer.CUS_NM}}</td>
                         <td>{{customer.RM_ID}}</td>
                         <td>{{customer.SSN}}</td>
                         <td>{{customer.CHECK_TP}}</td>
                         <td>{{customer.MEM_ID}}</td>
                         <td>{{customer.MEM_TP}}</td>
-                        <td>{{customer.PROVNCE}}</td>
+                        <!--<td>{{customer.PROVNCE}}</td>-->
                         <td>{{customer.PHONE}}</td>
                         <td>{{customer.CHECK_IN_DT}}</td>
                         <td>{{customer.CHECK_OT_DT}}</td>
@@ -76,16 +82,23 @@
                             <input class="input-lg searchBox" type="text" ng-model = "memberNM" placeholder="会员姓名">
                             <input class="input-lg searchBox" type="text" ng-model = "memProvince" placeholder="省份">
                             <input class="input-lg searchBox" type="text" ng-change = "clearMEMphonefilter()" ng-model = "memPhone" placeholder="手机号">
-                            <select class="btn btn-default btn-lg" ng-model="memSorter" >
-                                <option value="">排序</option>
-                                <option value="MEM_ID">会员卡号</option>
-                                <option value="MEM_TP">会员级别</option>
-                                <option value="MEM_NM">姓名</option>
-                                <option value="MEM_DOB">生日</option>
-                                <option value="IN_DT">入会时间</option>
-                                <option value="TIMES">累计住店次数</option>
-                                <option value="POINTS">积分</option>
-                            </select>
+                            <div class="btn-group" dropdown is-open="memSorter.isopen"
+                                 ng-init="selectTo('','排序',memSorter)" dropdown-append-to-body>
+                                <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                                    {{memSorter.caption}} <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href ng-click="selectTo('','排序',memSorter)">排序</a></li>
+                                    <li><a href ng-click="selectTo('GUEST_NM','姓名',memSorter)">姓名</a></li>
+                                    <li><a href ng-click="selectTo('RM_ID','会员卡号',memSorter)">会员卡号</a></li>
+                                    <li><a href ng-click="selectTo('SSN','会员级别',memSorter)">会员级别</a></li>
+                                    <li><a href ng-click="selectTo('CHECK_TP','姓名',memSorter)">姓名</a></li>
+                                    <li><a href ng-click="selectTo('MEM_ID','生日',memSorter)">生日</a></li>
+                                    <li><a href ng-click="selectTo('MEM_TP','入会时间',memSorter)">入会时间</a></li>
+                                    <li><a href ng-click="selectTo('PHONE','累计住店次数',memSorter)">累计住店次数</a></li>
+                                    <li><a href ng-click="selectTo('CHECK_IN_DT','积分',memSorter)">积分</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -106,7 +119,7 @@
                         <th>累计住店次数</th>
                         <th>积分</th>
                     </tr>
-                    <tr ng-repeat = "member in memberInfo | filter : {MEM_ID: memberID, MEM_NM: memberNM,PROV: memProvince ,PHONE: memPhone} | orderBy:memSorter "
+                    <tr ng-repeat = "member in memberInfo | filter : {MEM_ID: memberID, MEM_NM: memberNM,PROV: memProvince ,PHONE: memPhone} | orderBy:memSorter.value "
                         ng-mouseenter="LightUp(member)"
                         ng-mouseleave = 'LightBack(member)'
                         ng-dblclick="fastAction(member)"

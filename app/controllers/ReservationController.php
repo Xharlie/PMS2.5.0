@@ -99,7 +99,7 @@ class ReservationController extends BaseController{
             /********************************prepare Room pay array******************************/
         if ($newResv["STATUS"] == "预付"){
             $DepositArray = array();
-            $this->roomDepositIn($payment,$RESV_ID,$DepositArray);
+            $this->roomDepositIn($payment,new DateTime($newResv['RESV_TMESTMP']),$RESV_ID,$DepositArray);
             DB::table('ReserveDepositAcct')->insert($DepositArray);
         }
         return Response::json('预定成功!');
@@ -149,7 +149,7 @@ class ReservationController extends BaseController{
             /********************************prepare additional Room pay array******************************/
         if ($payment != null){
             $DepositArray = array();
-            $this->roomDepositIn($payment,$RESV_ID,$DepositArray);
+            $this->roomDepositIn($payment,new DateTime($reResv['RESV_TMESTMP']),$RESV_ID,$DepositArray);
             DB::table('ReserveDepositAcct')->insert($DepositArray);
         }
         return Response::json('修改成功!');
@@ -201,14 +201,13 @@ class ReservationController extends BaseController{
         }
     }
 
-    public function roomDepositIn(&$payment,&$RESV_ID,&$DepositArray){
-        $date = new DateTime();
+    public function roomDepositIn(&$payment,$RESV_TMESTMP,&$RESV_ID,&$DepositArray){
         foreach ($payment["payByMethods"] as $payByMethod){
             $depo = array(
                 "RESV_ID" => $RESV_ID,
                 "DEPO_AMNT"=>$payByMethod["payAmount"],
                 "PAY_METHOD" => $payByMethod["payMethod"],
-                "DEPO_TSTMP"=> $date
+                "DEPO_TSTMP"=> $RESV_TMESTMP
             );
             array_push($DepositArray,$depo);
         }

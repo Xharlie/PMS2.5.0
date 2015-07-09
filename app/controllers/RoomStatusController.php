@@ -18,6 +18,12 @@ class RoomStatusController extends BaseController{
         return Response::json($roomAndRoomType);
     }
 
+    public function getAllRoomTypes(){
+        $allRoomTypes = DB::table('RoomsTypes')
+            ->get();
+        return Response::json($allRoomTypes);
+    }
+
     public function showRoom(){
         $roomShow = DB::table('Rooms')
             ->leftjoin('RoomTran', 'Rooms.RM_TRAN_ID','=','RoomTran.RM_TRAN_ID')
@@ -28,7 +34,7 @@ class RoomStatusController extends BaseController{
                 'RoomTran.CHECK_IN_DT as CHECK_IN_DT','RoomTran.CHECK_OT_DT as CHECK_OT_DT',
                 'RoomTran.RM_AVE_PRCE as RM_AVE_PRCE','RoomTran.DPST_RMN as DPST_RMN',
                 'RoomTran.RSRV_PAID_DYS as RSRV_PAID_DYS','RoomTran.CONN_RM_TRAN_ID as CONN_RM_TRAN_ID',
-                'RoomTran.LEAVE_TM as LEAVE_TM','RoomTran.CHECK_TP as CHECK_TP',
+                'RoomTran.LEAVE_TM as LEAVE_TM','RoomTran.IN_TM as IN_TM','RoomTran.CHECK_TP as CHECK_TP',
                 'RoomTran.TMP_PLAN_ID as TMP_PLAN_ID','RoomTran.TREATY_ID as TREATY_ID',
                 'RoomTran.MEM_ID as MEM_ID',DB::raw('COALESCE(Conn.DPST_RMN,RoomTran.DPST_RMN) as CONN_DPST_RMN'))
             ->orderBy('Rooms.RM_ID', 'ASC')
@@ -42,7 +48,7 @@ class RoomStatusController extends BaseController{
             ->join('Customers','Customers.RM_TRAN_ID','=','Rooms.RM_TRAN_ID')
             ->select('Customers.SSN as SSN','Customers.CUS_NAME as CUS_NAME',
                 'Customers.MEM_ID as MEM_ID','Customers.TREATY_ID as TREATY_ID',
-                'Customers.PHONE as PHONE','Customers.PROVNCE as PROVNCE',
+                'Customers.PHONE as PHONE','Customers.DOB as DOB','Customers.ADDRSS as ADDRSS',
                 'Customers.POINTS as POINTS','Customers.MEM_TP as MEM_TP',
                 'Customers.RMRK as RMRK','Customers.RM_ID as RM_ID')
             ->orderBy('Rooms.RM_ID', 'ASC')

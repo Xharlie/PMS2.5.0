@@ -17,7 +17,12 @@ app.controller('sideBarController', function($scope, $http){
     }
 });
 
-app.controller('reservationController', function($scope, $http, resrvFactory,$modal){
+app.controller('reservationController', function($scope, $http, resrvFactory,$modal,roomStatusFactory){
+
+    $scope.selectTo = function(value,caption,ngModel){
+        ngModel.value = value;
+        ngModel.caption = caption;
+    }
 
     $scope.ready=false;
     var now = new Date();
@@ -28,6 +33,13 @@ app.controller('reservationController', function($scope, $http, resrvFactory,$mo
     $scope.blockClass = "reserveClick"
     $scope.timeOutClass = "timeOutResv"
     $scope.clicked = false;
+    $scope.roomType = {};
+    $scope.sorter = {};
+
+    roomStatusFactory.getAllRoomTypes().success(function(data){
+        $scope.allType= data;
+    });
+
     resrvFactory.resvShow().success(function(data){
         $scope.resvInfo =data;
         $scope.ready=true;
@@ -48,6 +60,8 @@ app.controller('reservationController', function($scope, $http, resrvFactory,$mo
             }
         }
     });
+// get all room types for filters
+
 
     $scope.addNew = function(){
         var modalInstance = $modal.open({
@@ -401,6 +415,12 @@ app.controller('customerController', function($scope, $http, customerFactory,$mo
     $scope.iconAndAction = {"memberIconAction":util.memberIconAction };
     $scope.blockClass = "reserveClick"
     $scope.clicked = false;
+    $scope.sorter = {};
+    $scope.memSorter = {};
+    $scope.selectTo = function(value,caption,ngModel){
+        ngModel.value = value;
+        ngModel.caption = caption;
+    }
     $scope.clearMEMIDfilter = function(){
         if($scope.memberID == '') delete $scope.memberID;
     };
@@ -442,13 +462,6 @@ app.controller('customerController', function($scope, $http, customerFactory,$mo
         }
     };
 
-//    $scope.loadMemberPage = function(pageNum){
-//        var shift = parseInt((pageNum-1) * $scope.VarItemPerPage);
-//        customerFactory.memberPageShow(shift,$scope.VarItemPerPage).success(function(data){
-//            $scope.memberInfo =data;
-//            $scope.totalItems = $scope.rooms[$scope.selectedFloor.FLOOR_ID].length;
-//        });
-//    }
     $scope.addNewCustomer = function(){
         var modalInstance = $modal.open({
             windowTemplateUrl: 'directiveViews/modalWindowTemplate',
@@ -510,10 +523,15 @@ app.controller('accountingController', function($scope, $http, accountingFactory
 
     /******************************************     utilities     **********************************************/
 
+    $scope.selectTo = function(value,caption,ngModel){
+        ngModel.value = value;
+        ngModel.caption = caption;
+    }
 
     function queryAcct(startTime, endTime) {
         accountingFactory.accountingGetAll(startTime, endTime).success(function(data){
             $scope.acctInfo = data;
+            show(data)
             $scope.ready=true;
             for (var i =0 ; i< $scope.acctInfo.length; i++){
                 $scope.acctInfo[i].blockClass=[];
@@ -566,6 +584,10 @@ app.controller('accountingController', function($scope, $http, accountingFactory
     $scope.Payaddup = 0;
     $scope.collections = ['TSTMP'];
     $scope.ready=false;
+    $scope.Type={};
+    $scope.class={};
+    $scope.payMethod={};
+    $scope.sorter={};
     var today =  new Date();
     $scope.QueryDates={today:today,startDate:today,endDate:today};
     queryAcct(util.dateFormat(today),util.dateFormat(today));
@@ -576,11 +598,11 @@ app.controller('accountingController', function($scope, $http, accountingFactory
     $scope.clicked = false;
 
     $scope.TypeFilter = function(acct){
-        if ($scope.Type == ""){
+        if ($scope.Type.value == ""){
             return true;
-        }else if($scope.Type == "CON"){
+        }else if($scope.Type.value == "CON"){
             return acct['CON'];
-        }else if($scope.Type == "PAY"){
+        }else if($scope.Type.value == "PAY"){
             return acct['PAY'];
         }
     };
@@ -781,8 +803,11 @@ app.controller('merchandiseHistoController', function($scope, $http, merchandise
 app.controller('merchandiseController', function($scope, $http, merchandiseFactory,$modal){
 
     /****************************************************  utilities *******************************************************/
-
-
+// for dropdown simulate select
+    $scope.selectTo = function(value,caption,ngModel){
+        ngModel.value = value;
+        ngModel.caption = caption;
+    }
 
     $scope.nullify = function(filter){
         if (filter == ""){
@@ -794,12 +819,6 @@ app.controller('merchandiseController', function($scope, $http, merchandiseFacto
         $scope.lightUp(prod);
         $scope.clicked = true;
     }
-
-//    var pathArray = window.location.href.split("/");
-//    var room_ID = pathArray[pathArray.length-1];
-//    if(room_ID != ":"){
-//        $scope.prodRoom = room_ID;
-//    }
 
     $scope.lightUp = function(prod){
         if($scope.clicked) return;
@@ -830,20 +849,7 @@ app.controller('merchandiseController', function($scope, $http, merchandiseFacto
         }
     }
 
-    var testFail = function(){
-//        $scope.purchaseCheck = function(){
-//            if ($scope.onCounter.length == 0){
-//                $scope.err = "请选购商品";
-//            }else if($scope.notValidAmount!= 0){
-//                $scope.err = "商品数量输入错误";
-//            }else if($scope.room == "请输入正确房间号"){
-//                $scope.err = "房间号不存在";
-//            }else{
-//                $scope.err = "可以交易";
-//            }
-//
-//        }
-    }
+    var testFail = function(){ return false};
 
     // change notice on shopping cart area
     var checkBoughtLength = function(){
@@ -867,12 +873,16 @@ app.controller('merchandiseController', function($scope, $http, merchandiseFacto
     $scope.prodInfo ='';
     $scope.onCounter = [];
     $scope.BookCommonInfo = {prodSumPrice:0};
+    $scope.prodSorter = {};
+    $scope.prodTypeFilter = {};
 
     merchandiseFactory.productShow().success(function(data){
         $scope.ready=true;
         $scope.prodInfo = data;
+        $scope.prodType={};
         for(var i = 0; i < $scope.prodInfo.length; i++){
             $scope.prodInfo[i]["blockClass"] = [];
+            $scope.prodType[$scope.prodInfo[i].PROD_TP] = $scope.prodInfo[i].PROD_TP;
         }
     });
 
@@ -900,48 +910,6 @@ app.controller('merchandiseController', function($scope, $http, merchandiseFacto
         checkBoughtLength();
     }
 
-
-//    $scope.initRoomsInfo = function(prodRoom){
-//        merchandiseFactory.merchanRoomShow().success(function(data){
-//            $scope.rooms = data;
-//            $scope.checkRoom(prodRoom);
-//
-//        });
-//    }
-
-//    $scope.checkRoom = function(prodRoom){
-//        $scope.prodRoomTranId = "";
-//        if(prodRoom == ""){
-//            $scope.room ="";
-//            $scope.prodRoomTranId = "";
-//            $scope.prodRoomTKN_ID ="";
-//        }else{
-//            $scope.room = "请输入正确房间号";
-//            for (var i =0; i< $scope.rooms.length; i++){
-//                if (prodRoom == $scope.rooms[i].RM_ID){
-//                    if($scope.rooms[i].RM_TRAN_ID != undefined){
-//                        $scope.prodRoomTranId = $scope.rooms[i].RM_TRAN_ID;
-//                        $scope.room = "找到房间，并现有客人";
-//                        $scope.prodRoomId = $scope.rooms[i].RM_ID;
-//                        $scope.prodRoomTKN_ID = $scope.rooms[i].CONN_RM_TRAN_ID;
-//                    }
-//                    break;
-//                }
-//            }
-//        }
-//    };
-//
-//
-//    $scope.viewClickBuy = function(){
-//        $scope.viewClick = "Buy";
-//        if ($scope.prodInfo =='') {
-//            $scope.ready=false;
-//            merchandiseFactory.productShow().success(function(data){
-//                $scope.prodInfo = data;
-//                $scope.ready=true;
-//            });
-//        }
-//    };
     $scope.buySubmit = function(){
         $scope.changeSumPrice(null);
         if(testFail()) return;

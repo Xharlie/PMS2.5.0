@@ -17,26 +17,30 @@
             <!-- add inline style!!!!!!! -->
                 <ul class="nav navbar-nav" style="overflow: visible; margin-right:200px;">
                 <!-- add inline style!!!!!!! -->
-                    <li ng-class="tabClassObj.room"><a href="#/roomStatus"  ng-click="emphasize('room')"></span>房态信息</a></li>
-        			<li ng-class="tabClassObj.rese"><a href="#/reservation" ng-click="emphasize('rese')"></span>预订信息</a></li>
+                    <li ng-class="tabClassObj.room"><a href="#/roomStatus"  ng-click="emphasize('room')">房态信息</a></li>
+        			<li ng-class="tabClassObj.rese"><a href="#/reservation" ng-click="emphasize('rese')">预订信息</a></li>
                     
-             <!--       <div class="btn-group"  dropdown is-open="status.merc.isopen" ng-mouseover="status.merc.isopen = true" ng-mouseleave="status.merc.isopen = false">
-                        <li ng-class="tabClassObj.merc" class=" dropdown-toggle" >
-                            </span>商品管理<span class="caret" ></span>
-                        </li>
+                    <li class="btn-group"  dropdown is-open="status.merc.isopen"
+                        ng-mouseover="status.merc.isopen = true" ng-mouseleave="status.merc.isopen = false"
+                        >
+                        <a href ng-class="tabClassObj.merc" class="dropdown-toggle" >
+                            商品管理<span class="caret" ></span>
+                        </a>
                         <ul class="dropdown-menu" role="menu"
                             ng-mouseover="status.merc.isopen = true" ng-mouseleave="status.merc.isopen = false">
                             <li><a href="#/merchandise/:" ng-click="emphasize('merc')">购买商品</a></li>
                             <li><a href="#/merchandiseHisto/:" ng-click="emphasize('merc')">购买记录</a></li>
                         </ul>
-                    </div> -->
-                    <li class="dropdown">
-                      <a href="#/merchandise/:" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">商品管理<span class="caret"></span></a>
+                    </li>
+                <!--    <li class="btn-group">
+                      <a  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">商品管理
+                          <span class="caret"></span>
+                      </a>
                       <ul class="dropdown-menu">
                         <li><a href="#/merchandise/:">购买商品</a></li>
                         <li><a href="#/merchandiseHisto/:">销售记录</a></li>
                       </ul>
-                    </li>
+                    </li>   -->
         		    <li ng-class="tabClassObj.cust"><a href="#/customer" ng-click="emphasize('cust')">客户管理</a></li>
         		    <li ng-class="tabClassObj.acco"><a href="#/accounting" ng-click="emphasize('acco')">账目管理</a></li>
         		    <li class="hidden" ng-class="tabClassObj.prob"><a ng-click="emphasize('prob')">问题汇报</a></li>

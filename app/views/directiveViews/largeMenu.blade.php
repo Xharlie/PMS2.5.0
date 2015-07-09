@@ -24,7 +24,10 @@
                     </tr>
                     <tr>
                         <td>入住时间</td>
-                        <td><label>{{owner.CHECK_IN_DT}}</label></td>
+                        <td>
+                            <label>{{owner.CHECK_IN_DT}}</label>
+                            <label>{{owner.IN_TM}}</label>
+                        </td>
                     </tr>
                     <tr>
                         <td>预离时间</td>

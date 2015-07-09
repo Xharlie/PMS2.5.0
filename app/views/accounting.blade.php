@@ -36,38 +36,62 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="pull-right">
-                        <select class="form-control btn btn-default form-control btn-lg" ng-model="Type" ng-init="Type='';">
-                            <option value="">费用与结算</option>
-                            <option value="CON">仅费用</option>
-                            <option value="PAY">仅结算</option>
-                        </select>
-                        <select class="form-control btn btn-default btn-lg form-control" ng-model="class" >
-                            <option value="">所有类别</option>
-                            <option value="存入押金">存入押金</option>
-                            <option value="退还押金">退还押金</option>
-                            <option value="夜核房费">夜核房费</option>
-                            <option value="损坏罚金">损坏罚金</option>
-                            <option value="商品">商品</option>
-                        </select>
-                        <select class="form-control btn btn-default btn-lg form-control" ng-model="payMethod" >
-                            <option value="">所有方式</option>
-                            <option value="现金">现金</option>
-                            <option value="信用卡">信用卡</option>
-                            <option value="银行卡">银行卡</option>
-                            <option value="优惠券">优惠券</option>
-                        </select>
-                        <select class="form-control btn btn-default btn-lg form-control" ng-model="sorter" >
-                            <option value="">排序</option>
-                            <option value="ACCT_ID">帐单号</option>
-                            <option value="TSTMP">发生时间</option>
-                            <option value="RM_ID">房号</option>
-                            <option value="CLASS">类别</option>
-                            <option value="PAY_METHOD">付款方式</option>
-                            <option value="CONSUME_PAY_AMNT">消费金额</option>
-                            <option value="SUBMIT_PAY_AMNT">结算金额</option>
-                            <option value="RMRK">备注</option>
-                        </select>
-                        <input class="input-lg" type="text"  ng-model = "searchAll" placeholder="智能搜索"></input>
+                        <div class="btn-group" dropdown is-open="Type.isopen"
+                             ng-init="selectTo('','费用与结算',Type)" dropdown-append-to-body>
+                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                                {{Type.caption}} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href ng-click="selectTo('','费用与结算',Type)">费用与结算</a></li>
+                                <li><a href ng-click="selectTo('CON','仅费用',Type)">仅费用</a></li>
+                                <li><a href ng-click="selectTo('PAY','仅结算',Type)">仅结算</a></li>
+                            </ul>
+                        </div>
+                        <div class="btn-group" dropdown is-open="class.isopen"
+                             ng-init="selectTo('','所有类别',class)" dropdown-append-to-body>
+                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                                {{class.caption}} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href ng-click="selectTo('','所有类别',class)">所有类别</a></li>
+                                <li><a href ng-click="selectTo('存入押金','存入押金',class)">存入押金</a></li>
+                                <li><a href ng-click="selectTo('退还押金','退还押金',class)">退还押金</a></li>
+                                <li><a href ng-click="selectTo('夜核房费','夜核房费',class)">夜核房费</a></li>
+                                <li><a href ng-click="selectTo('损坏罚金','损坏罚金',class)">损坏罚金</a></li>
+                                <li><a href ng-click="selectTo('商品','商品',class)">商品</a></li>
+                            </ul>
+                        </div>
+                        <div class="btn-group" dropdown is-open="payMethod.isopen"
+                             ng-init="selectTo('','所有方式',payMethod)" dropdown-append-to-body>
+                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                                {{payMethod.caption}} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href ng-click="selectTo('','所有类别',payMethod)">所有方式</a></li>
+                                <li><a href ng-click="selectTo('现金','现金',payMethod)">现金</a></li>
+                                <li><a href ng-click="selectTo('信用卡','信用卡',payMethod)">信用卡</a></li>
+                                <li><a href ng-click="selectTo('银行卡','银行卡',payMethod)">银行卡</a></li>
+                                <li><a href ng-click="selectTo('损坏罚金','损坏罚金',payMethod)">损坏罚金</a></li>
+                                <li><a href ng-click="selectTo('优惠券','优惠券',payMethod)">优惠券</a></li>
+                            </ul>
+                        </div>
+                        <div class="btn-group" dropdown is-open="sorter.isopen"
+                             ng-init="selectTo('','排序',sorter)" dropdown-append-to-body>
+                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                                {{sorter.caption}} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href ng-click="selectTo('','排序',sorter)">排序</a></li>
+                                <li><a href ng-click="selectTo('ACCT_ID','帐单号',sorter)">帐单号</a></li>
+                                <li><a href ng-click="selectTo('TSTMP','发生时间',sorter)">发生时间</a></li>
+                                <li><a href ng-click="selectTo('RM_ID','房号',sorter)">房号</a></li>
+                                <li><a href ng-click="selectTo('CLASS','类别',sorter)">类别</a></li>
+                                <li><a href ng-click="selectTo('PAY_METHOD','付款方式',sorter)">付款方式</a></li>
+                                <li><a href ng-click="selectTo('CONSUME_PAY_AMNT','消费金额',sorter)">消费金额</a></li>
+                                <li><a href ng-click="selectTo('SUBMIT_PAY_AMNT','结算金额',sorter)">结算金额</a></li>
+                            </ul>
+                        </div>
+                        <input class="input-lg" type="text"  ng-model = "searchAll" placeholder="智能搜索" />
                     </div>
                 </div>
             </div>
@@ -85,8 +109,8 @@
                 <th>结算金额</th>
     			<th>备注</th>
     		</tr>
-            <tr ng-repeat = "acct in acctInfo  | filter : {CLASS: class,PAY_METHOD: payMethod}
-            | filter:TypeFilter  | filter:searchAll | orderBy:sorter:true as collections "
+            <tr ng-repeat = "acct in acctInfo  | filter : {CLASS: class.value,PAY_METHOD: payMethod.value}
+            | filter:TypeFilter  | filter:searchAll | orderBy:sorter.value:true as collections "
                 ng-mouseenter="LightUp(acct)"
                 ng-mouseleave = 'LightBack(acct)'
                 ng-dblclick="open(acct)" ng-class="acct.blockClass"
@@ -95,7 +119,7 @@
 <!--                                <button class="btn btn-default btn-xs" ng-click="modify(acct)">调整</button>-->
 <!--                            </td>-->
                 <td >
-                    {{acct.ACCT_ID}}
+                    {{acct.ACCT_ID+((acct.ORGN_ACCT_ID!=null)?'(原账目:'+acct.ORGN_ACCT_ID+')':'')}}
                 </td>
                 <td>
                     {{acct.adjustedTSTMP}}

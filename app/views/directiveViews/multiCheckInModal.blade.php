@@ -1,5 +1,4 @@
 <div id="wholeModal">
-    {{payError}}
     <div class="panel-heading">
         <h4 class="panel-title">
             <span class="glyphicon glyphicon-send"></span>
@@ -52,6 +51,7 @@
                         <option value="协议">协议</option>
                         <option value="活动码">活动码</option>
                         <option value="预订">预订</option>
+                        <option value="免费房">免费房</option>
                     </select>
                 </div>
                 <div class="form-group col-sm-6">
@@ -205,93 +205,8 @@
             </form>
         </div>
         <div ng-if ="viewClick=='Pay'">
-            <div ng-if ="(!Connected)" ng-repeat="singleRoom in BookRoom | filter: {check:'true'}" ng-controller="multiSingleRoomPayCtrl">
-                <h4>{{singleRoom.RM_ID}}号房</h4></br>
-                <div class="row">
-                    <div class="form-group col-sm-6">
-                        <label xlabel ng-transclude checker="isNotEmpty|isNumber" checkee="singleRoom.payment.paymentRequest" btn-pass="payError">应收数目</label>
-                        <input class="form-control input-lg" ng-model="singleRoom.payment.paymentRequest" />
-                    </div>
-                    <div class="form-group col-sm-6">
-                        <label>账目类型</label>
-                        <select class="form-control input-lg"  ng-model="singleRoom.payment.paymentType"
-                                ng-change="sourceChange()">
-                            <option value="住房押金">住房押金</option>
-                        </select>
-                    </div>
-                    <!--                <div class="form-group col-sm-4 ">-->
-                    <!--                    <label>账单号</label>-->
-                    <!--                    <input class="form-control"ng-model="b" />-->
-                    <!--                </div>-->
-                </div>
-                <div class="row"
-                     ng-repeat="singlePay in singleRoom.payment.payByMethods" ng-controller="multiSinglePayCtrl" >
-                    <div class="form-group col-sm-6">
-                        <label xlabel ng-transclude checker="isNumber" checkee="singlePay.payAmount" btn-pass="payError">实收数目</label>
-                        <input class="form-control input-lg" ng-model="singlePay.payAmount" />
-                    </div>
-                    <div class="form-group col-sm-6">
-                        <label>支付方式</label>
-                        <select class="form-control input-lg"  ng-model="singlePay.payMethod" >
-                            <option value="现金">现金</option>
-                            <option value="银行卡">银行卡</option>
-                            <option value="信用卡">信用卡</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row">
-                    <a class="pull-right btn btn-lg btn-link" ng-click="addNewPayByMethod(singleRoom)">添加支付方式</a>
-                </div>
-                <div class="splitter"></div>
-                <div class="row">
-                    <label>未收数目</label>
-                    <label class="text-lg text-danger">{{singleRoom.payment.payInDue}}元</label>
-                </div>
-            </div>
-            <div ng-if ="Connected">
-                <!--<h4>{{$scope.BookCommonInfo.Master.CONN_RM_ID}}号房主房</h4></br>-->
-                <div class="row">
-                    <div class="form-group col-sm-6">
-                        <label xlabel ng-transclude checker="isNotEmpty|isNumber" checkee="BookCommonInfo.Master.payment.paymentRequest" btn-pass="payError">应收数目</label>
-                        <input class="form-control input-lg" ng-model="BookCommonInfo.Master.payment.paymentRequest"
-                            ng-change="distributeMasterPay()"/>
-                    </div>
-                    <div class="form-group col-sm-6">
-                        <label>账目类型</label>
-                        <select class="form-control input-lg"  ng-model="BookCommonInfo.Master.payment.paymentType"
-                                ng-change="sourceChange()">
-                            <option value="住房押金">住房押金</option>
-                        </select>
-                    </div>
-                    <!--                <div class="form-group col-sm-4 ">-->
-                    <!--                    <label>账单号</label>-->
-                    <!--                    <input class="form-control"ng-model="b" />-->
-                    <!--                </div>-->
-                </div>
-                <div class="row"
-                     ng-repeat="singlePay in BookCommonInfo.Master.payment.payByMethods" ng-controller="multiSingleMasterPayCtrl" >
-                    <div class="form-group col-sm-6">
-                        <label xlabel ng-transclude checker="isNotEmpty|isNumber" checkee="singlePay.payAmount" btn-pass="payError">实收数目</label>
-                        <input class="form-control input-lg" ng-model="singlePay.payAmount" />
-                    </div>
-                    <div class="form-group col-sm-6">
-                        <label>支付方式</label>
-                        <select class="form-control input-lg"  ng-model="singlePay.payMethod" >
-                            <option value="现金">现金</option>
-                            <option value="银行卡">银行卡</option>
-                            <option value="信用卡">信用卡</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row">
-                    <a class="pull-right btn btn-lg btn-link" ng-click="addNewPayByMethod(BookCommonInfo.Master)">添加支付方式</a>
-                </div>
-                <div class="splitter"></div>
-                <div class="row">
-                    <label>未收数目</label>
-                    <label class="text-lg text-danger">{{BookCommonInfo.Master.payment.payInDue}}元</label>
-                </div>
-            </div>
+            <div ng-if ="(!Connected)" payment  book-room="BookRoom" pay-method-options="payMethodOptions" pay-error="payError"></div>
+            <div ng-if ="(Connected)" payment  book-room="BookRoomMaster" pay-method-options="payMethodOptions" pay-error="payError"></div>
 
             <div class="row modal-control">
                 <button class="pull-right btn btn-primary btn-lg"

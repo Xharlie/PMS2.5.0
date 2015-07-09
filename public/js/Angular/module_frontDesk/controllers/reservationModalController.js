@@ -1,4 +1,4 @@
-app.controller('reservationModalController', function($scope, $http,$modalInstance,focusInSideFactory,
+app.controller('reservationModalController', function($scope, $http,$modalInstance,focusInSideFactory, paymentFactory,
                                                       $timeout, roomTPs,initialString, newCheckInFactory,newResvFactory){
 
     /********************************************     validation     ***************************************************/
@@ -10,7 +10,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
     $scope.noError = function(btnPass){
         eval("$scope."+btnPass+"--");
     }
-
+    $scope.payError = 0;
     /********************************************     utility     ***************************************************/
 
     var today = new Date();
@@ -58,7 +58,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
 
     var createNewRoom = function(){
         var newRoom =  {RM_TP:"", RM_ID:"",finalPrice:"",SUGG_PRICE:"",discount:"",deposit:"",MasterRoom:'fasle',
-            GuestsInfo:[createNewGuest()],payment:createNewPayment(), check:true};
+            GuestsInfo:[createNewGuest()],payment:paymentFactory.createNewPayment('预付房款'), check:true};
         return newRoom;
     }
 
@@ -74,16 +74,6 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
     var createNewReserver = function(){
         var newReserver =  {Name:"",MemberId:"",Phone:"",MEM_TP:"",Points:"",RemarkInput:"",TIMES:""}
         return newReserver;
-    }
-
-    var createNewPayByMethod = function(){
-        var payByMethod =  {payAmount:"",payMethod:""};
-        return payByMethod;
-    }
-
-    var createNewPayment = function(){
-        var Payment =  {paymentRequest:"", paymentType:"住房押金", base:"",payInDue:"",payByMethods:[createNewPayByMethod()]};
-        return Payment;
     }
 
     var initRoomsAndRoomTypes = function(){
@@ -189,15 +179,6 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
         updateFinalPrice4TP(singleTP);
     }
 
-    $scope.updatePayInDue = function(singleRoom){
-        var totalDue= parseFloat(singleRoom.payment.paymentRequest);
-        for (var i=0; i<singleRoom.payment.payByMethods.length; i++){
-            totalDue = totalDue - singleRoom.payment.payByMethods[i].payAmount;
-        }
-        singleRoom.payment.payInDue = util.Limit(parseFloat(totalDue));
-        singleRoom.payment.payInDue = (isNaN(singleRoom.payment.payInDue))? 0.00: singleRoom.payment.payInDue;
-    };
-
     var depositMethod = function(basic){
         // for check in
 //        var sum = Math.floor((basic+200)/100)*100;
@@ -226,9 +207,6 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
             var payment = $scope.BookRoom[i].payment;
             payment.base = basicPrice($scope.BookRoom[i]);
             payment.paymentRequest = depositMethod(payment.base);
-//            payment.payByMethods[0].payAmount = payment.paymentRequest;
-//            payment.payInDue = 0;
-//            payment.payByMethods[0].payMethod = "现金";
             sum4master = sum4master + payment.paymentRequest;
             sum4distribute = sum4distribute + payment.base;
         }
@@ -239,6 +217,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
             $scope.BookCommonInfo.payment.payInDue = 0;
             $scope.BookCommonInfo.payment.base = sum4distribute;
     }
+
 
     var clearZeroRM_QUAN = function(BookRoomByTP,property,forbiddenArray){
         for(var TP in BookRoomByTP){
@@ -255,9 +234,10 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
 
 
     var newReservation = function(CHECK_IN_DT,CHECK_OT_DT){
-        $scope.BookCommonInfo = {CHECK_IN_DT: CHECK_IN_DT,CHECK_OT_DT:CHECK_OT_DT ,arriveTime:$scope.dateTime,
-                                roomSource:'', rentType:"全日租",Member:{},Treaty:{},payment:createNewPayment(),
+        $scope.BookCommonInfo = {CHECK_IN_DT: CHECK_IN_DT,CHECK_OT_DT:CHECK_OT_DT ,arriveTime:$scope.dateTime,check:true,
+                                roomSource:'', rentType:"全日租",Member:{},Treaty:{}, payment:paymentFactory.createNewPayment('预付房款'),
                                 comment:"",discount4ALL:"",paymentFlag:false};
+        $scope.BookRoomMaster = [$scope.BookCommonInfo];
         createBookRoom(1);
         $scope.Members =[];
         $scope.Treaties =[];
@@ -302,7 +282,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
                 var newRoom =  {RM_TP:roomTPs[i]["RM_TP"], RM_ID:"",finalPrice:roomTPs[i]["RESV_DAY_PAY"],
                     SUGG_PRICE:$scope.roomsAndRoomTypes[roomTPs[i]["RM_TP"]][0].SUGG_PRICE,
                     discount:"",deposit:"",MasterRoom:'fasle',
-                    GuestsInfo:[createNewGuest()],payment:createNewPayment(), check:true};
+                    GuestsInfo:[createNewGuest()],payment:paymentFactory.createNewPayment('预付房款'), check:true};
                 $scope.BookRoom.push(newRoom);
                 createBookRoomByTP(newRoom);
                 $scope.roomTpsDisableList[roomTPs[i]["RM_TP"]] = true;
@@ -331,11 +311,13 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
             rentType:       "全日租",
             Member:         {},
             Treaty:         {},
-            payment:        createNewPayment(),
+            payment:        paymentFactory.createNewPayment('预付房款'),
             comment:        roomTPs[0]["RMRK"],
             discount4ALL:   "",
-            paymentFlag:    (roomTPs[0].STATUS=="预付")
+            paymentFlag:    (roomTPs[0].STATUS=="预付"),
+            check:          true
         };
+        $scope.BookRoomMaster = [$scope.BookCommonInfo];
         $scope.reserver["Name"]= roomTPs[0]["RESVER_NAME"];
         $scope.reserver["Phone"]= roomTPs[0]["RESVER_PHONE"];
         newResvFactory.getRMInfoWithAvail(roomTPs["CHECK_IN_DT"],roomTPs["CHECK_OT_DT"]).success(function(data){
@@ -377,7 +359,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
     $scope.reserver = createNewReserver();
     $scope.check = {"checkInput": ""};
     $scope.watcher={"treaty":true,"member":true,"finalPrice":true,"discount":true,"paymentRequest":true};
-
+    $scope.payMethodOptions=paymentFactory.checkInPayMethodOptions();
     focusInSideFactory.tabInit('wholeModal');
     $timeout(function(){
         focusInSideFactory.manual('wholeModal');
@@ -392,17 +374,32 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
     /**********************************/
     /************** ********************************** Page Logical Confinement ********************************** *************/
 
-        // work around fixing Anuglar 1.30 bug....
-//    $scope.$watch("BookCommonInfo.CHECK_OT_DT",
-//        function(newValue,oldValue){
-//            if (newValue == null || newValue == undefined) {
-////                $scope.BookCommonInfo.CHECK_OT_DT = $scope.OT_DT;
-//            }else{
-//                $scope.OT_DT = util.dateFormat(newValue);
-//            }
-//        }
-//        ,true
-//    )
+    $scope.$watch(function(){
+            return $scope.BookCommonInfo.CHECK_IN_DT;
+        },
+        function(newValue, oldValue) {
+            if(newValue == oldValue || !$scope.watcher.treaty ) return;
+            if($scope.BookCommonInfo.CHECK_IN_DT != undefined && $scope.BookCommonInfo.CHECK_OT_DT != undefined &&
+                $scope.BookCommonInfo.CHECK_IN_DT <= $scope.BookCommonInfo.CHECK_OT_DT){
+                $scope.updatePayment();
+            }
+        },
+        true
+    );
+
+    $scope.$watch(function(){
+            return $scope.BookCommonInfo.CHECK_OT_DT;
+        },
+        function(newValue, oldValue) {
+            if(newValue == oldValue || !$scope.watcher.treaty ) return;
+            if( $scope.BookCommonInfo.CHECK_IN_DT != undefined && $scope.BookCommonInfo.CHECK_OT_DT != undefined
+                && $scope.BookCommonInfo.CHECK_IN_DT <= $scope.BookCommonInfo.CHECK_OT_DT){
+                $scope.updatePayment();
+            }
+        },
+        true
+    );
+
 
     // roomSource change: 1. search caption, 2. check bar disable, 3.discount
     $scope.$watch(function(){
@@ -493,40 +490,6 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
         true
     );
 
-    //rentType change, price change
-//    $scope.$watch(function(){
-//            return $scope.BookCommonInfo.rentType;
-//        },
-//        function(newValue, oldValue) {
-//            if(newValue != "全日租"){
-//                //    $scope.$apply(function(){
-//                $scope.BookCommonInfo.CHECK_OT_DT = util.dateFormat(today);
-//                $scope.OT_DT = util.dateFormat(today);
-//                $scope.BookCommonInfo.leaveTime = new Date($scope.plansOBJ[newValue].PLAN_COV_MIN*60*1000 + today.getTime());
-//            }else {
-//                $scope.BookCommonInfo.CHECK_OT_DT = util.dateFormat(tomorrow);
-//                $scope.OT_DT = util.dateFormat(tomorrow);
-//                $scope.BookCommonInfo.leaveTime = $scope.dateTime;
-//            }
-//            for (var i =0 ; i<$scope.BookRoom.length; i++){
-//                updateFinalPrice($scope.BookRoom[i]);
-//            }
-//        },
-//        true
-//    );
-
-
-
-    // RM_TP change induce price change
-
-
-
-    // discount rate and final price
-//    $scope.discountChange = function(singleRoom) {
-//        updateFinalPrice(singleRoom);
-//    }
-
-
     $scope.addRmTp = function(){
         for(var RmTp in $scope.roomsAndRoomTypes){
             if(!(RmTp in $scope.BookRoomByTP)){
@@ -547,12 +510,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
         }
     }
 
-    $scope.$watch('BookCommonInfo.payment.paymentRequest',
-        function(newValue, oldValue) {
-            $scope.updatePayInDue($scope.BookCommonInfo);
-        },
-        true
-    );
+
 
     /**********************************/
     /************** ********************************** pay  ********************************** *************/
@@ -561,20 +519,12 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
         singleRoom.payment.payByMethods.push(createNewPayByMethod());
     }
 
-    $scope.distributeMasterPay = function(){
-        $scope.updatePayInDue($scope.BookCommonInfo.Master);
-        var masterPay = $scope.BookCommonInfo.Master.payment;
-        var extraPay = masterPay.paymentRequest - masterPay.base;
-        for(var i = 0; i<$scope.BookRoom.length; i++){
-            $scope.BookRoom[i].payment.paymentRequest =
-                util.Limit($scope.BookRoom[i].payment.base + extraPay * $scope.BookRoom[i].payment.base / masterPay.base);
-        }
-    }
     /************************************************/
     /************** ********************************** page change ********************************** *************/
     $scope.confirm = function(){
         if ($scope.BookCommonInfo.paymentFlag){
             $scope.viewClick = "Pay";
+            $scope.payError = 0;
         }else{
             $scope.submit();
         }
@@ -794,16 +744,6 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
                     $scope.singleTP.rooms[i].discount = newValue;
                 }
                 $scope.$parent.updateFinalPrice4TP($scope.singleTP);
-            },
-            true
-        );
-    })
-/************************                       singlePay sub controller                      ***********************/
-    .controller('resvSinglePayCtrl', function ($scope) {
-        $scope.$watch('singlePay.payAmount',
-            function(newValue, oldValue) {
-                if(newValue == oldValue) return;
-                $scope.$parent.updatePayInDue($scope.$parent.BookCommonInfo);
             },
             true
         );

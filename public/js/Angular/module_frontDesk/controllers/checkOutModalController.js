@@ -48,20 +48,6 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
         $scope.BookCommonInfo.Master.payment.paymentRequest = sumation;
     }
 
-    $scope.updateShowItemsByRooms = function(){
-        var size = 0;
-        for (key in $scope.RM_TRAN_ID_SelectedList) {
-            if ($scope.RM_TRAN_ID_SelectedList[key]) size++;
-        }
-        for( var key in $scope.acct){
-            for(var i = 0; i < $scope.acct[key].length; i++){
-                // if not in the check out rooms, means it's a transfer, should show to guest when check out all
-                $scope.acct[key][i]['show'] = ($scope.acct[key][i].RM_TRAN_ID in $scope.RM_TRAN_ID_SelectedList) ?
-                                               $scope.RM_TRAN_ID_SelectedList[$scope.acct[key][i].RM_TRAN_ID] :
-                                               (size == $scope.BookRoom.length);
-            }
-        }
-    }
 
 
     $scope.twoDigit = function(limitee){
@@ -276,8 +262,8 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
             $scope.acct = data['acct'];
             $scope.acct["exceedPay"] = [];
             for (var i = 0; i < $scope.BookRoom.length; i++){
-                $scope.BookRoom[i]["selected"] = ($scope.BookRoom[i].RM_TRAN_ID==RM_TRAN_IDFortheRoom);
-                $scope.RM_TRAN_ID_SelectedList[$scope.BookRoom[i].RM_TRAN_ID] = ($scope.BookRoom[i].RM_TRAN_ID==RM_TRAN_IDFortheRoom);
+                $scope.BookRoom[i]["selected"] =  ($scope.BookRoom[i].RM_TRAN_ID==RM_TRAN_IDFortheRoom) || initialString == "checkLedger";
+                $scope.RM_TRAN_ID_SelectedList[$scope.BookRoom[i].RM_TRAN_ID] = $scope.BookRoom[i]["selected"];
                 $scope.TRAN2RMmapping[$scope.BookRoom[i].RM_TRAN_ID] = $scope.BookRoom[i].RM_ID;
                 initNewRoomAcct($scope.BookRoom[i]);
             }
@@ -318,7 +304,8 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
             setAcctShow();
 
             $scope.updateSumation();
-            $scope.viewClick=($scope.BookRoom.length>1)?'RoomChoose':'Info';
+            // if only check out  connected rooms
+            $scope.viewClick=($scope.BookRoom.length>1 && initialString != "checkLedger")?'RoomChoose':'Info';
             $scope.ready=true;
 
         });
@@ -375,7 +362,6 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
                     $scope.RM_TRAN_ID_SelectedList[key] = true;
                 }
             $timeout(function() {
-                $scope.updateSumation();
                 $scope.watcher.selected=true;
             }, 0);
         },
@@ -454,6 +440,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
         setMasterRmId();
         if(initialString == 'checkOut') setExTimeAcct();
         setAcctShow();
+        $scope.updateSumation();
         $scope.viewClick=target;
     }
 
@@ -613,8 +600,6 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
         function(newValue, oldValue) {
             if(newValue == oldValue || !$scope.watcher.selected ) return;
             $scope.$parent.RM_TRAN_ID_SelectedList[$scope.singleRoom.RM_TRAN_ID] = newValue;
-            $scope.$parent.updateShowItemsByRooms();
-            $scope.$parent.updateSumation();
         },
         true
     );

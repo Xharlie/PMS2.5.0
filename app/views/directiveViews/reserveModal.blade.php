@@ -1,4 +1,6 @@
 <div id="wholeModal" >
+    {{payError}}
+
     <div class="panel-heading">
         <h4 class="panel-title">
             <span class="glyphicon glyphicon-send"></span>
@@ -167,48 +169,8 @@
                     请修改错误信息</button>
             </div>
         </div>
-        <div ng-show ="viewClick=='Pay'">
-            <div class="row">
-                <div class="col-sm-4">
-                    <label xlabel ng-transclude checker="isNotEmpty|isNumber|isLargerEqualThan0" checkee="BookCommonInfo.payment.paymentRequest" btn-pass="payError" >
-                        <span ng-if="initialString=='newReservation'">应收数目</span>
-                        <span ng-if="initialString=='editReservation'">补交数目</span>
-                    </label>
-                    <input class="form-control input-lg" ng-model="BookCommonInfo.payment.paymentRequest" />
-                </div>
-                <div class="col-sm-4">
-                    <label>账目类型</label>
-                    <select class="form-control input-lg"  ng-model="BookCommonInfo.payment.paymentType"
-                            ng-change="sourceChange()">
-                        <option value="住房押金">住房押金</option>
-                    </select>
-                </div>
-                <!--                <div class="col-sm-4 ">-->
-                <!--                    <label>账单号</label>-->
-                <!--                    <input class="form-control"ng-model="b" />-->
-                <!--                </div>-->
-            </div>
-            <div class="row" ng-repeat="singlePay in BookCommonInfo.payment.payByMethods" ng-controller="resvSinglePayCtrl" >
-                <div class="col-sm-4 ">
-                    <label xlabel ng-transclude checker="isNotEmpty|isNumber|isLargerEqualThan0" checkee="singlePay.payAmount" btn-pass="payError" >实收数目</label>
-                    <input class="form-control input-lg" ng-model="singlePay.payAmount" />
-                </div>
-                <div class="col-sm-4 ">
-                    <label>支付方式</label>
-                    <select class="form-control input-lg"  ng-model="singlePay.payMethod" >
-                        <option value="现金">现金</option>
-                        <option value="银行卡">银行卡</option>
-                        <option value="信用卡">信用卡</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row">
-                <a class="pull-right btn btn-link btn-lg" ng-click="addNewPayByMethod(BookCommonInfo)">添加支付方式</a>
-            </div>
-            <div class="row">
-                <label>未收数目</label>
-                <label class="text-danger text-lg">{{BookCommonInfo.payment.payInDue}}元</label>
-            </div>
+        <div ng-if ="viewClick=='Pay'">
+            <div payment  book-room="BookRoomMaster" pay-method-options="payMethodOptions" pay-error="payError"></div>
             <div class="row modal-control">
                 <button class="pull-right btn btn-primary btn-lg" ng-if="initialString=='newReservation' && (payError == '0' || payError == null) "
                         ng-click="submit()"

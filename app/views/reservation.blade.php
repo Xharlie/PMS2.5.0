@@ -6,28 +6,42 @@
                 <button ng-click = "addNew()" class="btn btn-primary btn-lg">新预定</button>
                 <div class="pull-right">
                     <input type="text"  ng-model = "resvName" placeholder="预订人" class="searchBox input-lg">
-                    <select ng-model="roomType" class="form-control btn btn-default btn-lg">
-                        <option value="">所有房型</option>>
-                        <option value="Single">单人床房</option>
-                        <option value="Double">双人床房</option>
-                        <option value="Kingbed">大床房</option>
-                    </select>
-                    <select ng-model="sorter" class="form-control btn btn-default btn-lg" >
-                        <option value="">排序</option>
-                        <option value="GUEST_NM">住客姓名</option>
-                        <option value="RESVER_CARDNM">预定卡号</option>
-                        <option value="PHONE">预定手机</option>
-                        <option value="RESVER_NAME">预定人</option>
-                        <option value="RESV_WAY">支付方式</option>
-                        <option value="RESV_TMESTMP">下订日期</option>
-                        <option value="CHECK_IN_DT">预达日期</option>
-                        <option value="CHECK_OT_DT">预离日期</option>
-                        <option value="RM_TP">房型</option>
-                        <option value="RM_QUAN">房间数量</option>
-                        <option value="TREATY_ID">协议</option>
-                        <option value="MEMBER_ID">会员卡号</option>
-                        <option value="RMRK">备注</option>
-                    </select>
+                    <!-----------------------------------         roomtype filter         ----------------------------------------->
+                    <div class="btn-group" dropdown is-open="roomType.isopen"
+                         ng-init="selectTo('','所有房型',roomType)" dropdown-append-to-body>
+                        <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                            {{roomType.caption}} <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href ng-click="selectTo('','所有房型',roomType)">所有房型</a></li>
+                            <li ng-repeat=" type in allType">
+                                <a href ng-click="selectTo(type.RM_TP,type.RM_TP,roomType)">{{type.RM_TP}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-----------------------------------         sorter         ----------------------------------------->
+                    <div class="btn-group" dropdown is-open="sorter.isopen"
+                         ng-init="selectTo('','排序',sorter)" dropdown-append-to-body>
+                        <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                            {{sorter.caption}} <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href ng-click="selectTo('','排序',sorter)">排序</a></li>
+                            <li><a href ng-click="selectTo('GUEST_NM','住客姓名',sorter)">住客姓名</a></li>
+                            <li><a href ng-click="selectTo('RESVER_CARDNM','预定卡号',sorter)">预定卡号</a></li>
+                            <li><a href ng-click="selectTo('PHONE','预定手机',sorter)">预定手机</a></li>
+                            <li><a href ng-click="selectTo('RESVER_NAME','预定人',sorter)">预定人</a></li>
+                            <li><a href ng-click="selectTo('RESV_WAY','支付方式',sorter)">支付方式</a></li>
+                            <li><a href ng-click="selectTo('RESV_TMESTMP','下订日期',sorter)">下订日期</a></li>
+                            <li><a href ng-click="selectTo('CHECK_IN_DT','预达日期',sorter)">预达日期</a></li>
+                            <li><a href ng-click="selectTo('CHECK_OT_DT','预离日期',sorter)">预离日期</a></li>
+                            <li><a href ng-click="selectTo('RM_TP','房型',sorter)">房型</a></li>
+                            <li><a href ng-click="selectTo('RM_QUAN','房间数量',sorter)">房间数量</a></li>
+                            <li><a href ng-click="selectTo('TREATY_ID','协议',sorter)">协议</a></li>
+                            <li><a href ng-click="selectTo('MEMBER_ID','会员卡号',sorter)">会员卡号</a></li>
+                        </ul>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -45,7 +59,7 @@
     			<th>备注</th>
                 <th>状态</th>
     		</tr>
-    			<tr ng-repeat = "reserve in resvInfo | filter : {RESVER_NAME: resvName, RM_TP: roomType} | orderBy:sorter "
+    			<tr ng-repeat = "reserve in resvInfo | filter : {RESVER_NAME: resvName, RM_TP: roomType.value} | orderBy:sorter.value "
                     ng-mouseenter="sameIDLightUp(reserve)"
                     ng-mouseleave = 'sameIDLightBack(reserve)'
                     ng-dblclick="fastAction(reserve)"
