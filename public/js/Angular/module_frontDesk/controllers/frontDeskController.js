@@ -86,7 +86,7 @@ app.controller('reservationController', function($scope, $http, resrvFactory,$mo
         var roomST = [];
         for (var i =0; i < sameID.length; i++){
             for (var j=0; j<sameID[i].RM_QUAN; j++){
-                var room = {RM_TP:sameID[i].RM_TP, RM_ID:"", finalPrice:sameID[i].RESV_DAY_PAY};
+                var room = sameID[i];
                 roomST.push(room);
             }
         }
@@ -531,7 +531,6 @@ app.controller('accountingController', function($scope, $http, accountingFactory
     function queryAcct(startTime, endTime) {
         accountingFactory.accountingGetAll(startTime, endTime).success(function(data){
             $scope.acctInfo = data;
-            show(data)
             $scope.ready=true;
             for (var i =0 ; i< $scope.acctInfo.length; i++){
                 $scope.acctInfo[i].blockClass=[];

@@ -65,6 +65,7 @@
         <script src="js/Angular/module_frontDesk/controllers/directiveControllers/buildInDirController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/directiveControllers/xlabelController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/partControllers/paymentController.js"></script>
+        <script src="js/Angular/module_frontDesk/controllers/partControllers/roomSourceController.js"></script>
 
         <script src="js/Angular/module_frontDesk/services/frontDeskServices.js"></script>
         <script src="js/Angular/module_frontDesk/services/frontDeskModalServices.js"></script>
@@ -84,6 +85,7 @@
         <script src="js/Angular/module_frontDesk/directives/focusOn.js"></script>
         <script src="js/Angular/module_frontDesk/directives/xlabel.js"></script>
         <script src="js/Angular/module_frontDesk/directives/paymentModule.js"></script>
+        <script src="js/Angular/module_frontDesk/directives/roomSourceModule.js"></script>
 
         <script src="js/Angular/module_frontDesk/pan_lib/util.js"></script>
         <script src="js/Angular/module_frontDesk/pan_lib/filter.js"></script>

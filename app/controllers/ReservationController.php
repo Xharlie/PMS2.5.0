@@ -39,7 +39,7 @@ class ReservationController extends BaseController{
                                 'ReservationRoom.RM_TP as RM_TP','ReservationRoom.RM_QUAN as RM_QUAN',
                                 'Reservations.TREATY_ID as TREATY_ID','Reservations.MEMBER_ID as MEMBER_ID',
                                 'Reservations.RMRK as RMRK','ReservationRoom.STATUS as STATUS',
-                                'Reservations.PRE_PAID as PRE_PAID')
+                                'Reservations.PRE_PAID_RMN as PRE_PAID_RMN')
                         ->get();
         return Response::json($resvShow);
     }
@@ -53,7 +53,7 @@ class ReservationController extends BaseController{
                 'Reservations.RESVER_NAME as RESVER_NAME','Reservations.RESV_LATEST_TIME as RESV_LATEST_TIME',
                 'ReservationRoom.RM_TP as RM_TP','ReservationRoom.RM_QUAN as RM_QUAN',
                 'Reservations.RMRK as RMRK','ReservationRoom.STATUS as STATUS',
-                'Reservations.PRE_PAID as PRE_PAID')
+                'Reservations.PRE_PAID_RMN as PRE_PAID_RMN')
             ->get();
         return Response::json($resvShow);
     }
@@ -168,7 +168,7 @@ class ReservationController extends BaseController{
             "RESVER_PHONE" => $newResv["Phone"],
             "RESVER_EMAIL" => $newResv["email"],
             "RMRK"=> $newResv["RMRK"],
-            "PRE_PAID"=> $newResv["PRE_PAID"]
+            "PRE_PAID_RMN"=> $newResv["PRE_PAID_RMN"]
         );
         if($ReservationsArray["RESV_WAY"] == "会员卡"){
             $ReservationsArray["MEMEBER_ID"] = $newResv["roomSourceID"];

@@ -252,68 +252,79 @@ class AccountingController extends BaseController{
 
     public function submitModifyAcct(){
         $info = Input::all();
-        if($info["TABLE"] == "RoomDepositAcct"){
-            $InsertArray = array(
-                "RM_TRAN_ID" => $info["RM_TRAN_ID"],
-                "DEPO_AMNT" => $info["Amount"],
-                "PAY_METHOD" => $info["payMethod"],
-                "DEPO_TSTMP" => date('Y-m-d H:i:s'),
-                "ORGN_ACCT_ID" => $info["ORGN_ACCT_ID"],
-                "RMRK" => $info["RMRK"],
-                "FILLED" => $info["FILLED"]
-            );
-            $RM_DEPO_ID = DB::table('RoomDepositAcct')->insertGetId($InsertArray);
-
-        }elseif($info["TABLE"]  == "PenaltyAcct"){
-
-            $InsertArray = array(
-                "RM_TRAN_ID" => $info["RM_TRAN_ID"],
-                "PNLTY_PAY_AMNT" => $info["Amount"],
-                "BILL_TSTMP" => date('Y-m-d H:i:s'),
-                "ORGN_ACCT_ID" => $info["ORGN_ACCT_ID"],
-                "PAY_METHOD" => $info["payMethod"],
-                "TKN_RM_TRAN_ID" => $info["TKN_RM_TRAN_ID"],
-                "FILLED" => $info["FILLED"],
-                "BRK_EQPMT_RMRK" => $info["RMRK"]
-            );
-            $PEN_BILL_ID = DB::table('PenaltyAcct')->insertGetId($InsertArray);
-
-        }elseif($info["TABLE"]  == "RoomAcct"){
-
-            $InsertArray = array(
-                "RM_TRAN_ID" => $info["RM_TRAN_ID"],
-                "RM_PAY_AMNT" => $info["Amount"],
-                "BILL_TSTMP" => date('Y-m-d H:i:s'),
-                "ORGN_ACCT_ID" => $info["ORGN_ACCT_ID"],
-                "RM_PAY_METHOD" => $info["payMethod"],
-                "TKN_RM_TRAN_ID" => $info["TKN_RM_TRAN_ID"],
-                "FILLED" => $info["FILLED"],
-                "RMRK"=>$info["RMRK"]
-
-            );
-            $RM_BILL_ID = DB::table('RoomAcct')->insertGetId($InsertArray);
-
-        }elseif($info["TABLE"]  == "StoreTransaction"){
-
-            $InsertArray = array(
-                "STR_TRAN_TSTAMP" => date('Y-m-d H:i:s'),
-                "STR_PAY_METHOD" => $info["payMethod"],
-                "STR_PAY_AMNT" => $info["Amount"],
-                "ORGN_ACCT_ID" => $info["ORGN_ACCT_ID"],
-                "RMRK"=>$info["RMRK"]
-            );
-            $STR_TRAN_ID = DB::table('StoreTransaction')->insertGetId($InsertArray);
-
-            if(!is_null($info["RM_TRAN_ID"])){
-                $Insert = array(
+        try {
+            DB::beginTransaction();   //////  Important !! TRANSACTION Begin!!!
+            if($info["TABLE"] == "RoomDepositAcct"){
+                $InsertArray = array(
                     "RM_TRAN_ID" => $info["RM_TRAN_ID"],
-                    "STR_TRAN_ID" =>$STR_TRAN_ID,
-                    "RM_ID" => $info["RM_ID"],
-                    "TKN_RM_TRAN_ID" => $info["TKN_RM_TRAN_ID"],
+                    "DEPO_AMNT" => $info["Amount"],
+                    "PAY_METHOD" => $info["payMethod"],
+                    "DEPO_TSTMP" => date('Y-m-d H:i:s'),
+                    "ORGN_ACCT_ID" => $info["ORGN_ACCT_ID"],
+                    "RMRK" => $info["RMRK"],
                     "FILLED" => $info["FILLED"]
                 );
-                DB::table('RoomStoreTran')->insert($Insert);
+                $RM_DEPO_ID = DB::table('RoomDepositAcct')->insertGetId($InsertArray);
+                DB::update('update RoomTran set DPST_RMN = DPST_RMN + ? where RM_TRAN_ID = ?',
+                            array($info["Amount"],$info["RM_TRAN_ID"]));
+            }elseif($info["TABLE"]  == "PenaltyAcct"){
+
+                $InsertArray = array(
+                    "RM_TRAN_ID" => $info["RM_TRAN_ID"],
+                    "PNLTY_PAY_AMNT" => $info["Amount"],
+                    "BILL_TSTMP" => date('Y-m-d H:i:s'),
+                    "ORGN_ACCT_ID" => $info["ORGN_ACCT_ID"],
+                    "PAY_METHOD" => $info["payMethod"],
+                    "TKN_RM_TRAN_ID" => $info["TKN_RM_TRAN_ID"],
+                    "FILLED" => $info["FILLED"],
+                    "BRK_EQPMT_RMRK" => $info["RMRK"]
+                );
+                $PEN_BILL_ID = DB::table('PenaltyAcct')->insertGetId($InsertArray);
+
+            }elseif($info["TABLE"]  == "RoomAcct"){
+
+                $InsertArray = array(
+                    "RM_TRAN_ID" => $info["RM_TRAN_ID"],
+                    "RM_PAY_AMNT" => $info["Amount"],
+                    "BILL_TSTMP" => date('Y-m-d H:i:s'),
+                    "ORGN_ACCT_ID" => $info["ORGN_ACCT_ID"],
+                    "RM_PAY_METHOD" => $info["payMethod"],
+                    "TKN_RM_TRAN_ID" => $info["TKN_RM_TRAN_ID"],
+                    "FILLED" => $info["FILLED"],
+                    "RMRK"=>$info["RMRK"]
+
+                );
+                $RM_BILL_ID = DB::table('RoomAcct')->insertGetId($InsertArray);
+
+            }elseif($info["TABLE"]  == "StoreTransaction"){
+
+                $InsertArray = array(
+                    "STR_TRAN_TSTAMP" => date('Y-m-d H:i:s'),
+                    "STR_PAY_METHOD" => $info["payMethod"],
+                    "STR_PAY_AMNT" => $info["Amount"],
+                    "ORGN_ACCT_ID" => $info["ORGN_ACCT_ID"],
+                    "RMRK"=>$info["RMRK"]
+                );
+                $STR_TRAN_ID = DB::table('StoreTransaction')->insertGetId($InsertArray);
+
+                if(!is_null($info["RM_TRAN_ID"])){
+                    $Insert = array(
+                        "RM_TRAN_ID" => $info["RM_TRAN_ID"],
+                        "STR_TRAN_ID" =>$STR_TRAN_ID,
+                        "RM_ID" => $info["RM_ID"],
+                        "TKN_RM_TRAN_ID" => $info["TKN_RM_TRAN_ID"],
+                        "FILLED" => $info["FILLED"]
+                    );
+                    DB::table('RoomStoreTran')->insert($Insert);
+                }
             }
+        }catch (Exception $e){
+            DB::rollback();
+            $message=($e->getLine())."&&".$e->getMessage();
+            throw new Exception($message);
+        }finally{
+            DB::commit();
+            return Response::json("success!");
         }
     }
 }

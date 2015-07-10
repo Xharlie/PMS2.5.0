@@ -25,23 +25,6 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
         return util.dateFormat(rawDate);
     }
 
-    var createBookRoom = function(len){
-        for (var i=0; i<len; i++){
-            $scope.BookRoom.push(createNewRoom());
-        }
-    }
-
-    var createNewRoom = function(){
-        var newRoom =  {RM_TP:"", RM_ID:"",finalPrice:"",SUGG_PRICE:"",discount:"",deposit:"",MasterRoom:'fasle',
-            GuestsInfo:[createNewGuest()],payment:paymentFactory.createNewPayment('住房押金'), check:true};
-        return newRoom;
-    }
-
-    var createNewGuest = function(){
-        var newGuest =  {Name:"",MemberId:"",Phone:"",SSN:"",SSNType:"二代身份证",DOB:"",Address:"",MEM_TP:"",Points:"",RemarkInput:"",TIMES:""};
-        return newGuest;
-    }
-
     var initRoomsAndRoomTypes = function(exceptedRM_ID){
         for (var i = 0; i <$scope.RoomAllinfo.length; i++ ){
             var RM_TP = $scope.RoomAllinfo[i]["RM_TP"];
@@ -229,7 +212,7 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
                 $scope.BookCommonInfo.leaveTime = new Date(util.time2DateTime($scope.BookCommonInfo.CHECK_OT_DT ,roomST[0]["LEAVE_TM"]));
             $scope.BookRoom[0].SUGG_PRICE = $scope.roomsAndRoomTypes[roomST[0]["RM_TP"]][0]["SUGG_PRICE"];
             for(var i = 0; i < roomST[0]["customers"].length; i++){
-                if($scope.BookRoom[0].GuestsInfo.length <= i) $scope.BookRoom[0].GuestsInfo.push(createNewGuest());
+                if($scope.BookRoom[0].GuestsInfo.length <= i) $scope.BookRoom[0].GuestsInfo.push(roomFactory.createNewGuest());
                 $scope.BookRoom[0].GuestsInfo[i].Name = roomST[0]["customers"][i].CUS_NAME;
                 $scope.BookRoom[0].GuestsInfo[i].MemberId = roomST[0]["customers"][i].MEM_ID;
                 $scope.BookRoom[0].GuestsInfo[i].Phone = roomST[0]["customers"][i].PHONE;
@@ -270,18 +253,7 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
         },0);
     }
 
-//   var multiWalkIn = function(roomST){
-//       newCheckInFactory.getRoomInfo().success(function(data){
-//           $scope.RoomAllinfo = data;
-//           $scope.BookCommonInfo.roomSource="普通散客";
-//           initRoomsAndRoomTypes();
-//           for (var i=0; i< roomST.length; i++){
-//               $scope.BookRoom[i].RM_TP = roomST[i].RM_TP;
-//               $scope.BookRoom[i].RM_ID = roomST[i].RM_ID;
-//               $scope.BookRoom[i].SUGG_PRICE = $scope.roomsAndRoomTypes[roomST[i].RM_TP][0].SUGG_PRICE;
-//           }
-//       });
-//   };
+
 
     // get temp Plan for all kinds of room type
     var getTempPlan = function(call_back){
@@ -317,7 +289,7 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
     $scope.roomsDisableList = {};
     $scope.BookRoom = [];
     $scope.BookRoomByTP = {};   //  only for multi walk in or multi checkin
-    createBookRoom(roomST.length);
+    roomFactory.createBookRoom($scope.BookRoom,roomST.length,'住房押金');
     $scope.check= {checkInput: ""};
     $scope.watcher={"roomSource":true,"treaty":true,"member":true,"finalPrice":true,"discount":true,"paymentRequest":true,"rentType":true};
     $scope.submitLoading = false;
@@ -376,6 +348,7 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
                     $scope.caption.searchCaption = "N/A(暂时)";
                     $scope.disable.searchDisable = true;
                     updateDiscount("");
+                    break;
                 case '免费房':
                     $scope.caption.searchCaption = "N/A(暂时)";
                     $scope.disable.searchDisable = true;
@@ -497,7 +470,7 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
     /************** ********************************** guest  ********************************** *************/
     // add customer
     $scope.addCustomer = function(guestInfo){
-        guestInfo.push(createNewGuest());
+        guestInfo.push(roomFactory.createNewGuest());
     }
     // remove customer
     $scope.deleteCustomer = function(GuestsInfo,index){
@@ -535,7 +508,7 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
             $scope.viewClick = "Pay";
             for(var i = 0; i < $scope.BookRoom.length; i++){
                 var payment = $scope.BookRoom[i].payment;
-                payment.paymentRequest = depositMethod($scope.BookRoom[i]);
+                payment.paymentRequest = util.Limit(depositMethod($scope.BookRoom[i]));
                 payment.payByMethods[0].payAmount = payment.paymentRequest;
                 payment.payInDue = 0;
                 payment.payByMethods[0].payMethod = "现金";

@@ -15,6 +15,12 @@ app.controller('depositModalController', function($scope, $http,paymentFactory,n
     }
     $scope.payError = 0;
 
+/********************************************       utility       ****************************************************/
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+
 /********************************************     common initial setting     *****************************************/
     $scope.initialString = initialString;
     $scope.BookCommonInfo = {

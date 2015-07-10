@@ -235,12 +235,10 @@ class NewCheckInController extends BaseController{
             }
             DB::table('RoomDepositAcct')->insert($DepositArray);
             DB::table('Customers')->insert($CustomerArray);
-            /*--------------------------------------- delete Room Availablilty Resv Quan------------------------------------------*/
             if ($reserve != null){
+            /*--------------------------------------- delete Room Availablilty Resv Quan------------------------------------------*/
                 $this->roomOccupationResvChange($room,$reserve,$unfilled);
-
             /*--------------------------------------- change Resv Quan and status ------------------------------------------*/
-
                 $this->reservRoomstatus($room,$reserve,$unfilled);
             }
         }catch (Exception $e){
@@ -361,13 +359,21 @@ class NewCheckInController extends BaseController{
         foreach ($room["pay"]["payByMethods"] as $payByMethod){
             $depo = array(
                 "RM_TRAN_ID" => $RM_TRAN_ID,
+                "REF_ID" => null,
                 "DEPO_AMNT"=>$payByMethod["payAmount"],
                 "PAY_METHOD" => $payByMethod["payMethod"],
                 "DEPO_TSTMP"=> $date,
                 "RMRK"=> $RMRK,
                 "FILLED"=>'F'
             );
+            /**********     if  paid by  resvDeposit      *************/
+            if($payByMethod['payMethod'] == '预定金' && $payByMethod['payRefID'] !=null){
+                $depo['REF_ID'] = $payByMethod['payRefID'];
+                DB::update('update Reservations set PRE_PAID_RMN = PRE_PAID_RMN - ? where RESV_ID = ?',
+                    array($payByMethod["payAmount"],$payByMethod['payRefID']) );
+            }
             array_push($DepositArray,$depo);
+
         }
     }
 

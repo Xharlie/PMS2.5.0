@@ -50,20 +50,6 @@
                             <option value="预定">预定</option>
                             <option value="免费房">免费房</option>
                         </select>
-                        <!-- <div class="btn-group" dropdown is-open="payMethod.isopen" on-togggle="sourceChange()"
-                             ng-init="selectValue('普通散客',BookCommonInfo,'roomSource')" dropdown-append-to-body>
-                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
-                                {{BookCommonInfo.roomSource}} <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href ng-click="selectValue('普通散客',BookCommonInfo,'roomSource')">普通散客</a></li>
-                                <li><a href ng-click="selectValue('会员',BookCommonInfo,'roomSource')">会员</a></li>
-                                <li><a href ng-click="selectValue('协议',BookCommonInfo,'roomSource')">协议</a></li>
-                                <li><a href ng-click="selectValue('活动码',BookCommonInfo,'roomSource')" >活动码</a></li>
-                                <li><a href ng-click="selectValue('预定',BookCommonInfo,'roomSource')" >预定</a></li>
-                                <li><a href ng-click="selectValue('免费房',BookCommonInfo,'roomSource')" >免费房</a></li>
-                            </ul>
-                        </div> -->
                     </div>
                     <div class="form-group col-sm-6">
                         <label>出租类型</label>
@@ -91,7 +77,7 @@
                                 <th>会员号&nbsp;&nbsp;</th>
                                 <th>会员姓名</th>
                             </tr>
-                            <tr  ng-repeat = "memberOption in Members |  orderBy:MEM_ID "
+                            <tr  ng-repeat = "memberOption in Members |  orderBy:MEM_ID"
                                  tooltip-html-unsafe="{{memberOption.summary}}"
                                  tooltip-trigger="mouseenter"
                                  tooltip-append-to-body="true">

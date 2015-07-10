@@ -1,7 +1,7 @@
 /**
  * Created by Xharlie on 12/22/14.
  */
-app.controller('MultiCheckInModalController', function($scope, $http, newCheckInFactory,focusInSideFactory,paymentFactory,
+app.controller('MultiCheckInModalController', function($scope, $http, newCheckInFactory,focusInSideFactory,paymentFactory,roomFactory,
                                                        $modalInstance, $timeout, roomST,initialString,RESV){
 
     /********************************************     validation     ***************************************************/
@@ -24,26 +24,6 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
         return util.dateFormat(rawDate);
     }
 
-    var createBookRoom = function(len){
-        for (var i=0; i<len; i++){
-            $scope.BookRoom.push(createNewRoom());
-        }
-    }
-
-    var createBookRoomByTP = function(singleRoom){
-            if (singleRoom.RM_TP in $scope.BookRoomByTP){
-                $scope.BookRoomByTP[singleRoom.RM_TP].rooms.push(singleRoom);
-                $scope.BookRoomByTP[singleRoom.RM_TP].roomAmount++;
-            }else{
-                $scope.BookRoomByTP[singleRoom.RM_TP] = {SUGG_PRICE:singleRoom.SUGG_PRICE,discount:singleRoom.discount,finalPrice:singleRoom.finalPrice,rooms:[singleRoom],roomAmount:1};
-            }
-    }
-
-    function createNewRoom(){
-        var newRoom =  {RM_TP:"", RM_ID:"",finalPrice:"",SUGG_PRICE:"",discount:"",deposit:"",MasterRoom:'fasle',
-            GuestsInfo:[createNewGuest()],payment:paymentFactory.createNewPayment('住房押金'), check:true};
-        return newRoom;
-    }
 
     function preAssignRM_ID(){
         for(var tp in $scope.BookRoomByTP){
@@ -52,11 +32,6 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
                 $scope.BookRoomByTP[tp].rooms[i].RM_ID = $scope.roomsAndRoomTypes[tp][i].RM_ID;
             }
         }
-    }
-
-    var createNewGuest = function(){
-        var newGuest =  {Name:"",MemberId:"",Phone:"",SSN:"",SSNType:"二代身份证",DOB:"",Address:"",MEM_TP:"",Points:"",RemarkInput:"",TIMES:""};
-        return newGuest;
     }
 
 
@@ -138,15 +113,12 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
         }
     }
 
-//
-//    var  updateFinalPrice = function(singleRoom){
-//        var discount = (singleRoom.discount=="")? 100: singleRoom.discount;
-//        if ($scope.BookCommonInfo.rentType == "全日租"){
-//            singleRoom.finalPrice = util.Limit(singleRoom.SUGG_PRICE * discount /100);
-//        } else {
-//            singleRoom.finalPrice = util.Limit($scope.plansOBJ[$scope.BookCommonInfo.rentType].PLAN_COV_PRCE * discount /100);
-//        }
-//    };
+    function update2Resv(){
+        for(var key in $scope.BookRoomByTP){
+            $scope.BookRoomByTP[key].finalPrice =  $scope.BookRoomByTP[key].resvPrice;
+        }
+    };
+
 
     var  updateFinalPrice4TP = function(singleTP){
         var discount = (singleTP.discount==="")? 100: singleTP.discount;
@@ -188,9 +160,6 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
         return;
     }
 
-
-
-
     // need improved
     var depositMethod = function(basic){
         var sum = Math.floor((basic+200)/100)*100;
@@ -213,7 +182,11 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
         return false;
     }
 
-
+    function getResvDeposit(masterPay){
+        masterPay.payByMethods[0].payAmount = roomST[0].PRE_PAID_RMN;
+        masterPay.payByMethods[0].payMethod = "预定金";
+        masterPay.payByMethods[0].payRefID = roomST[0].RESV_ID;
+    }
 
     /**********************************/
     /************** ********************************** Initial functions ******************************************* *************/
@@ -226,9 +199,11 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
             initRoomsAndRoomTypes();
             for (var i=0; i< roomST.length; i++){
                 $scope.BookRoom[i].RM_TP = roomST[i].RM_TP;
-                $scope.BookRoom[i].SUGG_PRICE = roomST[i].finalPrice;
+                $scope.BookRoom[i].SUGG_PRICE = $scope.roomsAndRoomTypes[$scope.BookRoom[i].RM_TP][0].SUGG_PRICE;
+                $scope.BookRoom[i].finalPrice = roomST[i].RESV_DAY_PAY;
+                $scope.BookRoom[i].resvPrice = roomST[i].RESV_DAY_PAY;
 //                updateFinalPrice($scope.BookRoom[i]);
-                createBookRoomByTP($scope.BookRoom[i]);
+                roomFactory.createBookRoomByTP($scope.BookRoom[i],$scope.BookRoomByTP);
             }
             preAssignRM_ID();
         });
@@ -244,7 +219,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
                 $scope.BookRoom[i].RM_ID = roomST[i].RM_ID;
                 $scope.BookRoom[i].SUGG_PRICE = $scope.roomsAndRoomTypes[roomST[i].RM_TP][0].SUGG_PRICE;
 //                updateFinalPrice($scope.BookRoom[i]);
-                createBookRoomByTP($scope.BookRoom[i]);
+                roomFactory.createBookRoomByTP($scope.BookRoom[i],$scope.BookRoomByTP);
             }
         });
     };
@@ -278,7 +253,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
     $scope.roomsDisableList = {};
     $scope.BookRoom = [];
     $scope.BookRoomByTP = {};   //  only for multi walk in or multi checkin
-    createBookRoom(roomST.length);
+    roomFactory.createBookRoom($scope.BookRoom,roomST.length,'住房押金');
     $scope.check= {checkInput: ""};
     focusInSideFactory.tabInit('wholeModal');
     $timeout(function(){
@@ -342,8 +317,9 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
                 case '预订':
                     $scope.caption.searchCaption = "N/A(暂时)";
                     $scope.disable.searchDisable = true;
-//                    updateDiscount("");
-                    updateDiscount4TP("");
+                    update2Resv();
+//                    updateDiscount4TP("");
+                    break;
                 case '免费房':
                     $scope.caption.searchCaption = "N/A(暂时)";
                     $scope.disable.searchDisable = true;
@@ -414,12 +390,6 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
         updateForRmtpChange(singleRoom);
     }
 
-
-    // discount rate and final price
-//    $scope.discountChange = function(singleRoom) {
-//        updateFinalPrice(singleRoom);
-//    }
-
     $scope.discountChange4TP = function(singleTP) {
         updateFinalPrice4TP(singleTP);
     }
@@ -470,7 +440,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
     /************** ********************************** guest  ********************************** *************/
         // add customer
     $scope.addCustomer = function(guestInfo){
-        guestInfo.push(createNewGuest());
+        guestInfo.push(roomFactory.createNewGuest());
     }
     // remove customer
     $scope.deleteCustomer = function(GuestsInfo,index){
@@ -527,11 +497,16 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
             sum4distribute = sum4distribute + payment.base;
         }
         if ($scope.Connected){
+            sum4master=util.Limit(sum4master);
+            if(initialString == "multiReserve" && util.isNum(roomST[0].PRE_PAID_RMN) &&  roomST[0].PRE_PAID_RMN >0 ){
+                getResvDeposit($scope.BookCommonInfo.Master.payment);
+            }else{
+                $scope.BookCommonInfo.Master.payment.payByMethods[0].payAmount = sum4master;
+                $scope.BookCommonInfo.Master.payment.payByMethods[0].payMethod = "现金";
+            }
             $scope.BookCommonInfo.Master.payment.paymentRequest = sum4master;
-            $scope.BookCommonInfo.Master.payment.payByMethods[0].payAmount = sum4master;
-            $scope.BookCommonInfo.Master.payment.payByMethods[0].payMethod = "现金";
-            $scope.BookCommonInfo.Master.payment.payInDue = 0;
-            $scope.BookCommonInfo.Master.payment.base = sum4distribute;
+            $scope.BookCommonInfo.Master.payment.payInDue = sum4master - $scope.BookCommonInfo.Master.payment.payByMethods[0].payAmount;
+            $scope.BookCommonInfo.Master.payment.base = util.Limit(sum4distribute);
         }
     }
 
@@ -543,19 +518,14 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
     $scope.editRoomAndGuest = function(){
         $scope.viewClick = "roomInfo";
         $scope.roomError = 0;
-        if ($scope.Connected && $scope.BookCommonInfo.Master.CONN_RM_ID != ""){
-            for(var i = 0; i < $scope.BookRoom.length; i++){
-                if ($scope.BookRoom[i].RM_ID == $scope.BookCommonInfo.Master.CONN_RM_ID){
-                    if (!$scope.BookRoom[i].check) {
-                        $scope.BookCommonInfo.Master.CONN_RM_ID = "";
+        if ($scope.Connected ){
+            if($scope.BookRoom.length > 1){
+                for(var i = 0; i < $scope.BookRoom.length; i++){
+                    if ($scope.BookRoom[i].check) {
+                        $scope.BookCommonInfo.Master.CONN_RM_ID = $scope.BookRoom[i].RM_ID;
                         return;
                     }
                 }
-            }
-        }
-        if ($scope.Connected && $scope.BookCommonInfo.Master.CONN_RM_ID == ""){
-            if($scope.BookRoom.length > 1){
-                $scope.BookCommonInfo.Master.CONN_RM_ID = $scope.BookRoom[0].RM_ID;
             }
         }
 

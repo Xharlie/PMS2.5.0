@@ -69,7 +69,7 @@ app.controller('modifyAcctModalController', function($scope, $http, focusInSideF
 
         $scope.submitInfo={
             TABLE : $scope.oriAcct.TABLE,
-            ORGN_ACCT_ID : $scope.oriAcct.ACCT_ID,
+            ORGN_ACCT_ID : Number($scope.oriAcct.ACCT_ID.substring(4)),
             RM_TRAN_ID : $scope.oriAcct.RM_TRAN_ID,
             TKN_RM_TRAN_ID : $scope.oriAcct.TKN_RM_TRAN_ID,
             Amount : Amount,

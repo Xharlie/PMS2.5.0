@@ -47,10 +47,11 @@ app.controller('smallMenuController',function ($scope, $http,cusModalFactory,$mo
             var roomST = [];
             for (var i =0; i < sameID.length; i++){
                 for (var j=0; j<sameID[i].RM_QUAN; j++){
-                    var room = {RM_TP:sameID[i].RM_TP, RM_ID:"", finalPrice:sameID[i].RESV_DAY_PAY};
+                    var room = sameID[i];
                     roomST.push(room);
                 }
             }
+
             var modalInstance = $modal.open({
                 windowTemplateUrl: 'directiveViews/modalWindowTemplate',
                 templateUrl: 'directiveViews/multiCheckInModal',

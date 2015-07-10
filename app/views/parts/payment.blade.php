@@ -21,10 +21,13 @@
             <div class="form-group col-sm-6">
                 <label>支付方式</label>
                 <select class="form-control input-lg"  ng-model="singlePay.payMethod" >
-                    <option value="{{payMethod}}" ng-repeat="payMethod in payMethodOptions">{{payMethod}}</option>
+                    <!---  only for resv check in -------->
+                    <option ng-if="singlePay.payMethod=='预定金'" value="预定金" >预定金</option>
+                    <!---  only for resv check in -------->
+                    <option ng-if="singlePay.payMethod!='预定金'" value="{{payMethod}}" ng-repeat="payMethod in payMethodOptions">{{payMethod}}</option>
                 </select>
             </div>
-            <!--            for purchase model             -->
+            <!--         only   for purchase model             -->
             <div class="form-group col-sm-6" ng-if="singlePay.payMethod == '房间挂账' ">
                 <label xlabel ng-transclude checker="isNotEmpty" checkee="singlePay.roomId"
                        btn-pass="BookRoom[{{$parent.$index}}].payment.payByMethods[{{$index}}].roomNumError" >房间号</label>
@@ -34,8 +37,7 @@
                        typeahead-on-select="roomIdHit(singlePay,$item)" typeahead-append-to-body="true"
                        typeahead-editable="true">
             </div>
-            <!--            for purchase model             -->
-
+            <!--         only   for purchase model             -->
         </div>
         <div class="row">
             <a class="pull-right btn btn-link btn-lg"   ng-if="singleRoom.payment.paymentType != '商品付款' "

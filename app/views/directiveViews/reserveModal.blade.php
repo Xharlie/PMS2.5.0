@@ -1,6 +1,4 @@
 <div id="wholeModal" >
-    {{payError}}
-
     <div class="panel-heading">
         <h4 class="panel-title">
             <span class="glyphicon glyphicon-send"></span>
@@ -68,7 +66,7 @@
                     </select>
                 </div>
                 <div class="col-sm-4 form-group ">
-                    <label xlabel ng-transclude checker="isNotEmpty|isNumber|isLargerEqualThan0" checkee="BookCommonInfo.payment.paymentRequest" btn-pass="payError">预定金</label>
+                    <label xlabel ng-transclude checker="isNotEmpty|isNumber" checkee="BookCommonInfo.payment.paymentRequest" btn-pass="payError">预定金</label>
                     <input class="form-control input-lg" ng-model="BookCommonInfo.payment.paymentRequest" />
                 </div>
                 <div class="col-sm-3 form-group ">
