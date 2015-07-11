@@ -75,7 +75,7 @@
                         <td>{{bill.BILL_TSTMP}}</td>
                         <td>BIL-{{bill.RM_BILL_ID}}</td>
                         <td>{{bill.RM_ID}}</td>
-                        <td>{{bill.RMRK}}</td>
+                        <td>{{bill.SUB_CAT}}房费</td>
                         <td>{{twoDigit(bill.RM_PAY_AMNT)}}元</td>
                         <td></td>
                     </tr>
@@ -84,13 +84,13 @@
                         <td>{{depo.DEPO_TSTMP}}</td>
                         <td>DEP-{{depo.RM_DEPO_ID}}</td>
                         <td>{{depo.RM_ID}}</td>
-                        <td>{{depo.RMRK}}</td>
+                        <td>{{depo.PAY_METHOD}}{{depo.SUB_CAT}}押金</td>
                         <td>{{twoDigit(depo.DEPO_AMNT)}}元</td>
                         <td></td>
                     </tr>
-                    <tr ng-repeat = "store in acct.AcctStore | filter: {show : 'true'} | orderBy: STR_TRAN_TSTAMP  ">
+                    <tr ng-repeat = "store in acct.AcctStore | filter: {show : 'true'} | orderBy: STR_TRAN_TSTMP  ">
                         <td><input ng-if="BookCommonInfo.transferable" type="checkbox" ng-model="store.transfer" ng-checked="store.transfer" ng-change="updateSumation()"/></td>
-                        <td>{{store.STR_TRAN_TSTAMP}}</td>
+                        <td>{{store.STR_TRAN_TSTMP}}</td>
                         <td>STR-{{store.STR_TRAN_ID}}</td>
                         <td>{{store.RM_ID}}</td>
                         <td>{{store.PROD_NM}}＊{{store.PROD_QUAN}}</td>
@@ -102,7 +102,7 @@
                         <td>{{pen.BILL_TSTMP}}</td>
                         <td>PEN-{{pen.PEN_BILL_ID}}</td>
                         <td>{{pen.RM_ID}}</td>
-                        <td>{{pen.BRK_EQPMT_RMRK}}</td>
+                        <td>赔偿费</td>
                         <td>{{twoDigit(pen.PNLTY_PAY_AMNT)}}元</td>
                         <td></td>
                     </tr>

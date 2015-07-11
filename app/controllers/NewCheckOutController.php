@@ -34,6 +34,12 @@ class NewCheckOutController extends BaseController{
                     $query->where('RoomAcct.FILLED', '!=', 'T')
                         ->orWhereNull('RoomAcct.FILLED');
                 })
+                ->select('RoomAcct.RM_BILL_ID as RM_BILL_ID','RoomAcct.RM_TRAN_ID as RM_TRAN_ID',
+                    'RoomAcct.RM_PAY_AMNT as RM_PAY_AMNT','RoomAcct.BILL_TSTMP as BILL_TSTMP',
+                    'RoomAcct.ORGN_ACCT_ID as ORGN_ACCT_ID','RoomAcct.RM_PAY_METHOD as RM_PAY_METHOD',
+                    'RoomAcct.EMP_ID as EMP_ID','RoomAcct.TKN_RM_TRAN_ID as TKN_RM_TRAN_ID',
+                    'RoomAcct.FILLED as FILLED','RoomAcct.RMRK as RMRK',
+                    'RoomAcct.SUB_CAT as SUB_CAT','RoomTran.RM_ID')
                 ->get();
 
             $acctRoomDepo= DB::table('RoomDepositAcct')
@@ -44,6 +50,12 @@ class NewCheckOutController extends BaseController{
                     $query->where('RoomDepositAcct.FILLED', '!=', 'T')
                         ->orWhereNull('RoomDepositAcct.FILLED');
                 })
+                ->select('RoomDepositAcct.RM_DEPO_ID as RM_DEPO_ID','RoomDepositAcct.RM_TRAN_ID as RM_TRAN_ID',
+                    'RoomDepositAcct.DEPO_AMNT as DEPO_AMNT','RoomDepositAcct.DEPO_TSTMP as DEPO_TSTMP',
+                    'RoomDepositAcct.REF_ID as REF_ID','RoomDepositAcct.PAY_METHOD as PAY_METHOD',
+                    'RoomDepositAcct.ORGN_ACCT_ID as ORGN_ACCT_ID','RoomDepositAcct.RMRK as RMRK',
+                    'RoomDepositAcct.EMP_ID as EMP_ID','RoomDepositAcct.FILLED as FILLED',
+                    'RoomDepositAcct.SUB_CAT as SUB_CAT','RoomTran.RM_ID')
                 ->get();
 
             $acctRoomStore = DB::table('RoomStoreTran')
@@ -57,6 +69,12 @@ class NewCheckOutController extends BaseController{
                     $query->where('RoomStoreTran.FILLED', '!=', 'T')
                         ->orWhereNull('RoomStoreTran.FILLED');
                 })
+                ->select('RoomStoreTran.STR_TRAN_ID as STR_TRAN_ID','RoomStoreTran.RM_TRAN_ID as RM_TRAN_ID',
+                    'RoomStoreTran.TKN_RM_TRAN_ID as TKN_RM_TRAN_ID','RoomStoreTran.FILLED as FILLED',
+                    'StoreTransaction.STR_TRAN_TSTMP as STR_TRAN_TSTMP','StoreTransaction.STR_PAY_METHOD as STR_PAY_METHOD',
+                    'StoreTransaction.STR_PAY_AMNT as STR_PAY_AMNT','StoreTransaction.ORGN_ACCT_ID as ORGN_ACCT_ID',
+                    'StoreTransaction.EMP_ID as EMP_ID','StoreTransaction.RMRK as RMRK',
+                    'RoomTran.RM_ID')
                 ->get();
 
             $acctPenalty = DB::table('PenaltyAcct')
@@ -68,6 +86,11 @@ class NewCheckOutController extends BaseController{
                     $query->where('PenaltyAcct.FILLED', '!=', 'T')
                         ->orWhereNull('PenaltyAcct.FILLED');
                 })
+                ->select('PenaltyAcct.PEN_BILL_ID as PEN_BILL_ID','PenaltyAcct.RM_TRAN_ID as RM_TRAN_ID',
+                    'PenaltyAcct.PNLTY_PAY_AMNT as PNLTY_PAY_AMNT','PenaltyAcct.BILL_TSTMP as BILL_TSTMP',
+                    'PenaltyAcct.ORGN_ACCT_ID as ORGN_ACCT_ID','PenaltyAcct.PAY_METHOD as PAY_METHOD',
+                    'PenaltyAcct.EMP_ID as EMP_ID','PenaltyAcct.TKN_RM_TRAN_ID as TKN_RM_TRAN_ID',
+                    'PenaltyAcct.FILLED as FILLED','PenaltyAcct.BRK_EQPMT_RMRK as BRK_EQPMT_RMRK','RoomTran.RM_ID')
                 ->get();
 
             $acct["AcctPay"] = array_merge($acct["AcctPay"],(array)$acctPay);

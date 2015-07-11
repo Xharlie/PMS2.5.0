@@ -6,7 +6,7 @@
                     <h4 class="panel-title"><span class="glyphicon glyphicon-home"></span> 房型余量</h4>
                 </div>
                 <table class="table">
-                    <tr ng-repeat="(rmTp,status) in roomSummary">
+                    <tr ng-repeat="(rmTp,status) in roomSummary" ng-click="rmTpToggle(rmTp)">
                         <td>
                             <div>
                                 <div>
@@ -33,7 +33,7 @@
                     <h4 class="panel-title"><span class="glyphicon glyphicon-time"></span> 近期预达</h4>
                 </div>
                 <table class="table">
-                    <tr ng-repeat="resv in resvComInfo | orderBy:RESV_LATEST_TIME:'true'">
+                    <tr ng-repeat="resv in resvComInfo | orderBy:'RESV_LATEST_TIME':false">
                         <td>
                             <div class="pull-left" ng-bind="resv.RESVER_NAME"></div>
                             <div class="pull-right" >今天 {{resv.RESV_LATEST_TIME}}</div>
@@ -93,12 +93,14 @@
 
         <div class="panel-body padded-block">
             <div id="roomStatusFrame" class="roomStatus" ng-repeat="(FLOOR_ID,roomsOnFloor) in roomFloor | orderObjectByNum:FLOOR_ID " style="margin-bottom: 10px;">
-                <label style="font-weight: normal">{{roomsOnFloor.FLOOR}}</label>
+                <label style="font-weight: normal">
+                    <span hidden>{{roomsOnFloor.FLOOR}}</span>
+                </label>
                 <div class="roomStatusFull">
                     <div ng-dblclick="fastAction(roomST)"
                          class="room" ng-class="roomST.blockClass"
                          onclick="event.preventDefault();"
-                         ng-repeat = "roomST in roomsOnFloor.rooms | filter: customerizeFilter | orderBy: roomST.RM_ID "
+                         ng-repeat = "roomST in roomsOnFloor.rooms | filter: customerizeFilter | filter: {RM_TP: RM_TPfilter} | orderBy: roomST.RM_ID "
                          ng-mouseenter="connLightUp(roomST)"
                          ng-mouseleave = 'connLightback(roomST)'
                          sglclick="open(roomST)" block-class="blockClass"

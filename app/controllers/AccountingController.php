@@ -76,7 +76,7 @@ class AccountingController extends BaseController{
 
     public function storeDetailGet($startTS,$endTS){
         $productSellSum =  DB::table('StoreTransaction')
-            ->whereRaw("StoreTransaction.STR_TRAN_TSTAMP BETWEEN ".$startTS." AND ".$endTS)
+            ->whereRaw("StoreTransaction.STR_TRAN_TSTMP BETWEEN ".$startTS." AND ".$endTS)
             ->join('ProductInTran','ProductInTran.STR_TRAN_ID','=','StoreTransaction.STR_TRAN_ID')
             ->leftjoin('ProductInfo','ProductInfo.PROD_ID','=','ProductInTran.PROD_ID')
             ->select(DB::raw("ProductInTran.PROD_ID as PROD_ID, ProductInfo.PROD_NM as PROD_NM,
@@ -93,7 +93,7 @@ class AccountingController extends BaseController{
             ->sum('DEPO_AMNT');
 
         $StoreAcct =  DB::table('StoreTransaction')
-            ->whereRaw("StoreTransaction.STR_TRAN_TSTAMP BETWEEN ".$startTS." AND ".$endTS)
+            ->whereRaw("StoreTransaction.STR_TRAN_TSTMP BETWEEN ".$startTS." AND ".$endTS)
             ->where("STR_PAY_METHOD","=","现金")
             ->sum('STR_PAY_AMNT');
         $cashGet = $DepoAcct + $StoreAcct;
@@ -163,10 +163,10 @@ class AccountingController extends BaseController{
                 ,true as CON,false as PAY" ));
 
         $StoreAcct =  DB::table('StoreTransaction')
-            ->whereRaw("StoreTransaction.STR_TRAN_TSTAMP BETWEEN '".$startTime."' AND '".$endTime."'")
-//            ->whereRaw("UNIX_TIMESTAMP(StoreTransaction.STR_TRAN_TSTAMP) BETWEEN ".$twoDaysAgo." AND ".$today)
+            ->whereRaw("StoreTransaction.STR_TRAN_TSTMP BETWEEN '".$startTime."' AND '".$endTime."'")
+//            ->whereRaw("UNIX_TIMESTAMP(StoreTransaction.STR_TRAN_TSTMP) BETWEEN ".$twoDaysAgo." AND ".$today)
             ->leftjoin('RoomStoreTran','RoomStoreTran.STR_TRAN_ID','=','StoreTransaction.STR_TRAN_ID')
-            ->select(DB::raw("StoreTransaction.STR_TRAN_TSTAMP as TSTMP,
+            ->select(DB::raw("StoreTransaction.STR_TRAN_TSTMP as TSTMP,
              CASE
                 WHEN RoomStoreTran.RM_ID is Null THEN '商品现付'
                 ELSE  '商品挂账'
@@ -237,7 +237,7 @@ class AccountingController extends BaseController{
             $targetAcct =  DB::table('StoreTransaction')
                 ->where("StoreTransaction.STR_TRAN_ID","$ACCT_ID")
                 ->leftjoin('RoomStoreTran','RoomStoreTran.STR_TRAN_ID','=','StoreTransaction.STR_TRAN_ID')
-                ->select(DB::raw("StoreTransaction.STR_TRAN_TSTAMP as TSTMP,'商品' as CLASS,
+                ->select(DB::raw("StoreTransaction.STR_TRAN_TSTMP as TSTMP,'商品' as CLASS,
             StoreTransaction.STR_TRAN_ID as ACCT_ID,RoomStoreTran.RM_ID as RM_ID,
             RoomStoreTran.RM_TRAN_ID as RM_TRAN_ID,''as PAYER_NM,'' as PAYER_PHONE,
             StoreTransaction.STR_PAY_METHOD as PAY_METHOD,StoreTransaction.STR_PAY_AMNT as 'CONSUME_PAY_AMNT',
@@ -261,6 +261,7 @@ class AccountingController extends BaseController{
                     "PAY_METHOD" => $info["payMethod"],
                     "DEPO_TSTMP" => date('Y-m-d H:i:s'),
                     "ORGN_ACCT_ID" => $info["ORGN_ACCT_ID"],
+                    "SUB_CAT" => '改帐',
                     "RMRK" => $info["RMRK"],
                     "FILLED" => $info["FILLED"]
                 );
@@ -291,6 +292,7 @@ class AccountingController extends BaseController{
                     "RM_PAY_METHOD" => $info["payMethod"],
                     "TKN_RM_TRAN_ID" => $info["TKN_RM_TRAN_ID"],
                     "FILLED" => $info["FILLED"],
+                    "SUB_CAT" => '改帐',
                     "RMRK"=>$info["RMRK"]
 
                 );
@@ -299,7 +301,7 @@ class AccountingController extends BaseController{
             }elseif($info["TABLE"]  == "StoreTransaction"){
 
                 $InsertArray = array(
-                    "STR_TRAN_TSTAMP" => date('Y-m-d H:i:s'),
+                    "STR_TRAN_TSTMP" => date('Y-m-d H:i:s'),
                     "STR_PAY_METHOD" => $info["payMethod"],
                     "STR_PAY_AMNT" => $info["Amount"],
                     "ORGN_ACCT_ID" => $info["ORGN_ACCT_ID"],

@@ -16,13 +16,13 @@
                         <th>付款总额</th>
                         <th>房单号</th>
                     </tr>
-                        <tr ng-repeat = "info in histoInfo | orderBy:'STR_TRAN_TSTAMP':true"
+                        <tr ng-repeat = "info in histoInfo | orderBy:'STR_TRAN_TSTMP':true"
                             ng-mouseenter="lightUp(info)"  ng-mouseleave = 'lightBack(info)'
                             sglclick="open(info)" onclick="event.preventDefault();" ng-class="info.blockClass" block-class="blockClass"
                             not-show ="menuNoshow" pop-menu  menu-type="'content-menu'" owner="{'owner':info,'format':contentFormat}"
                             ng-transclude>
                             <td>{{info.STR_TRAN_ID}}</td>
-                            <td>{{info.STR_TRAN_TSTAMP}}</td>
+                            <td>{{info.STR_TRAN_TSTMP}}</td>
                             <td>{{(info.RM_ID == null)?"N/A":info.RM_ID}}</td>
                             <td>{{info.STR_PAY_METHOD}}</td>
                             <td>{{twoDigit(info.STR_PAY_AMNT)}}</td>

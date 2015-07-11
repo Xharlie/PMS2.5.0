@@ -526,7 +526,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
                             RM_TRAN_ID:ac.RM_TRAN_ID,
                             RM_ID: $scope.TRAN2RMmapping[ac.RM_TRAN_ID],
                             FILLED: (!ac.transfer && initialString == "checkOut" )?'T':'F'},
-                        StoreTransaction:{STR_TRAN_TSTAMP:ac.TSTMP,
+                        StoreTransaction:{STR_TRAN_TSTMP:ac.TSTMP,
                             STR_PAY_AMNT:ac.PAY_AMNT,
                             STR_PAY_METHOD:'房间挂账',
                             RMRK:ac.RMRK,
@@ -542,7 +542,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
                     break;
                 case 'newAcct':
                     addAcct.RoomAcct.push({RM_TRAN_ID:ac.RM_TRAN_ID,TKN_RM_TRAN_ID:$scope.BookCommonInfo.Master.mastr_RM_TRAN_ID,
-                        RMRK: '手入房费', RM_PAY_AMNT: ac.PAY_AMNT,BILL_TSTMP:ac.TSTMP,
+                        SUB_CAT:'手录',RMRK: ac.RMRK, RM_PAY_AMNT: ac.PAY_AMNT,BILL_TSTMP:ac.TSTMP,
                         FILLED: (!ac.transfer && initialString == "checkOut")?'T':'F' });
                     break;
 
@@ -551,7 +551,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
         for(var i = 0; i < $scope.acct['exceedPay'].length; i++){
             var ac = $scope.acct['exceedPay'][i];
             addAcct.RoomAcct.push({RM_TRAN_ID:ac.RM_TRAN_ID,TKN_RM_TRAN_ID:$scope.BookCommonInfo.Master.mastr_RM_TRAN_ID,
-                RMRK: '超时房费', RM_PAY_AMNT: ac.RM_PAY_AMNT,BILL_TSTMP:ac.BILL_TSTMP,
+                SUB_CAT:'超时',RMRK: '', RM_PAY_AMNT: ac.RM_PAY_AMNT,BILL_TSTMP:ac.BILL_TSTMP,
                 FILLED: (!ac.transfer && initialString == "checkOut" )?'T':'F' });
         }
         return addAcct;
@@ -571,7 +571,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
         for(var i = 0; i < $scope.BookCommonInfo.Master.payment.payByMethods.length; i++){
             var me = $scope.BookCommonInfo.Master.payment.payByMethods[i];
             addDepoArray.push({RM_TRAN_ID:$scope.BookCommonInfo.Master.mastr_RM_TRAN_ID,DEPO_AMNT:me.payAmount,
-                               PAY_METHOD:me.payMethod,DEPO_TSTMP:util.tstmpFormat(today),RMRK:"结算金额",FILLED:'T'});
+                               PAY_METHOD:me.payMethod,DEPO_TSTMP:util.tstmpFormat(today),SUB_CAT:'存入',RMRK:"",FILLED:'T'});
         }
         return addDepoArray;
     }

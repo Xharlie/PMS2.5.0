@@ -55,7 +55,7 @@ app.controller('largeMenuController',function ($scope, $http, $modal, cusModalFa
                         return $scope.owner.connRM_TRAN_IDs;          // leave flexibility to have multiple parameters or rooms
                     },
                     initialString: function () {
-                        return "singleDeposit";
+                        return "checkOut";
                     },
                     RM_TRAN_IDFortheRoom: function() {
                         return $scope.owner.RM_TRAN_ID;

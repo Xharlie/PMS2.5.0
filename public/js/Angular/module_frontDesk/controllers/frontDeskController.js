@@ -306,6 +306,14 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
         || (roomST['customers'] != null && roomST['customers'][0].CUS_NAME.match(test) != null) );
     };
 
+    $scope.rmTpToggle = function(rmTp){
+        if($scope.RM_TPfilter != rmTp) {
+            $scope.RM_TPfilter = rmTp;
+        }else{
+            $scope.RM_TPfilter = '';
+        }
+    }
+
     /* Room Click Modal is here !*/
 
 

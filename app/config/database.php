@@ -51,28 +51,31 @@ return array(
 			'database' => __DIR__.'/../database/production.sqlite',
 			'prefix'   => '',
 		),
-
-//        'mysql' => array(
-//            'driver'    => 'mysql',
-//            'host'      => 'localhost',
-//            'database'  => 'BI',
-//            'username'  => 'coder',
-//            'password'  => '^coder$',
-//            'charset'   => 'utf8',
-//            'collation' => 'utf8_general_ci',
-//            'prefix'    => '',
-//        ),
-//    		'mysql' => array(
-//    			'driver'    => 'mysql',
-//    			'host'      => '182.92.189.254',
-//    			'database'  => 'BI',
-//    			'username'  => 'coder',
-//    			'password'  => '^coder$',
-//    			'charset'   => 'utf8',
-//    			'collation' => 'utf8_general_ci',
-//    			'prefix'    => '',
-//    		),
-
+/***    for server
+        'mysql' => array(
+            'driver'    => 'mysql',
+            'host'      => 'localhost',
+            'database'  => 'Rock',
+            'username'  => 'coder',
+            'password'  => '^coder$',
+            'charset'   => 'utf8',
+            'collation' => 'utf8_general_ci',
+            'prefix'    => '',
+        ),
+ **/
+/****           for Ben
+    		'mysql' => array(
+    			'driver'    => 'mysql',
+    			'host'      => '182.92.189.254',
+    			'database'  => 'Rock',
+    			'username'  => 'coder',
+    			'password'  => '^coder$',
+    			'charset'   => 'utf8',
+    			'collation' => 'utf8_general_ci',
+    			'prefix'    => '',
+    		),
+*******/
+        /****   for xharlie ******/
     		'mysql' => array(
     			'driver'    => 'mysql',
     			'host'      => 'localhost',

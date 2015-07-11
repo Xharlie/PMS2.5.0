@@ -2,7 +2,6 @@
 
 
 class NewCheckInController extends BaseController{
-
     /*** getClicked room info for single walk in check in    ***/
     public function getSingleRoomInfo($RM_ID){
         $singleRoomInfo = DB::table('Rooms')
@@ -77,8 +76,8 @@ class NewCheckInController extends BaseController{
             DB::update('update RoomTran set DPST_RMN = DPST_RMN + ? where RM_TRAN_ID = ?',
                 array($pay['paymentRequest'],$RM_TRAN_ID) );
             /*------------------------- insert to roomDesposit and wait to insert in  ---------------------------------*/
-            $RMRK = "存入押金";
-            $this->roomDepositIn($all,$RM_TRAN_ID,$DepositArray,$RMRK);
+            $SUB_CAT = "补存";
+            $this->roomDepositIn($all,$RM_TRAN_ID,$DepositArray,$SUB_CAT,null);
             DB::table('RoomDepositAcct')->insert($DepositArray);
         }catch (Exception $e){
             DB::rollback();
@@ -144,10 +143,11 @@ class NewCheckInController extends BaseController{
                     $TKN_ID = $CONN_RM_TRAN_ID;
                     if($CONN_RM_TRAN_ID=="") $TKN_ID = $RM_TRAN_ID;
                     $RMRK="钟点房".$room["TMP_PLAN_ID"];
+                    $SUB_CAT="钟点房";
                     // master room, or itself deposit change
                     DB::update('update RoomTran set DPST_RMN = DPST_RMN - ? where RM_TRAN_ID = ?',
                         array($room["finalPrice"],$TKN_ID) );
-                    $this->roomAcctIn($RM_TRAN_ID,$room['finalPrice'],$TKN_ID,$RMRK);
+                    $this->roomAcctIn($RM_TRAN_ID,$room['finalPrice'],$TKN_ID,$SUB_CAT,$RMRK);
                 }
             /*-------------------------------------------  Rooms    -----------------------------------------------*/
                 // 1-------------------------     if RM_ID has been changed,cover both RM_TRAN_ID changed or not
@@ -217,8 +217,8 @@ class NewCheckInController extends BaseController{
                 $this->customerIn($room,$CustomerArray,$RM_TRAN_ID);
                 /*------------------------- insert to roomDesposit and wait to insert in  ---------------------------------*/
                 if ($room["CONN_RM_ID"] =="" || $room["CONN_RM_ID"] == $room["roomSelect"]){  // if no master room or master room is this room
-                    $RMRK = "存入押金";
-                    $this->roomDepositIn($room,$RM_TRAN_ID,$DepositArray,$RMRK);
+                    $SUB_CAT= "存入";
+                    $this->roomDepositIn($room,$RM_TRAN_ID,$DepositArray,$SUB_CAT,null);
                 }
                 /*------------------------- change Room Availablilty Check Quan---------------------------------*/
                 $this->roomOccupationCheckChange($room);
@@ -227,10 +227,11 @@ class NewCheckInController extends BaseController{
                     $TKN_ID = $CONN_RM_TRAN_ID;
                     if($CONN_RM_TRAN_ID=="") $TKN_ID = $RM_TRAN_ID;
                     $RMRK="钟点房".$room["TMP_PLAN_ID"];
+                    $SUB_CAT='钟点房';
                     // master room, or itself deposit change
                     DB::update('update RoomTran set DPST_RMN = DPST_RMN - ? where RM_TRAN_ID = ?',
                         array($room["finalPrice"],$TKN_ID) );
-                    $this->roomAcctIn($RM_TRAN_ID,$room['finalPrice'],$TKN_ID,$RMRK);
+                    $this->roomAcctIn($RM_TRAN_ID,$room['finalPrice'],$TKN_ID,$SUB_CAT,$RMRK);
                 }
             }
             DB::table('RoomDepositAcct')->insert($DepositArray);
@@ -256,13 +257,14 @@ class NewCheckInController extends BaseController{
 
     }
 
-    public function roomAcctIn(&$RM_TRAN_ID,&$RM_PAY_AMNT,&$TKN_RM_TRAN_ID,&$RMRK){
+    public function roomAcctIn(&$RM_TRAN_ID,&$RM_PAY_AMNT,&$TKN_RM_TRAN_ID,$SUB_CAT,$RMRK){
         $InsertArray = array(
             "RM_TRAN_ID" => $RM_TRAN_ID,
             "RM_PAY_AMNT" => $RM_PAY_AMNT,
             "BILL_TSTMP" => date('Y-m-d H:i:s'),
             "TKN_RM_TRAN_ID" => $TKN_RM_TRAN_ID,
             "FILLED" => 'F',
+            "SUB_CAT" => $SUB_CAT,
             "RMRK"=>$RMRK
 
         );
@@ -354,7 +356,7 @@ class NewCheckInController extends BaseController{
         }
     }
 
-    public function roomDepositIn(&$room,&$RM_TRAN_ID,&$DepositArray,&$RMRK){
+    public function roomDepositIn(&$room,&$RM_TRAN_ID,&$DepositArray,$SUB_CAT,$RMRK){
         $date = new DateTime();
         foreach ($room["pay"]["payByMethods"] as $payByMethod){
             $depo = array(
@@ -363,6 +365,7 @@ class NewCheckInController extends BaseController{
                 "DEPO_AMNT"=>$payByMethod["payAmount"],
                 "PAY_METHOD" => $payByMethod["payMethod"],
                 "DEPO_TSTMP"=> $date,
+                "SUB_CAT"=> $SUB_CAT,
                 "RMRK"=> $RMRK,
                 "FILLED"=>'F'
             );
