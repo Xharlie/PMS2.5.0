@@ -6,7 +6,7 @@
                     <h4 class="panel-title"><span class="glyphicon glyphicon-home"></span> 房型余量</h4>
                 </div>
                 <table class="table">
-                    <tr ng-repeat="(rmTp,status) in roomSummary" ng-click="rmTpToggle(rmTp)">
+                    <tr ng-repeat="(rmTp,status) in roomSummary" ng-click="rmTpToggle(rmTp)" style="cursor: pointer;">
                         <td>
                             <div>
                                 <div>

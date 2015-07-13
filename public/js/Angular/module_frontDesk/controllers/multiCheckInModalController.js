@@ -49,43 +49,6 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
         }
     }
 
-    var updateMembers = function(data){
-        $scope.Members = data;
-        if (data.length<1){
-            alert("查不到");
-            $scope.BookCommonInfo.Member = "";
-            return;
-        }
-        $scope.BookCommonInfo.Member = $scope.Members[0];
-        for(var i = 0 ; i < $scope.Members.length; i++){
-            $scope.Members[i]["summary"] = "<table>"+
-                "<tr>" +  "<td>" + "证件:" + "</td>" + "<td>" + $scope.Members[i].SSN + "</td>" + "</tr>"+
-                "<tr>" + "<td>" + "级别:" + "</td>" + "<td>" + $scope.Members[i].MEM_TP + "</td>" + "</tr>"+
-                "<tr>" + "<td>" + "折扣:" + "</td>" + "<td>" + $scope.Members[i].DISCOUNT_RATE + "</td>" + "</tr>"+
-                "<tr>" + "<td>" + "电话:" + "</td>" + "<td>" + $scope.Members[i].PHONE + "</td>" + "</tr>"+
-                "<tr>" + "<td>" + "积分:" + "</td>" + "<td>" + $scope.Members[i].POINTS + "</td>" + "</tr>"+
-                "</table>";
-        }
-    }
-
-    var updateTreaties= function(data){
-        $scope.Treaties = data;
-        if (data.length<1){
-            alert("查不到");
-            $scope.BookCommonInfo.Treaty = "";
-            return;
-        }
-        $scope.BookCommonInfo.Treaty = $scope.Treaties[0];
-        for(var i = 0 ; i < $scope.Treaties.length; i++){
-            $scope.Treaties[i]["summary"] = "<table>"+
-                "<tr>" +  "<td>" + "类型:" + "</td>" + "<td>" + $scope.Treaties[i].TREATY_TP + "</td>" + "</tr>"+
-                "<tr>" + "<td>" + "公司电话:" + "</td>" + "<td>" + $scope.Treaties[i].CORP_PHONE + "</td>" + "</tr>"+
-                "<tr>" + "<td>" + "联系人:" + "</td>" + "<td>" + $scope.Treaties[i].CONTACT_NM + "</td>" + "</tr>"+
-                "<tr>" + "<td>" + "备注:" + "</td>" + "<td>" + $scope.Treaties[i].RMARK + "</td>" + "</tr>"+
-                "<tr>" + "<td>" + "优惠:" + "</td>" + "<td>" + $scope.Treaties[i].DISCOUNT + "</td>" + "</tr>"+
-                "</table>";
-        }
-    }
 
     var updateMemberGuest = function(singleGuest){
         newCheckInFactory.searchMember(singleGuest.MemberId,["MEM_ID"]).success(function(d){
@@ -239,15 +202,13 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
     /********************************************     common initial setting     *****************************************/
     $scope.viewClick = "Info";
     $scope.initialString=initialString;
-    $scope.BookCommonInfo = {CHECK_IN_DT: today,CHECK_OT_DT: tomorrow,leaveTime:$scope.dateTime,inTime:today,
-        roomSource:'', rentType:"全日租",Member:{},Treaty:{},Master:{CONN_RM_ID:"",payment:paymentFactory.createNewPayment('住房押金'),check:true} };
+    $scope.BookCommonInfo = {CHECK_IN_DT: today,CHECK_OT_DT: tomorrow,leaveTime:$scope.dateTime,inTime:today,initFlag:null,Members :[],
+        Treaties : [], roomSource:'', rentType:"全日租",Member:{},Treaty:{},Master:{CONN_RM_ID:"",payment:paymentFactory.createNewPayment('住房押金'),check:true} };
     // for payment module to work in ng-repeat
     $scope.BookRoomMaster = [$scope.BookCommonInfo.Master];
     $scope.caption = {searchCaption:"",resultCaption:""};
     $scope.styles = {CheckInStyle:{},CheckOTStyle:{},memStyle:{}};
     $scope.disable = {searchDisable:false};
-    $scope.Members =[];
-    $scope.Treaties =[];
     $scope.Connected=true;
     $scope.roomsAndRoomTypes = {};
     $scope.roomsDisableList = {};
@@ -394,48 +355,6 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
         updateFinalPrice4TP(singleTP);
     }
 
-
-
-
-    /**********************************/
-    /************** ********************************** room source check ********************************** *************/
-    $scope.checkSource = function(source,checkInput){
-        checkInput = checkInput.trim();
-        if (checkInput == ""){
-            return;
-        }
-        if (source == '会员'){
-            $scope.memCheck(checkInput);
-        }else if(source == '协议'){
-            $scope.treatyCheck(checkInput);
-        }
-    }
-    /******** ************ MemberCheck ******* *************/
-
-    $scope.memCheck = function(checkInput){
-        if(util.isName(checkInput)){
-            newCheckInFactory.searchMember(checkInput,["MEM_NM"]).success(function(data){
-                updateMembers(data);
-            });
-        }else if(util.isSSN(checkInput)){
-            newCheckInFactory.searchMember(checkInput,["SSN"]).success(function(data){
-                updateMembers(data);
-            });
-        }else{
-            newCheckInFactory.searchMember(checkInput,["MEM_ID","PHONE"]).success(function(data){
-                updateMembers(data);
-            });
-        }
-    }
-
-    /********** ********** TreatyCheck ******* *************/
-    $scope.treatyCheck = function(checkInput){
-        newCheckInFactory.searchTreaties(checkInput,["TREATY_ID","CORP_NM"]).success(function(data){
-            updateTreaties(data);
-        });
-    }
-
-
     /************************************************/
     /************** ********************************** guest  ********************************** *************/
         // add customer
@@ -471,12 +390,10 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
         });
     }
 
-
     /************************************************/
     /************** ********************************** connect toggled  ********************************** *************/
     $scope.toggleMaster = function(){
         $scope.Connected = (!$scope.Connected);
-
     }
     /************************************************/
     /************** ********************************** page change  ********************************** *************/

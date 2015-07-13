@@ -7,13 +7,13 @@
         </div>
     </div>
     <div class="col-sm-7">
-        <table  class="pull-right" ng-show="BookCommonInfo.roomSource =='会员'" class="ng-hide">
+        <table  class="pull-right" ng-show="BookCommonInfo.roomSource =='会员' " class="ng-hide">
             <tr>
                 <th></th>
                 <th>会员号&nbsp;&nbsp;</th>
                 <th>会员姓名</th>
             </tr>
-            <tr  ng-repeat = "memberOption in Members |  orderBy:MEM_ID"
+            <tr  ng-repeat = "memberOption in BookCommonInfo.Members |  orderBy:MEM_ID"
                  tooltip-html-unsafe="{{memberOption.summary}}"
                  tooltip-trigger="mouseenter"
                  tooltip-append-to-body="true">
@@ -23,13 +23,13 @@
                 <td>{{memberOption.MEM_NM}}</td>
             </tr>
         </table>
-        <table  class="pull-right" ng-show="BookCommonInfo.roomSource =='协议'" class="ng-hide">
+        <table  class="pull-right" ng-show="BookCommonInfo.roomSource =='协议' " class="ng-hide">
             <tr>
                 <th>&nbsp;</th>
                 <th>协议号&nbsp;&nbsp;</th>
                 <th>单位名称</th>
             </tr>
-            <tr  ng-repeat = "treatyOption in Treaties |  orderBy:TREATY_ID "
+            <tr  ng-repeat = "treatyOption in BookCommonInfo.Treaties |  orderBy:TREATY_ID "
                  tooltip-html-unsafe="{{treatyOption.summary}}"
                  tooltip-trigger="mouseenter"
                  tooltip-append-to-body="true">

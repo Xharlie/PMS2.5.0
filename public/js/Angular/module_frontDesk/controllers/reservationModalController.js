@@ -59,43 +59,6 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
         }
     }
 
-    var updateMembers = function(data){
-        $scope.Members = data;
-        if (data.length<1){
-            alert("查不到此单登记会员");
-            $scope.BookCommonInfo.Member = "";
-            return;
-        }
-        $scope.BookCommonInfo.Member = $scope.Members[0];
-        for(var i = 0 ; i < $scope.Members.length; i++){
-            $scope.Members[i]["summary"] = "<table>"+
-                "<tr>" +  "<td>" + "证件:" + "</td>" + "<td>" + $scope.Members[i].SSN + "</td>" + "</tr>"+
-                "<tr>" + "<td>" + "级别:" + "</td>" + "<td>" + $scope.Members[i].MEM_TP + "</td>" + "</tr>"+
-                "<tr>" + "<td>" + "折扣:" + "</td>" + "<td>" + $scope.Members[i].DISCOUNT_RATE + "</td>" + "</tr>"+
-                "<tr>" + "<td>" + "电话:" + "</td>" + "<td>" + $scope.Members[i].PHONE + "</td>" + "</tr>"+
-                "<tr>" + "<td>" + "积分:" + "</td>" + "<td>" + $scope.Members[i].POINTS + "</td>" + "</tr>"+
-                "</table>";
-        }
-    }
-
-    var updateTreaties= function(data){
-        $scope.Treaties = data;
-        if (data.length<1){
-            alert("查不到此单登记协议号");
-            $scope.BookCommonInfo.Treaty = "";
-            return;
-        }
-        $scope.BookCommonInfo.Treaty = $scope.Treaties[0];
-        for(var i = 0 ; i < $scope.Treaties.length; i++){
-            $scope.Treaties[i]["summary"] = "<table>"+
-                "<tr>" +  "<td>" + "类型:" + "</td>" + "<td>" + $scope.Treaties[i].TREATY_TP + "</td>" + "</tr>"+
-                "<tr>" + "<td>" + "公司电话:" + "</td>" + "<td>" + $scope.Treaties[i].CORP_PHONE + "</td>" + "</tr>"+
-                "<tr>" + "<td>" + "联系人:" + "</td>" + "<td>" + $scope.Treaties[i].CONTACT_NM + "</td>" + "</tr>"+
-                "<tr>" + "<td>" + "备注:" + "</td>" + "<td>" + $scope.Treaties[i].RMARK + "</td>" + "</tr>"+
-                "<tr>" + "<td>" + "优惠:" + "</td>" + "<td>" + $scope.Treaties[i].DISCOUNT + "</td>" + "</tr>"+
-                "</table>";
-        }
-    }
 
     var updateMemberGuest = function(singleGuest){
         newCheckInFactory.searchMember(singleGuest.MemberId,["MEM_ID"]).success(function(d){
@@ -203,13 +166,11 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
 
 
     var newReservation = function(CHECK_IN_DT,CHECK_OT_DT){
-        $scope.BookCommonInfo = {CHECK_IN_DT: CHECK_IN_DT,CHECK_OT_DT:CHECK_OT_DT ,arriveTime:$scope.dateTime,check:true,
+        $scope.BookCommonInfo = {CHECK_IN_DT: CHECK_IN_DT,CHECK_OT_DT:CHECK_OT_DT ,arriveTime:$scope.dateTime,check:true,initFlag:null,Members:[],Treaties:[],
                                 roomSource:'', rentType:"全日租",Member:{},Treaty:{}, payment:paymentFactory.createNewPayment('预付房款'),
                                 comment:"",discount4ALL:"",paymentFlag:false};
         $scope.BookRoomMaster = [$scope.BookCommonInfo];
         roomFactory.createBookRoom($scope.BookRoom,1,'预付房款');
-        $scope.Members =[];
-        $scope.Treaties =[];
         newResvFactory.getRMInfoWithAvail(CHECK_IN_DT,CHECK_OT_DT).success(function(data){
             $scope.RoomAllinfo = data;
             initRoomsAndRoomTypes();
@@ -221,7 +182,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
                 $scope.BookRoom[0].AVAIL_QUAN = $scope.roomsAndRoomTypes[key][0].AVAIL_QUAN;
                 break;
             }
-            roomFactory.createBookRoomByTP($scope.BookRoom[0].$scope.BookRoomByTP);
+            roomFactory.createBookRoomByTP($scope.BookRoom[0],$scope.BookRoomByTP);
             $scope.BookCommonInfo.roomSource='普通预定';
         });
     };
@@ -231,8 +192,10 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
         newCheckInFactory.searchTreaties(checkInput,["TREATY_ID"]).success(function(data){
             $scope.watcher.finalPrice=false;
             $scope.watcher.paymentRequest=false;
-            updateTreaties(data);
+            $scope.BookCommonInfo.initFlag = true;
+            $scope.BookCommonInfo.Treaties = data;
             call_back();
+            $scope.BookCommonInfo.initFlag = null; // close initFlag
         });
     }
 
@@ -240,8 +203,10 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
         newCheckInFactory.searchMember(checkInput,["MEM_ID"]).success(function(data){
             $scope.watcher.finalPrice=false;
             $scope.watcher.paymentRequest=false;
-            updateMembers(data);
+            $scope.BookCommonInfo.initFlag = true;
+            $scope.BookCommonInfo.Members = data;
             call_back();
+            $scope.BookCommonInfo.initFlag = null; // close initFlag
         });
     }
 
@@ -284,7 +249,10 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
             comment:        roomTPs[0]["RMRK"],
             discount4ALL:   "",
             paymentFlag:    (roomTPs[0].STATUS=="预付"),
-            check:          true
+            initFlag:       null,
+            check:          true,
+            Members:        [],
+            Treaties:       []
         };
         $scope.BookRoomMaster = [$scope.BookCommonInfo];
         $scope.reserver["Name"]= roomTPs[0]["RESVER_NAME"];
@@ -293,16 +261,12 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
             $scope.RoomAllinfo = data;
             initRoomsAndRoomTypes();
             if (roomTPs[0]["RESV_WAY"]=="协议" && roomTPs[0]["TREATY_ID"] != null){
-                $scope.Members =[];
                 $scope.check["checkInput"] = roomTPs[0]["TREATY_ID"];
                 initialTreatyCheck($scope.check["checkInput"],initEditCall_back);
             }else if(roomTPs[0]["RESV_WAY"]=="会员" && roomTPs[0]["MEMBER_ID"] != null){
-                $scope.Treaties =[];
                 $scope.check["checkInput"] = roomTPs[0]["MEMBER_ID"];
                 initialMemCheck($scope.check["checkInput"],initEditCall_back);
             }else{
-                $scope.Members =[];
-                $scope.Treaties =[];
                 initEditCall_back();
             }
         });
@@ -329,6 +293,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
     $scope.check = {"checkInput": ""};
     $scope.watcher={"treaty":true,"member":true,"finalPrice":true,"discount":true,"paymentRequest":true};
     $scope.payMethodOptions=paymentFactory.checkInPayMethodOptions();
+    $scope.roomTPs= roomTPs;
     focusInSideFactory.tabInit('wholeModal');
     $timeout(function(){
         focusInSideFactory.manual('wholeModal');
@@ -472,7 +437,7 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
                 $scope.BookRoom.push(newRoom);
                 updateFinalPrice(newRoom);
                 //create corresponding roomType
-                roomFactory.createBookRoomByTP(newRoom.$scope.BookRoomByTP);
+                roomFactory.createBookRoomByTP(newRoom,$scope.BookRoomByTP);
                 $scope.roomTpsDisableList[RmTp] = true;
                 break;
             }
@@ -527,44 +492,6 @@ app.controller('reservationModalController', function($scope, $http,$modalInstan
     }
 
     /**********************************/
-    /************** ********************************** room source check ********************************** *************/
-    $scope.checkSource = function(source,checkInput){
-        checkInput = checkInput.trim();
-        if (checkInput == ""){
-            return;
-        }
-        if (source == '会员'){
-            $scope.memCheck(checkInput);
-        }else if(source == '协议'){
-            $scope.treatyCheck(checkInput);
-        }
-    }
-    /******** ************ MemberCheck ******* *************/
-
-    $scope.memCheck = function(checkInput){
-        if(util.isName(checkInput)){
-            newCheckInFactory.searchMember(checkInput,["MEM_NM"]).success(function(data){
-                updateMembers(data);
-            });
-        }else if(util.isSSN(checkInput)){
-            newCheckInFactory.searchMember(checkInput,["SSN"]).success(function(data){
-                updateMembers(data);
-            });
-        }else{
-            newCheckInFactory.searchMember(checkInput,["MEM_ID","PHONE"]).success(function(data){
-                updateMembers(data);
-            });
-        }
-    }
-
-    /********** ********** TreatyCheck ******* *************/
-    $scope.treatyCheck = function(checkInput){
-        newCheckInFactory.searchTreaties(checkInput,["TREATY_ID","CORP_NM"]).success(function(data){
-            updateTreaties(data);
-        });
-    }
-
-    /************************************************/
     /************** ********************************** submit  ********************************** *************/
 
     $scope.submit = function(){

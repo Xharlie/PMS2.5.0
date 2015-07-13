@@ -6,12 +6,13 @@ app.directive('roomSource', function() {
     return {
         restrict: 'A',
         replace: true,
-        controller: 'paymentCtrl',
+        controller: 'roomSourceCtrl',
         scope: {
-            BookRoom: '=bookRoom',
-            payMethodOptions:'=payMethodOptions',
-            payError: '=payError',
-            rooms :'=rooms'
+            disable: '=disable',
+            BookCommonInfo:'=bookCommonInfo',
+            check:'=check',
+            caption:'=caption',
+            roomST:'=roomST'
         },
         templateUrl: 'parts/roomSource'   //初步为hardcoding,可进一步优化为function，实现dynamic调用
     };
