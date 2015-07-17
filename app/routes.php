@@ -19,11 +19,15 @@ Blade::setEscapedContentTags('<%%', '%%>'); 	// for escaped data
 /*------------------------------------Auth--------------------------------------------*/
 
 
-
-Route::get('/', array('before' => 'authen',function()
+Route::get('/test', function()
 {
-    return View::make('full');
-}));
+    return Session::get("test");
+});
+
+Route::get('/', function()
+{
+    return View::make('full',array('userInfo' => Session::get("flashUserInfouserInfo")));
+});
 
 Route::group(array('prefix' => 'directiveViews'), function()
 {
@@ -47,6 +51,10 @@ Route::get('/logon', function()
     return View::make('logon',array('err' => Session::get("err")));
 });
 
+// getUserInfo
+Route::get('/getUserInfo', 'UserController@getUserInfo');
+
+
 Route::get('/dialog', function()
 {
     return View::make('dialog');
@@ -57,10 +65,11 @@ Route::get('/dialog', function()
 Route::post('/logonPost', 'UserController@logon');
 
 
-Route::get('logout', function()
+Route::get('/logout', function()
 {
+    Session::flush();
     Auth::logout();
-    return Redirect::to('/');
+    return Redirect::intended('/logon');
 });
 
 
@@ -146,6 +155,11 @@ Route::filter('checkInFilter', function($RM_ID,$RM_TP){
 Route::get('/getSingleRoomInfo/{RM_ID}', 'NewCheckInController@getSingleRoomInfo');
 // get  all rooms  info in  check in;
 Route::get('/getRoomInfo', 'NewCheckInController@getRoomInfo');
+// get  all rooms  info in  check in;
+Route::get('/getShiftOptions/{HTL_ID}', 'UserController@getShiftOptions');
+// push  selected shift to Session;
+Route::post('/putShiftChosen', 'UserController@putShiftChosen');
+
 // get  all rooms info with availability;
 Route::post('/getRMInfoWithAvail', 'ReservationController@getRMInfoWithAvail');
 
@@ -279,16 +293,31 @@ Route::get('/planDelete/{PLAN_ID}','SettingRoomController@deletePlan');
 
 Route::post('/planAdd','SettingRoomController@addPlan');
 
-/*------------------------------------------Filter---------------------------------------------*/
 
-Route::filter('authen', function()
-{
+
+/*------------------------------------------Filter---------------------------------------------*/
+//
+//Route::filter('authen', function()
+//{
+//    if (!Auth::check())
+//    {
+//        return Redirect::to('/logon');
+//    }
+//});
+
+App::before(function($request){
+    if(Request::getUri() == URL::to('logonPost') || Request::getUri() == URL::to('logon')
+        || Request::getUri() == URL::to('logout')
+        || Request::getUri() == URL::to('test')
+    ) return ;
+
     if (!Auth::check())
     {
-        return Redirect::to('/logon');
+        return Redirect::intended('/logon');
+    }else{
+        return UserController::checkSessionTimeOutNValidity();
     }
 });
-
 
 
 /*-----------------------------------------Resource--------------------------------------------*/

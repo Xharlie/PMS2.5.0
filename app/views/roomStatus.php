@@ -1,5 +1,5 @@
 <!doctype html >
-<div class="hotelStatus">
+<div class="hotelStatus" >
     <div class="col-sm-3">
         <div class="panel panel-default">
                 <div class="panel-heading">

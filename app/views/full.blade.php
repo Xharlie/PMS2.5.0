@@ -14,12 +14,15 @@
         <!----      IE detection          --->
         <!--[if lt IE 9]><script src="js/Angular/module_frontDesk/pan_lib/browserDetection.js"></script><![endif]-->
 	</head>
-	<body >
-		<div class="sideNavArea" ng-controller="sideBarController">
-			@include('sideNav')
-		</div>
+	<body>
+        <script>
+            var uni ={userInfo : JSON.parse('<?php echo json_encode($userInfo); ?>')};
+        </script>
+		<div class="sideNavArea" ng-controller="sideBarController" >
+                @include('sideNav')
+        </div>
 		<div class="main">
-			<div class="infoCenterArea">
+            <div class="infoCenterArea">
 				@include('infoCenter')
 			</div>
             <div class="content">
@@ -34,22 +37,21 @@
                 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.17/angular-animate.js"></script>
                 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
                 <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.0.js"></script>     -->
+        <!-- <script src="Scripts/angularjs/angular-ui-0.4.0.min.js"></script> -->
+
 
         <script src="Scripts/jquery/jquery-1.11.1.js"></script>
-        <script src="Scripts/angularjs/angular.min.js"></script>
+        <script src="Scripts/angularjs/angular_1.3.0/angular.min.js"></script>
         <!--  <script src="Scripts/angularjs/ui-bootstrap-tpls-0.11.0.js"></script>     any problem, try change back to this version-->
-                <script src="Scripts/angularjs/ui-bootstrap-tpls-0.13.0.min.js"></script>
-
-                <script src="Scripts/angularjs/angular-route.js"></script>
-                <script src="Scripts/angularjs/angular-animate-1.3.0.js"></script>
-                <script src="Scripts/angularjs/angular-ui-0.4.0.min.js"></script>
-
-
+                <script src="Scripts/angularjs/angular_1.3.0/ui-bootstrap-tpls.min.js"></script>
+                <script src="Scripts/angularjs/angular_1.3.0/angular-route.min.js"></script>
+                <script src="Scripts/angularjs/angular_1.3.0/angular-animate.min.js"></script>
+                <script src="Scripts/angularjs/angular_1.3.0/angular-cookies.min.js"></script>
 
                 <!-- JS Angular for front Desk-->
         <script src="js/Angular/module_frontDesk/module.js"></script>
+
         <script src="js/Angular/module_frontDesk/controllers/frontDeskController.js"></script>
-        <!--  <script src="js/Angular/module_frontDesk/controllers/frontDeskModals.js"></script> -->
         <script src="js/Angular/module_frontDesk/controllers/menu/smallMenuController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/menu/largeMenuController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/menu/contentMenuController.js"></script>
@@ -61,6 +63,7 @@
         <script src="js/Angular/module_frontDesk/controllers/modifyAcctModalController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/purchaseModalController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/depositModalController.js"></script>
+        <script src="js/Angular/module_frontDesk/controllers/shiftSelectModalController.js"></script>
 
         <script src="js/Angular/module_frontDesk/controllers/directiveControllers/buildInDirController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/directiveControllers/xlabelController.js"></script>
@@ -72,6 +75,7 @@
         <script src="js/Angular/module_frontDesk/services/newCheckInServices.js"></script>
         <script src="js/Angular/module_frontDesk/services/newCheckOutServices.js"></script>
         <script src="js/Angular/module_frontDesk/services/newResvServices.js"></script>
+        <script src="js/Angular/module_frontDesk/services/sessionNcookies.js"></script>
 
         <script src="js/Angular/module_frontDesk/services/internalLogic/paymentService.js"></script>
         <script src="js/Angular/module_frontDesk/services/internalLogic/roomService.js"></script>

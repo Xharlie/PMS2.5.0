@@ -1,4 +1,4 @@
-var app = angular.module('Operationer',['ngRoute','ngAnimate','ui.bootstrap','ui','ui.bootstrap.position']);
+var app = angular.module('Operationer',['ngRoute','ngAnimate','ui.bootstrap']); //,''ui','ui.bootstrap.position'
 app.config(['$routeProvider',function ($routeProvider){
     $routeProvider
         .when('/roomStatus',
@@ -11,11 +11,6 @@ app.config(['$routeProvider',function ($routeProvider){
             controller:'reservationController',
             templateUrl: '../app/views/reservation.blade.php'
         })
-//        .when('/accounting',
-//        {
-//            controller:'accountingController',
-//            templateUrl: '../app/views/accounting.blade.php'
-//        })
         .when('/merchandise/:RM_ID',
         {
             controller:'merchandiseController',

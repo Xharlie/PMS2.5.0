@@ -1,6 +1,5 @@
 
-
-app.controller('sideBarController', function($scope, $http){
+app.controller('sideBarController', function($scope, $http,sessionFactory,$modal){
     var pathArray = window.location.href.split("/");
     $scope.tab = pathArray[pathArray.length-1].substring(0, 4);
     if ($scope.tab.length<4){
@@ -15,6 +14,26 @@ app.controller('sideBarController', function($scope, $http){
         }
         $scope.tabClassObj[tabName]='tabChosen';
     }
+
+    /*********   get userInfo   **********/
+    sessionFactory.getUserInfo().success(function(data){
+        $scope.userInfo = data;
+        if($scope.userInfo.SHFT_ID == null || $scope.userInfo.SHFT_ID ==""){
+            var modalInstance = $modal.open({
+                windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+                templateUrl: 'directiveViews/shiftSelectModal',
+                controller: 'shiftSelectModalController',
+                resolve: {
+                    HTL_ID: function () {
+                        return $scope.userInfo.HTL_ID;
+                    }
+                }
+            });
+            modalInstance.result.then(function (data) {
+                $scope.userInfo = data;
+            });
+        }
+    });
 });
 
 app.controller('reservationController', function($scope, $http, resrvFactory,$modal,roomStatusFactory){
@@ -144,7 +163,7 @@ app.controller('reservationController', function($scope, $http, resrvFactory,$mo
 });
 
 
-app.controller('roomStatusController', function($scope,$compile, $http, roomStatusFactory, $modal,cusModalFactory,resrvFactory){
+app.controller('roomStatusController', function($scope,$compile, $http, roomStatusFactory, $modal,cusModalFactory,resrvFactory,sessionFactory){
     /* Database version */
     var today = new Date();
     $scope.connectClick = "toStart";
@@ -170,6 +189,9 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
             floors[room.FLOOR_ID] = {FLOOR_ID:room.FLOOR_ID,FLOOR:room.FLOOR,rooms:[room]};
         }
     }
+
+
+
     roomStatusFactory.roomShow().success(function(data){
         $scope.roomStatusInfo =data;
         for (var i=0; i<$scope.roomStatusInfo.length; i++){
@@ -222,6 +244,8 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
     resrvFactory.showComResv(util.dateFormat(today)).success(function(data){
         $scope.resvComInfo =data;
     })
+
+
 
     $scope.connLightUp = function(roomST){
         if(roomST['connLightUp'] != undefined){
@@ -354,26 +378,6 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
                 }
             });
         }else if($scope.connectFlag == false && roomST.RM_CONDITION == "有人"){
-            // check out
-            //var modalInstance = $modal.open({
-            //    windowTemplateUrl: 'directiveViews/modalWindowTemplate',
-            //    templateUrl: 'directiveViews/checkOutModal',
-            //    controller: 'checkOutModalController',
-            //    resolve: {
-            //        connRM_TRAN_IDs: function () {
-            //            return roomST.connRM_TRAN_IDs;
-            //        },
-            //        initialString: function () {
-            //            return "checkOut";
-            //        },
-            //        RM_TRAN_IDFortheRoom: function() {
-            //            return roomST.RM_TRAN_ID;
-            //        },
-            //        ori_Mastr_RM_TRAN_ID: function() {
-            //            return roomST.CONN_RM_TRAN_ID;
-            //        }
-            //    }
-            //})
             var modalInstance = $modal.open({
                 windowTemplateUrl: 'directiveViews/modalWindowTemplate',
                 templateUrl: 'directiveViews/singleCheckInModal',

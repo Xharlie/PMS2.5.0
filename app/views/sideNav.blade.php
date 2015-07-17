@@ -8,7 +8,7 @@
         </div>
         <div class="navbar-right">
             <p class="navbar-text" style="margin-right:20px;">
-                你好，<b>京华酒店！</b>
+                你好,{{userInfo.EMP_NM}}!<b>{{userInfo.HTL_NM+','+userInfo.SHFT_NM}}</b>
             </p>
         </div>
         <!-- add inline style!!!!!!! -->

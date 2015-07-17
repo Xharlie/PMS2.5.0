@@ -111,6 +111,7 @@ class AccountingController extends BaseController{
         $startTime = Input::get('startTime');
         $endTime = date('Y-m-d',strtotime(Input::get('endTime'))+86400000);
         $DepoAcct =  DB::table('RoomDepositAcct')
+//            ->where("RoomDepositAcct.HTL_ID",S)
             ->whereRaw("RoomDepositAcct.DEPO_TSTMP BETWEEN '".$startTime."' AND '".$endTime."'")
 //            ->whereRaw("UNIX_TIMESTAMP(RoomDepositAcct.DEPO_TSTMP) BETWEEN ".$twoDaysAgo." AND ".$today)
             ->leftjoin('RoomTran','RoomTran.RM_TRAN_ID','=','RoomDepositAcct.RM_TRAN_ID')
