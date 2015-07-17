@@ -135,7 +135,6 @@ var util = {
         var SName = Name.toString();
         return (isNaN(SName)) && (SName.search(/\d+/) == -1 || !isNaN(SName.substring(SName.search(/\d+/))));
     }  // only number shown at the trail is allowed, but not all numbers for every char
-
 }
 
 var show =function(showee){

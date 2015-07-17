@@ -92,7 +92,7 @@
         </div>
 
         <div class="panel-body padded-block">
-            <div id="roomStatusFrame" class="roomStatus" ng-repeat="(FLOOR_ID,roomsOnFloor) in roomFloor | orderObjectByNum:FLOOR_ID " style="margin-bottom: 10px;">
+            <div id="roomStatusFrame" class="roomStatus" ng-repeat="(FLOOR_ID,roomsOnFloor) in roomFloor | orderObjectByNum:'FLOOR_ID' " style="margin-bottom: 10px;">
                 <label style="font-weight: normal">
                     <span hidden>{{roomsOnFloor.FLOOR}}</span>
                 </label>
@@ -100,12 +100,13 @@
                     <div ng-dblclick="fastAction(roomST)"
                          class="room" ng-class="roomST.blockClass"
                          onclick="event.preventDefault();"
-                         ng-repeat = "roomST in roomsOnFloor.rooms | filter: customerizeFilter | filter: {RM_TP: RM_TPfilter} | orderBy: roomST.RM_ID "
+                         ng-repeat = "roomST in roomsOnFloor.rooms | filter: customerizeFilter | filter: {RM_TP: RM_TPfilter} | orderBy:'RM_ID' "
                          ng-mouseenter="connLightUp(roomST)"
                          ng-mouseleave = 'connLightback(roomST)'
                          sglclick="open(roomST)" block-class="blockClass"
                          not-show ="connectFlag" pop-menu  menu-type="roomST.menuType"
-                         owner="roomST" icon-n-action="roomST.menuIconAction" ng-transclude>
+                         owner="roomST" icon-n-action="roomST.menuIconAction"
+                         update-all-room="updateInfo.updateAllRoom" ng-transclude>
                             <ul>
                                 <li>
                                     <div>{{roomST.RM_ID}}</div>

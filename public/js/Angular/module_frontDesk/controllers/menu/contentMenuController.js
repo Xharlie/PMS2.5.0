@@ -32,5 +32,8 @@ app.controller('contentMenuController',function ($scope, $http,cusModalFactory,$
         if (ind >=0) owner.owner.blockClass.splice(ind,1);
         if($scope.$parent.$parent.extraCleaner!= undefined) $scope.$parent.$parent.extraCleaner(owner);  // clean associate affected element
     }
+    $scope.anchor = function(){
+        show('BB');
+    }
 });
 

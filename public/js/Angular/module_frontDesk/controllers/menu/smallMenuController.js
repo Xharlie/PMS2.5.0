@@ -18,9 +18,9 @@ app.controller('smallMenuController',function ($scope, $http,cusModalFactory,$mo
                         return "singleWalkIn";
                     }
                 }
+            }).result.then(function(data) {
+                    $scope.updateAllRoom();
             });
-//            var location = "newCheckIn/checkIn/"+$scope.roomST.RM_ID;
-//            openTab(location,"","",closeCallback);
         }else if(actionString == '房间维修'){
             cusModalFactory.Change2Mending($scope.owner.RM_ID).success(function(data){
                 $scope.owner.RM_CONDITION = "维修";

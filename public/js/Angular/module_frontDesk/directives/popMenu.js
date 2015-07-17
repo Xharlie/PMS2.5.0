@@ -9,7 +9,8 @@ app.directive('contentMenu', function($document,$parse) {
         scope: {
             iconNAction: '=iconNAction',
             owner:'=owner',
-            blockClass: '=blockClass'
+            blockClass: '=blockClass',
+            updateAllRoom: '='
         },
         link: function link(scope,element, attrs) {
             $document.on("click", function(event){
@@ -38,7 +39,8 @@ app.directive('smallMenu', function($document,$parse) {
         scope: {
             iconNAction: '=iconNAction',
             owner:'=owner',
-            blockClass: '=blockClass'
+            blockClass: '=blockClass',
+            updateAllRoom: '='
         },
         link: function link(scope,element, attrs) {
             $document.on("click", function(event){
@@ -69,7 +71,8 @@ app.directive('largeMenu', function($document) {
         scope: {
             iconNAction: '=iconNAction',
             owner:'=owner',
-            blockClass: '=blockClass'
+            blockClass: '=blockClass',
+            updateAllRoom: '='
         },
         link: function link(scope,element, attrs) {
             $document.on("click", function(event){
@@ -99,7 +102,8 @@ app.directive('popMenu', function ($compile,$parse) {
             menuType : '=menuType',
             owner: '=owner',
             notShow: '=notShow',
-            blockClass: '=blockClass'
+            blockClass: '=blockClass',
+            updateAllRoom: '='
         },
         link: function link(scope,element,attrs) {
             var delay = 200, clicks = 0, timer = null;
@@ -128,6 +132,7 @@ app.directive('popMenu', function ($compile,$parse) {
                 menu.setAttribute("icon-n-action",'iconNAction');
                 menu.setAttribute("owner",'owner');
                 menu.setAttribute("block-class",'blockClass');
+                menu.setAttribute("update-all-room",'updateAllRoom');
                 var top = event.pageY; // 当 position:absoulte;
                 var left = event.pageX; // 当 position:absoulte;
                 document.body.appendChild(menu);

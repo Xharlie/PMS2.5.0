@@ -28,8 +28,7 @@ app.controller('sideBarController', function($scope, $http,sessionFactory,$modal
                         return $scope.userInfo.HTL_ID;
                     }
                 }
-            });
-            modalInstance.result.then(function (data) {
+            }).result.then(function (data) {
                 $scope.userInfo = data;
             });
         }
@@ -163,7 +162,7 @@ app.controller('reservationController', function($scope, $http, resrvFactory,$mo
 });
 
 
-app.controller('roomStatusController', function($scope,$compile, $http, roomStatusFactory, $modal,cusModalFactory,resrvFactory,sessionFactory){
+app.controller('roomStatusController', function($scope, $http, roomStatusFactory, $modal,cusModalFactory,resrvFactory,sessionFactory){
     /* Database version */
     var today = new Date();
     $scope.connectClick = "toStart";
@@ -173,6 +172,8 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
     $scope.blockClass="roomBlockSelected";
     $scope.roomSummary = {};
     $scope.roomFloor = {};
+    $scope.roomStatusInfo ={};
+    $scope.updateInfo={};
     $scope.roomCount = function(room,summary){
         if(room.RM_TP in summary){
             summary[room.RM_TP]['total']++;
@@ -190,59 +191,82 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
         }
     }
 
+/******************* allRoomComparer to compare every single room ******************/
+    function allRoomCompare(upt){
+        structure.updateElement([$scope.roomStatusInfo,$scope.master2BranchStyle,$scope.master2BranchID,$scope.roomSummary,$scope.roomFloor],upt);
+    }
 
+    $scope.updateInfo.updateAllRoom = function(){
+        var roomStatusInfo =null;
+        var master2BranchStyle = {};
+        var master2BranchID = {};
+        var roomSummary = {};
+        var roomFloor = {};
+        roomStatusInit(roomStatusInfo,master2BranchStyle,master2BranchID,roomSummary,roomFloor,allRoomCompare);
+    }
 
-    roomStatusFactory.roomShow().success(function(data){
-        $scope.roomStatusInfo =data;
-        for (var i=0; i<$scope.roomStatusInfo.length; i++){
-            $scope.roomCount($scope.roomStatusInfo[i],$scope.roomSummary);
-            $scope.floorify($scope.roomStatusInfo[i],$scope.roomFloor);
-            switch($scope.roomStatusInfo[i].RM_CONDITION){
-                case '空房':
-                    $scope.roomStatusInfo[i].menuType = 'small-menu';
-                    $scope.roomStatusInfo[i].menuIconAction = util.avaIconAction;
-                    $scope.roomStatusInfo[i].blockClass = ["room-empty"];
-                    break;
-                case '有人':
-                    $scope.roomStatusInfo[i].menuType = "large-menu";
-                    $scope.roomStatusInfo[i].menuIconAction = util.infoIconAction;
-                    $scope.roomStatusInfo[i].blockClass = ["room-full"];
-                    break;
-                case '脏房':
-                    $scope.roomStatusInfo[i].menuType = "small-menu";
-                    $scope.roomStatusInfo[i].menuIconAction = util.dirtIconAction;
-                    $scope.roomStatusInfo[i].blockClass = ["room-dirty"];
-                    break;
-                case '维修':
-                    $scope.roomStatusInfo[i].menuType = "small-menu";
-                    $scope.roomStatusInfo[i].menuIconAction = util.mendIconAction;
-                    $scope.roomStatusInfo[i].blockClass = ["room-disabled"];
-            }
+/****************************     init      ****************************/
+    roomStatusInit($scope.roomStatusInfo,$scope.master2BranchStyle,$scope.master2BranchID,$scope.roomSummary,$scope.roomFloor,null);
 
-            if($scope.roomStatusInfo[i]['CONN_RM_TRAN_ID'] != null){
-                $scope.roomStatusInfo[i]['connLightUp'] = [];
-                if($scope.roomStatusInfo[i]['CONN_RM_TRAN_ID'] in $scope.master2BranchStyle){
-                    $scope.master2BranchStyle[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']].push($scope.roomStatusInfo[i].blockClass);
-                    $scope.master2BranchID[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']].push($scope.roomStatusInfo[i].RM_TRAN_ID);
-                }else{
-                    $scope.master2BranchStyle[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']] = [$scope.roomStatusInfo[i].blockClass];
-                    $scope.master2BranchID[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']]=[$scope.roomStatusInfo[i].RM_TRAN_ID];
+    function roomStatusInit(roomStatusInfo,master2BranchStyle,master2BranchID,roomSummary,roomFloor,callbackCompare){
+        roomStatusFactory.roomShow().success(function(data){
+            structure.sortByRm(data);
+            roomStatusInfo = data;
+            for (var i=0; i<roomStatusInfo.length; i++){
+                $scope.roomCount(roomStatusInfo[i],roomSummary);
+                $scope.floorify(roomStatusInfo[i],roomFloor);
+                switch(roomStatusInfo[i].RM_CONDITION){
+                    case '空房':
+                        roomStatusInfo[i].menuType = 'small-menu';
+                        roomStatusInfo[i].menuIconAction = util.avaIconAction;
+                        roomStatusInfo[i].blockClass = ["room-empty"];
+                        break;
+                    case '有人':
+                        roomStatusInfo[i].menuType = "large-menu";
+                        roomStatusInfo[i].menuIconAction = util.infoIconAction;
+                        roomStatusInfo[i].blockClass = ["room-full"];
+                        break;
+                    case '脏房':
+                        roomStatusInfo[i].menuType = "small-menu";
+                        roomStatusInfo[i].menuIconAction = util.dirtIconAction;
+                        roomStatusInfo[i].blockClass = ["room-dirty"];
+                        break;
+                    case '维修':
+                        roomStatusInfo[i].menuType = "small-menu";
+                        roomStatusInfo[i].menuIconAction = util.mendIconAction;
+                        roomStatusInfo[i].blockClass = ["room-disabled"];
+                }
+
+                if(roomStatusInfo[i]['CONN_RM_TRAN_ID'] != null){
+                    roomStatusInfo[i]['connLightUp'] = [];
+                    if(roomStatusInfo[i]['CONN_RM_TRAN_ID'] in master2BranchStyle){
+                        master2BranchStyle[roomStatusInfo[i]['CONN_RM_TRAN_ID']].push(roomStatusInfo[i].blockClass);
+                        master2BranchID[roomStatusInfo[i]['CONN_RM_TRAN_ID']].push(roomStatusInfo[i].RM_TRAN_ID);
+                    }else{
+                        master2BranchStyle[roomStatusInfo[i]['CONN_RM_TRAN_ID']] = [roomStatusInfo[i].blockClass];
+                        master2BranchID[roomStatusInfo[i]['CONN_RM_TRAN_ID']]=[roomStatusInfo[i].RM_TRAN_ID];
+                    }
                 }
             }
-        }
-        for (var i=0; i<$scope.roomStatusInfo.length; i++){
-            if($scope.roomStatusInfo[i]['connLightUp'] != undefined){
-                $scope.roomStatusInfo[i]['connLightUp'] = $scope.master2BranchStyle[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']];
-                $scope.roomStatusInfo[i]['connRM_TRAN_IDs'] = $scope.master2BranchID[$scope.roomStatusInfo[i]['CONN_RM_TRAN_ID']];
-            }else{
-                $scope.roomStatusInfo[i]['connRM_TRAN_IDs'] = [$scope.roomStatusInfo[i]['RM_TRAN_ID']];
+            for (var i=0; i<roomStatusInfo.length; i++){
+                if(roomStatusInfo[i]['connLightUp'] != undefined){
+                    roomStatusInfo[i]['connLightUp'] = master2BranchStyle[roomStatusInfo[i]['CONN_RM_TRAN_ID']];
+                    roomStatusInfo[i]['connRM_TRAN_IDs'] = master2BranchID[roomStatusInfo[i]['CONN_RM_TRAN_ID']];
+                }else{
+                    roomStatusInfo[i]['connRM_TRAN_IDs'] = [roomStatusInfo[i]['RM_TRAN_ID']];
+                }
             }
-        }
-        $scope.ready=true;
-    });
+            $scope.ready=true;
+            //if(callbackCompare !=null) callbackCompare([roomStatusInfo,master2BranchStyle,master2BranchID,roomSummary,roomFloor]);
+            if(callbackCompare !=null) {
+                callbackCompare([roomStatusInfo,master2BranchStyle,master2BranchID,roomSummary,roomFloor]);
+            }
+        });
+    }
+
 
     resrvFactory.showComResv(util.dateFormat(today)).success(function(data){
-        $scope.resvComInfo =data;
+        $scope.resvComInfo = data;
     })
 
 
@@ -303,7 +327,10 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
                         return "";
                     }
                 }
+            }).result.then(function(data) {
+                    $scope.updateInfo.updateAllRoom();
             });
+
         }
         for (var i =0; i< $scope.connectRooms.length; i++){
             $scope.connectRooms[i].blockClass.splice($scope.connectRooms[i].blockClass.indexOf($scope.blockClass),1);
@@ -361,7 +388,6 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
     };
 
 
-
     $scope.fastAction = function(roomST){
         if($scope.connectFlag == false && roomST.RM_CONDITION == "空房"){
             var modalInstance = $modal.open({
@@ -376,7 +402,10 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
                         return "singleWalkIn";
                     }
                 }
+            }).result.then(function(data) {
+                    $scope.updateInfo.updateAllRoom();
             });
+
         }else if($scope.connectFlag == false && roomST.RM_CONDITION == "有人"){
             var modalInstance = $modal.open({
                 windowTemplateUrl: 'directiveViews/modalWindowTemplate',
@@ -390,6 +419,8 @@ app.controller('roomStatusController', function($scope,$compile, $http, roomStat
                         return "editRoom";
                     }
                 }
+            }).result.then(function(data) {
+                $scope.updateInfo.updateAllRoom();
             });
         }else if($scope.connectFlag == false && roomST.RM_CONDITION == "脏房"){
             cusModalFactory.Change2Cleaned(roomST.RM_ID).success(function(data){
@@ -707,7 +738,6 @@ app.controller('oneKeyShiftController', function($scope, $http, accountingFactor
     $scope.changeShiftSubmit = function(){
         if(testFail()) return;
         $scope.submitLoading = true;
-        show($scope.ShiftInfo);
         accountingFactory.changeShiftSubmit($scope.ShiftInfo).success(function(data){
             $scope.submitLoading = false;
         });

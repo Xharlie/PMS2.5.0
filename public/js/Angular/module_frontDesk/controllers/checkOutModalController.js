@@ -469,7 +469,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
                 $scope.submitLoading = false;
                 show("办理成功!");
                 $modalInstance.close("checked");
-                util.closeCallback();
+                //util.closeCallback();
         });
     }
 
@@ -481,7 +481,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
                 $scope.submitLoading = false;
                 show("办理成功!");
                 $modalInstance.close("checked");
-                util.closeCallback();
+                //util.closeCallback();
             });
     }
 

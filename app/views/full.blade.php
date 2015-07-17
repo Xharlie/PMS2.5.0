@@ -93,6 +93,7 @@
 
         <script src="js/Angular/module_frontDesk/pan_lib/util.js"></script>
         <script src="js/Angular/module_frontDesk/pan_lib/filter.js"></script>
+        <script src="js/Angular/module_frontDesk/pan_lib/structure.js"></script>
 
         <script src="js/Angular/module_frontDesk/hardwareAPI/tinyPrinter.js"></script>
 

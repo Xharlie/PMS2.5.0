@@ -527,7 +527,7 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
             printer.checkIn(pms,room,room.GuestsInfo[0]);
             printer.deposit(pms,room,room.GuestsInfo[0]);
             $modalInstance.close("checked");
-            util.closeCallback();
+            //util.closeCallback();
         });
     }
 
@@ -568,7 +568,7 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
                 $scope.submitLoading = false;
                 show("办理成功!");
                 $modalInstance.close("checked");
-                util.closeCallback();
+                //util.closeCallback();
             });
         }
     };

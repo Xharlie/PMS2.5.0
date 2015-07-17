@@ -44,6 +44,8 @@ app.controller('largeMenuController',function ($scope, $http, $modal, cusModalFa
                         return "editRoom";
                     }
                 }
+            }).result.then(function(data) {
+                    $scope.updateAllRoom();
             });
         }else if(actionString == '退房办理'){
             var modalInstance = $modal.open({
@@ -64,6 +66,8 @@ app.controller('largeMenuController',function ($scope, $http, $modal, cusModalFa
                         return $scope.owner.CONN_RM_TRAN_ID;
                     }
                 }
+            }).result.then(function(data) {
+                    $scope.updateAllRoom();
             });
         }else if(actionString == '入押金'){
             var modalInstance = $modal.open({
@@ -78,6 +82,8 @@ app.controller('largeMenuController',function ($scope, $http, $modal, cusModalFa
                         return "singleDepositIn";
                     }
                 }
+            }).result.then(function(data) {
+                    $scope.updateAllRoom();
             });
         }else if(actionString == '账目查看'){
             var modalInstance = $modal.open({
@@ -98,22 +104,13 @@ app.controller('largeMenuController',function ($scope, $http, $modal, cusModalFa
                         return $scope.owner.CONN_RM_TRAN_ID;
                     }
                 }
+            }).result.then(function(data) {
+                    $scope.updateAllRoom();
             });
         }else if(actionString == '商品购买'){
             angular.element('#largeMenu').remove();
             window.location.href = '#/merchandise/:' + $scope.owner.RM_TRAN_ID;
         }
-//        }else if(actionString == '房价调整'){
-//            cusModalFactory.Change2Cleaned($scope.owner.RM_ID).success(function(data){
-//                $scope.owner.RM_CONDITION = "空房";
-//                $scope.owner.menuIconAction = avaIconAction;
-//            });
-//        }else if(actionString == '制门卡'){
-//            cusModalFactory.Change2Cleaned($scope.owner.RM_ID).success(function(data){
-//                $scope.owner.RM_CONDITION = "空房";
-//                $scope.owner.menuIconAction = avaIconAction;
-//            });
-//        }
     }
 
     $scope.close = function(owner){
