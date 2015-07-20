@@ -25,7 +25,6 @@ class NewCheckOutController extends BaseController{
                 ->where('Customers.RM_TRAN_ID',$allInfoArray[$i]->RM_TRAN_ID)
                 ->get();
 
-
             $acctPay = DB::table('RoomAcct')
                 ->where('TKN_RM_TRAN_ID','=',$allInfoArray[$i]->RM_TRAN_ID)
                 ->join('RoomTran','RoomTran.RM_TRAN_ID','=','RoomAcct.RM_TRAN_ID')

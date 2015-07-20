@@ -131,6 +131,22 @@ class AccountingController extends BaseController{
             RoomDepositAcct.PAY_METHOD as PAY_METHOD,
             '' as 'CONSUME_PAY_AMNT',RoomDepositAcct.DEPO_AMNT as 'SUBMIT_PAY_AMNT',RoomDepositAcct.RMRK as RMRK,false as CON,true as PAY "));
 
+//            $MemDepo =  DB::table('MemTranDeposit')
+////            ->where("RoomDepositAcct.HTL_ID",S)
+//            ->whereRaw("MemTranDeposit.DEPO_TSTMP BETWEEN '".$startTime."' AND '".$endTime."'")
+//            ->leftjoin('MemTran','MemTran.MEM_TRAN_ID','=','MemTranDeposit.MEM_TRAN_ID')
+//            ->select(DB::raw("MemTranDeposit.DEPO_TSTMP as TSTMP,
+//            '会员卡消费'as CLASS,
+//            'MemTranDeposit' as 'TABLE',
+//            RoomDepositAcct.FILLED as FILLED,
+//            CONCAT('DEP-',RoomDepositAcct.RM_DEPO_ID) as ACCT_ID,
+//            RoomDepositAcct.ORGN_ACCT_ID as ORGN_ACCT_ID,
+//            RoomTran.RM_ID as RM_ID,
+//            RoomDepositAcct.RM_TRAN_ID as RM_TRAN_ID,
+//            RoomDepositAcct.RM_TRAN_ID as TKN_RM_TRAN_ID,'' as PAYER_NM,'' as PAYER_PHONE,
+//            RoomDepositAcct.PAY_METHOD as PAY_METHOD,
+//            '' as 'CONSUME_PAY_AMNT',RoomDepositAcct.DEPO_AMNT as 'SUBMIT_PAY_AMNT',RoomDepositAcct.RMRK as RMRK,false as CON,true as PAY "));
+
         $PenalAcct =  DB::table('PenaltyAcct')
             ->whereRaw("PenaltyAcct.BILL_TSTMP BETWEEN '".$startTime."' AND '".$endTime."'")
 //            ->whereRaw("UNIX_TIMESTAMP(PenaltyAcct.BILL_TSTMP) BETWEEN ".$twoDaysAgo." AND ".$today)
@@ -190,6 +206,7 @@ class AccountingController extends BaseController{
                 WHEN RoomStoreTran.RM_ID is Null THEN true
                 ELSE false
             END AS PAY "));
+
         $allAcct = $DepoAcct->union($BillAcct)->union($PenalAcct)->union($StoreAcct)->get();
         return Response::json($allAcct);
     }

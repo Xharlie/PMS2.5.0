@@ -3,6 +3,8 @@
  */
 app.controller('paymentCtrl', function ($scope,paymentFactory) {
 
+    /*************************    validation      ************************/
+
     $scope.hasError = function(btnPass){
         if(eval("$scope."+btnPass)==null) eval("$scope."+btnPass+"=0");
         eval("$scope."+btnPass+"++");
@@ -10,10 +12,24 @@ app.controller('paymentCtrl', function ($scope,paymentFactory) {
     $scope.noError = function(btnPass){
         eval("$scope."+btnPass+"--");
     }
+    /*************************    init      ************************/
+    payInit();
+
+    function payInit(){
+        for(var i=0; i<$scope.BookRoom.length;i++){
+            $scope.BookRoom[i].payment.paymentRequest = util.Limit($scope.BookRoom[i].payment.paymentRequest);
+            for(var j=0; j<$scope.BookRoom.payment.payByMethods.length;j++){
+                $scope.BookRoom[i].payment.payByMethods[i].payAmount = util.Limit($scope.BookRoom[i].payment.payByMethods[i].payAmount);
+            }
+        }
+    }
+
+    /*************************    utility      ************************/
 
     $scope.addNewPayByMethod = function(singleRoom){
         singleRoom.payment.payByMethods.push(paymentFactory.createNewPayByMethod());
     }
+
     $scope.updatePayInDue = function(singleRoom){
         var totalDue= parseFloat(singleRoom.payment.paymentRequest);
         for (var i=0; i<singleRoom.payment.payByMethods.length; i++){
@@ -21,7 +37,6 @@ app.controller('paymentCtrl', function ($scope,paymentFactory) {
         }
         singleRoom.payment.payInDue = util.Limit(parseFloat(totalDue));
         singleRoom.payment.payInDue = (isNaN(singleRoom.payment.payInDue))? 0.00: singleRoom.payment.payInDue;
-
     };
     /*************************    for purchasemodal only      ************************/
     $scope.roomIdHit = function(singlePay, room){

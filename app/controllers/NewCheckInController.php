@@ -374,6 +374,15 @@ class NewCheckInController extends BaseController{
                 $depo['REF_ID'] = $payByMethod['payRefID'];
                 DB::update('update Reservations set PRE_PAID_RMN = PRE_PAID_RMN - ? where RESV_ID = ?',
                     array($payByMethod["payAmount"],$payByMethod['payRefID']) );
+                DB::table('ReserveDepositAcct')->insert(
+                    array(
+                        'RESV_ID'=>$payByMethod['payRefID'],
+                        'DEPO_AMNT'=>$payByMethod["payAmount"] * (-1),
+                        'PAY_METHOD'=> $payByMethod["payMethod"],
+                        'DEPO_TSTMP'=>$date,
+                        'RMRK'=> '转入房间押金'
+                    )
+                );
             }
             array_push($DepositArray,$depo);
 

@@ -304,18 +304,19 @@ Route::post('/planAdd','SettingRoomController@addPlan');
 //        return Redirect::to('/logon');
 //    }
 //});
+//use Illuminate\Http\Request;
 
 App::before(function($request){
+//    if($request->ajax()){
+//    }
     if(Request::getUri() == URL::to('logonPost') || Request::getUri() == URL::to('logon')
         || Request::getUri() == URL::to('logout')
         || Request::getUri() == URL::to('test')
     ) return ;
 
-    if (!Auth::check())
+    if (!Auth::check() || !UserController::checkSessionTimeOutNValidity())
     {
-        return Redirect::intended('/logon');
-    }else{
-        return UserController::checkSessionTimeOutNValidity();
+        return Redirect::intended('/logout');
     }
 });
 

@@ -38,7 +38,6 @@ app.controller('smallMenuController',function ($scope, $http,cusModalFactory,$mo
                 $scope.owner.RM_CONDITION = "空房";
                 $scope.owner.menuIconAction = util.avaIconAction;
                 $scope.owner.blockClass[0] = "room-empty";
-
             });
         }
         /*********************************          reservation          **************************************/

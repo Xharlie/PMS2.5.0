@@ -75,7 +75,7 @@ class UserController extends BaseController{
     }
 
     public static function checkSessionTimeOutNValidity(){
-        if(Session::get('userInfo')==null)  return UserController::terminateSession();
+        if(Session::get('userInfo')==null)  return false;
         $emp = DB::table('EmployeeSysAccess')
             ->where('id', '=', Session::get('userInfo')['id'])
             ->first(array('SESSION_ID'));
@@ -86,16 +86,12 @@ class UserController extends BaseController{
             || (time() - Session::get('LAST_ACTIVITY')) > 2*3600)           // 2 hours idle time
         {
             // Delete session data created by this app:
-            return UserController::terminateSession();
+            return false;
         }else{
             // update last activity of session
             Session::put('LAST_ACTIVITY', time());
+            return true;
         }
-    }
-
-    public static function terminateSession(){
-        Session::flush();
-        return Redirect::intended('/logout');
     }
 
     public function chanceManagement($success){

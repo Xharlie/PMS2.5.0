@@ -23,7 +23,7 @@ app.factory('roomFactory',function($http,paymentFactory){
                 BookRoomByTP[singleRoom.RM_TP].rooms.push(singleRoom);
                 BookRoomByTP[singleRoom.RM_TP].roomAmount++;
             }else{
-                BookRoomByTP[singleRoom.RM_TP] = {SUGG_PRICE:singleRoom.SUGG_PRICE,discount:singleRoom.discount
+                BookRoomByTP[singleRoom.RM_TP] = {SUGG_PRICE:singleRoom.SUGG_PRICE,discount:singleRoom.discount,resvPrice:singleRoom.resvPrice
                     ,finalPrice:singleRoom.finalPrice,rooms:[singleRoom],roomAmount:1};
                 if (singleRoom.AVAIL_QUAN!=null){
                     BookRoomByTP[singleRoom.RM_TP]['AVAIL_QUAN'] = singleRoom.AVAIL_QUAN;

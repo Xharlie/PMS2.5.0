@@ -55,11 +55,14 @@ app.controller('reservationController', function($scope, $http, resrvFactory,$mo
     $scope.sorter = {};
 
     roomStatusFactory.getAllRoomTypes().success(function(data){
-        $scope.allType= data;
+        $scope.allType = data;
+        show(data)
     });
 
     resrvFactory.resvShow().success(function(data){
         $scope.resvInfo =data;
+        show(data);
+
         $scope.ready=true;
         var nowDate = util.dateFormat(now);
         var nowTime = util.timeFormat(now);
