@@ -113,6 +113,31 @@ app.controller('largeMenuController',function ($scope, $http, $modal, cusModalFa
         }
     }
 
+    $scope.editWakeUp = function(WKC_TSTMP){
+        var initialString ='editWakeUp';
+        if(WKC_TSTMP == null){
+            initialString = 'initWakeUp';
+        }
+        var modalInstance = $modal.open({
+            windowTemplateUrl: 'directiveViews/modalWindowTemplate',
+            templateUrl: 'directiveViews/wakeUpCallModal',
+            controller: 'wakeUpCallModalController',
+            resolve: {
+                initialString: function () {
+                    return initialString;
+                },
+                RM_TRAN_IDFortheRoom: function() {
+                    return $scope.owner.RM_TRAN_ID;
+                },
+                WKC_TSTMP: function() {
+                    return WKC_TSTMP;
+                }
+            }
+        }).result.then(function(data) {
+                $scope.updateAllRoom();
+        });
+    }
+
     $scope.close = function(owner){
         owner.blockClass.splice(owner.blockClass.indexOf($scope.blockClass),1);
     }

@@ -6,7 +6,7 @@
                     <h4 class="panel-title"><span class="glyphicon glyphicon-home"></span> 房型余量</h4>
                 </div>
                 <table class="table">
-                    <tr ng-repeat="(rmTp,status) in roomSummary" ng-click="rmTpToggle(rmTp)" style="cursor: pointer;">
+                    <tr ng-repeat="(rmTp,status) in BookCommonInfo.roomSummary" ng-click="rmTpToggle(rmTp)" style="cursor: pointer;">
                         <td>
                             <div>
                                 <div>
@@ -90,9 +90,8 @@
                 </div>
             </div>
         </div>
-
         <div class="panel-body padded-block">
-            <div id="roomStatusFrame" class="roomStatus" ng-repeat="(FLOOR_ID,roomsOnFloor) in roomFloor | orderObjectByNum:'FLOOR_ID' " style="margin-bottom: 10px;">
+            <div id="roomStatusFrame" class="roomStatus" ng-repeat="(FLOOR_ID,roomsOnFloor) in BookCommonInfo.roomFloor | orderObjectByNum:'FLOOR_ID' " style="margin-bottom: 10px;">
                 <label style="font-weight: normal">
                     <span hidden>{{roomsOnFloor.FLOOR}}</span>
                 </label>

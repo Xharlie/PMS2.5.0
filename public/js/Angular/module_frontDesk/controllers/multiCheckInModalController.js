@@ -525,7 +525,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
             show("办理成功!");
             $scope.submitLoading = false;
             $modalInstance.close("checked");
-            util.closeCallback();
+            //util.closeCallback();
         });
     }
 

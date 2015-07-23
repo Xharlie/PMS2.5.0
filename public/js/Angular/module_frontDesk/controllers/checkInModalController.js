@@ -430,7 +430,6 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
     /************** ********************************** page change  ********************************** *************/
     $scope.confirm = function(){
         if($scope.initialString == "singleWalkIn"){
-            $scope.viewClick = "Pay";
             for(var i = 0; i < $scope.BookRoom.length; i++){
                 var payment = $scope.BookRoom[i].payment;
                 payment.paymentRequest = util.Limit(depositMethod($scope.BookRoom[i]));
@@ -438,6 +437,7 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
                 payment.payInDue = 0;
                 payment.payByMethods[0].payMethod = "现金";
             }
+            $scope.viewClick = "Pay";
         }else if($scope.initialString == "edit"){
                 $scope.editSubmit(false);
         }

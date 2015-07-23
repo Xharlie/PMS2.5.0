@@ -63,7 +63,7 @@ class MerchandiseController extends BaseController{
         $histoPurchase = DB::table('StoreTransaction')
             ->leftjoin('RoomStoreTran', 'RoomStoreTran.STR_TRAN_ID', '=', 'StoreTransaction.STR_TRAN_ID')
             ->select('StoreTransaction.STR_TRAN_ID as STR_TRAN_ID','StoreTransaction.STR_PAY_METHOD as STR_PAY_METHOD',
-                'StoreTransaction.STR_PAY_AMNT as STR_PAY_AMNT', 'StoreTransaction.STR_TRAN_TSTAMP as STR_TRAN_TSTAMP',
+                'StoreTransaction.STR_PAY_AMNT as STR_PAY_AMNT', 'StoreTransaction.STR_TRAN_TSTMP as STR_TRAN_TSTMP',
                 'RoomStoreTran.RM_TRAN_ID as RM_TRAN_ID','RoomStoreTran.RM_ID as RM_ID')
             ->get();
         return json_encode($histoPurchase,JSON_NUMERIC_CHECK);

@@ -35,7 +35,7 @@ class RoomStatusController extends BaseController{
                 'RoomTran.RM_AVE_PRCE as RM_AVE_PRCE','RoomTran.DPST_RMN as DPST_RMN',
                 'RoomTran.RSRV_PAID_DYS as RSRV_PAID_DYS','RoomTran.CONN_RM_TRAN_ID as CONN_RM_TRAN_ID',
                 'RoomTran.LEAVE_TM as LEAVE_TM','RoomTran.IN_TM as IN_TM','RoomTran.CHECK_TP as CHECK_TP',
-                'RoomTran.TMP_PLAN_ID as TMP_PLAN_ID','RoomTran.TREATY_ID as TREATY_ID',
+                'RoomTran.TMP_PLAN_ID as TMP_PLAN_ID','RoomTran.TREATY_ID as TREATY_ID','RoomTran.WKC_TSTMP as WKC_TSTMP',
                 'RoomTran.MEM_ID as MEM_ID',DB::raw('COALESCE(Conn.DPST_RMN,RoomTran.DPST_RMN) as CONN_DPST_RMN'))
             ->orderBy('Rooms.RM_ID', 'ASC')
             ->get();

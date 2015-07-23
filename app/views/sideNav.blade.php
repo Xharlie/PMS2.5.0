@@ -41,7 +41,20 @@
                         <li><a href="#/merchandiseHisto/:">销售记录</a></li>
                       </ul>
                     </li>   -->
-        		    <li ng-class="tabClassObj.cust"><a href="#/customer" ng-click="emphasize('cust')">客户管理</a></li>
+                    <li class="btn-group"  dropdown is-open="status.cust.isopen"
+                        ng-mouseover="status.cust.isopen = true" ng-mouseleave="status.cust.isopen = false"
+                            >
+                        <a href ng-class="tabClassObj.cust" class="dropdown-toggle" >
+                            客人管理<span class="caret" ></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu"
+                            ng-mouseover="status.cust.isopen = true" ng-mouseleave="status.cust.isopen = false">
+                            <li><a href="#/member" ng-click="emphasize('cust')">会员管理</a></li>
+                            <li><a href="#/customer" ng-click="emphasize('cust')">来客历史</a></li>
+                        </ul>
+                    </li>
+
+        		    <!-- <li ng-class="tabClassObj.cust"><a href="#/customer" ng-click="emphasize('cust')">客户管理</a></li> -->
         		    <li ng-class="tabClassObj.acco"><a href="#/accounting" ng-click="emphasize('acco')">账目管理</a></li>
         		    <li hidden ng-class="tabClassObj.prob"><a ng-click="emphasize('prob')">问题汇报</a></li>
         		    <li ng-class="tabClassObj.oneK" hidden><a href="#/oneKeyShift" ng-click="emphasize('oneK')">一键交班</a></li>

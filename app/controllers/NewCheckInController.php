@@ -63,6 +63,21 @@ class NewCheckInController extends BaseController{
         return Response::json($treaties);
     }
 
+    public function setWakeUpCall(){
+        $submitInfo = Input::all();
+        try {
+            DB::beginTransaction();   //////  Important !! TRANSACTION Begin!!!
+            DB::update('update RoomTran set WKC_TSTMP =  ? where RM_TRAN_ID = ?',
+                array($submitInfo['WKC_TSTMP'],$submitInfo['RM_TRAN_ID']) );
+        }catch (Exception $e){
+            DB::rollback();
+            $message=($e->getLine())."&&".$e->getMessage();
+            throw new Exception($message);
+        }finally{
+            DB::commit();
+            return Response::json("success!");
+        }    }
+
     public function submitDeposit(){
         $all = Input::all();
         $info = Input::get('SubmitInfo');

@@ -18,7 +18,7 @@ app.controller('paymentCtrl', function ($scope,paymentFactory) {
     function payInit(){
         for(var i=0; i<$scope.BookRoom.length;i++){
             $scope.BookRoom[i].payment.paymentRequest = util.Limit($scope.BookRoom[i].payment.paymentRequest);
-            for(var j=0; j<$scope.BookRoom.payment.payByMethods.length;j++){
+            for(var j=0; j<$scope.BookRoom[i].payment.payByMethods.length;j++){
                 $scope.BookRoom[i].payment.payByMethods[i].payAmount = util.Limit($scope.BookRoom[i].payment.payByMethods[i].payAmount);
             }
         }

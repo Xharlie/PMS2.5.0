@@ -31,12 +31,15 @@
                     <td>
                         <label>{{owner.CHECK_OT_DT}}</label>
                         <label>{{owner.LEAVE_TM}}</label>
-                        <a class="pull-right" style="cursor: pointer;" ng-click="excAction('信息修改')">续住</a>
+                        <!-- <a class="pull-right" style="cursor: pointer;" ng-click="excAction('信息修改')">续住</a> -->
                     </td>
                 </tr>
                 <tr>
                     <td>早叫</td>
-                    <td><label>{{owner.WKP}}未设置</label></td>
+                    <td>
+                        <label>{{(owner.WKC_TSTMP!=null)?owner.WKC_TSTMP:'未设置'}}</label>
+                        <label><a ng-click="editWakeUp(owner.WKC_TSTMP)" style="color:deepskyblue">{{(owner.WKC_TSTMP!=null)?'修改':'添加'}}</a></label>
+                    </td>
                 </tr>
                 <tr>
                     <td>在借物品</td>

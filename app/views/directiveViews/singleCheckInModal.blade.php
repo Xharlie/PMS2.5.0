@@ -152,7 +152,7 @@
                     <button class="pull-right btn btn-primary btn-lg"
                             ng-click="backward()">返回修改</button>
                 </div>
-             </div>
+            </div>
         </div>
     </div>
 </div>

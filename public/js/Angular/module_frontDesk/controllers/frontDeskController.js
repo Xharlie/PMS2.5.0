@@ -48,21 +48,18 @@ app.controller('reservationController', function($scope, $http, resrvFactory,$mo
     $scope.iconAndAction = {"resvIconAction":util.resvIconAction};
     $scope.iconAndActionDisabled = {"resvIconAction":util.iconAndActionDisabled};
     $scope.sameID={};
-    $scope.blockClass = "reserveClick"
-    $scope.timeOutClass = "timeOutResv"
+    $scope.blockClass = "reserveClick";
+    $scope.timeOutClass = "timeOutResv";
     $scope.clicked = false;
     $scope.roomType = {};
     $scope.sorter = {};
 
     roomStatusFactory.getAllRoomTypes().success(function(data){
         $scope.allType = data;
-        show(data)
     });
 
     resrvFactory.resvShow().success(function(data){
         $scope.resvInfo =data;
-        show(data);
-
         $scope.ready=true;
         var nowDate = util.dateFormat(now);
         var nowTime = util.timeFormat(now);
@@ -165,134 +162,59 @@ app.controller('reservationController', function($scope, $http, resrvFactory,$mo
 });
 
 
-app.controller('roomStatusController', function($scope, $http, roomStatusFactory, $modal,cusModalFactory,resrvFactory,sessionFactory){
+app.controller('roomStatusController', function($scope, $http, roomStatusFactory, $modal,cusModalFactory,resrvFactory,roomStatusInterFactory){
     /* Database version */
     var today = new Date();
+    $scope.BookCommonInfo = {
+        roomStatusInfo: null,
+        master2BranchStyle: null,
+        master2BranchID: null,
+        roomSummary: null,
+        roomFloor: null
+    }
     $scope.connectClick = "toStart";
-    $scope.master2BranchStyle = {};
-    $scope.master2BranchID = {};
     $scope.ready=false;
     $scope.blockClass="roomBlockSelected";
-    $scope.roomSummary = {};
-    $scope.roomFloor = {};
-    $scope.roomStatusInfo ={};
-    $scope.updateInfo={};
-    $scope.roomCount = function(room,summary){
-        if(room.RM_TP in summary){
-            summary[room.RM_TP]['total']++;
-            summary[room.RM_TP][room.RM_CONDITION]++;
-        }else{
-            summary[room.RM_TP] = {total:1,'空房':0,'有人':0,'维修':0,'脏房':0};
-            summary[room.RM_TP][room.RM_CONDITION]++;
+    $scope.updateInfo = {
+        updateAllRoom: function(){
+            roomStatusFactory.roomShow().success(function(data){
+                roomStatusInterFactory.updateAllRoom($scope.BookCommonInfo,data);
+            });
         }
-    }
-    $scope.floorify = function(room,floors){
-        if(room.FLOOR_ID in floors){
-            floors[room.FLOOR_ID].rooms.push(room);
-        }else{
-            floors[room.FLOOR_ID] = {FLOOR_ID:room.FLOOR_ID,FLOOR:room.FLOOR,rooms:[room]};
-        }
-    }
+    };
+
 
 /******************* allRoomComparer to compare every single room ******************/
-    function allRoomCompare(upt){
-        structure.updateElement([$scope.roomStatusInfo,$scope.master2BranchStyle,$scope.master2BranchID,$scope.roomSummary,$scope.roomFloor],upt);
-    }
 
-    $scope.updateInfo.updateAllRoom = function(){
-        var roomStatusInfo =null;
-        var master2BranchStyle = {};
-        var master2BranchID = {};
-        var roomSummary = {};
-        var roomFloor = {};
-        roomStatusInit(roomStatusInfo,master2BranchStyle,master2BranchID,roomSummary,roomFloor,allRoomCompare);
-    }
 
 /****************************     init      ****************************/
-    roomStatusInit($scope.roomStatusInfo,$scope.master2BranchStyle,$scope.master2BranchID,$scope.roomSummary,$scope.roomFloor,null);
-
-    function roomStatusInit(roomStatusInfo,master2BranchStyle,master2BranchID,roomSummary,roomFloor,callbackCompare){
+    (function roomStatusInit(){
         roomStatusFactory.roomShow().success(function(data){
-            structure.sortByRm(data);
-            roomStatusInfo = data;
-            for (var i=0; i<roomStatusInfo.length; i++){
-                $scope.roomCount(roomStatusInfo[i],roomSummary);
-                $scope.floorify(roomStatusInfo[i],roomFloor);
-                switch(roomStatusInfo[i].RM_CONDITION){
-                    case '空房':
-                        roomStatusInfo[i].menuType = 'small-menu';
-                        roomStatusInfo[i].menuIconAction = util.avaIconAction;
-                        roomStatusInfo[i].blockClass = ["room-empty"];
-                        break;
-                    case '有人':
-                        roomStatusInfo[i].menuType = "large-menu";
-                        roomStatusInfo[i].menuIconAction = util.infoIconAction;
-                        roomStatusInfo[i].blockClass = ["room-full"];
-                        break;
-                    case '脏房':
-                        roomStatusInfo[i].menuType = "small-menu";
-                        roomStatusInfo[i].menuIconAction = util.dirtIconAction;
-                        roomStatusInfo[i].blockClass = ["room-dirty"];
-                        break;
-                    case '维修':
-                        roomStatusInfo[i].menuType = "small-menu";
-                        roomStatusInfo[i].menuIconAction = util.mendIconAction;
-                        roomStatusInfo[i].blockClass = ["room-disabled"];
-                }
-
-                if(roomStatusInfo[i]['CONN_RM_TRAN_ID'] != null){
-                    roomStatusInfo[i]['connLightUp'] = [];
-                    if(roomStatusInfo[i]['CONN_RM_TRAN_ID'] in master2BranchStyle){
-                        master2BranchStyle[roomStatusInfo[i]['CONN_RM_TRAN_ID']].push(roomStatusInfo[i].blockClass);
-                        master2BranchID[roomStatusInfo[i]['CONN_RM_TRAN_ID']].push(roomStatusInfo[i].RM_TRAN_ID);
-                    }else{
-                        master2BranchStyle[roomStatusInfo[i]['CONN_RM_TRAN_ID']] = [roomStatusInfo[i].blockClass];
-                        master2BranchID[roomStatusInfo[i]['CONN_RM_TRAN_ID']]=[roomStatusInfo[i].RM_TRAN_ID];
-                    }
-                }
-            }
-            for (var i=0; i<roomStatusInfo.length; i++){
-                if(roomStatusInfo[i]['connLightUp'] != undefined){
-                    roomStatusInfo[i]['connLightUp'] = master2BranchStyle[roomStatusInfo[i]['CONN_RM_TRAN_ID']];
-                    roomStatusInfo[i]['connRM_TRAN_IDs'] = master2BranchID[roomStatusInfo[i]['CONN_RM_TRAN_ID']];
-                }else{
-                    roomStatusInfo[i]['connRM_TRAN_IDs'] = [roomStatusInfo[i]['RM_TRAN_ID']];
-                }
-            }
-            $scope.ready=true;
-            //if(callbackCompare !=null) callbackCompare([roomStatusInfo,master2BranchStyle,master2BranchID,roomSummary,roomFloor]);
-            if(callbackCompare !=null) {
-                callbackCompare([roomStatusInfo,master2BranchStyle,master2BranchID,roomSummary,roomFloor]);
-            }
+            $scope.BookCommonInfo = roomStatusInterFactory.roomStatusPackaging(data);
+            $scope.ready = true;
         });
-    }
-
+    })();
 
     resrvFactory.showComResv(util.dateFormat(today)).success(function(data){
         $scope.resvComInfo = data;
     })
 
-
-
     $scope.connLightUp = function(roomST){
-        if(roomST['connLightUp'] != undefined){
-            for (var i=0; i< roomST['connLightUp'].length; i++){
-                roomST['connLightUp'][i].push("connRoomBlock");
+        if(roomST['connLightUp'] != null && roomST.connRM_TRAN_IDs.length>1){
+            for (var key in roomST['connLightUp']){
+                roomST['connLightUp'][key].push("connRoomBlock");
             }
         }
     }
 
     $scope.connLightback = function(roomST){
-        if(roomST['connLightUp'] != undefined){
-            for (var i=0; i< roomST['connLightUp'].length; i++){
-                roomST['connLightUp'][i].
-                    splice(roomST['connLightUp'][i].indexOf('connRoomBlock'),1);
+        if(roomST['connLightUp'] != null && roomST.connRM_TRAN_IDs.length>1){
+            for (var key in roomST['connLightUp']){
+                roomST['connLightUp'][key].
+                    splice(roomST['connLightUp'][key].indexOf('connRoomBlock'),1);
             }
         }
     }
-
-
-
     $scope.connectRooms = [];
     $scope.connectFlag = false;
 
@@ -346,8 +268,6 @@ app.controller('roomStatusController', function($scope, $http, roomStatusFactory
 
     $scope.overall ='';
 
-
-
     $scope.ngFloorFilter = function(roomST){
         var test = new RegExp("^"+$scope.roomFloor+".*");
         var a = test.test(roomST.RM_ID); //$scope.roomFloor;
@@ -389,8 +309,6 @@ app.controller('roomStatusController', function($scope, $http, roomStatusFactory
             }
         }
     };
-
-
     $scope.fastAction = function(roomST){
         if($scope.connectFlag == false && roomST.RM_CONDITION == "空房"){
             var modalInstance = $modal.open({
@@ -443,7 +361,6 @@ app.controller('roomStatusController', function($scope, $http, roomStatusFactory
 });
 
 
-
 app.controller('customerController', function($scope, $http, customerFactory,$modal){
 
     $scope.VarMaxSize =util.VarMaxSize;
@@ -451,22 +368,37 @@ app.controller('customerController', function($scope, $http, customerFactory,$mo
     $scope.totalItems =0;
     $scope.currentPage=1;
     $scope.ready=false;
+    $scope.sorter = {};
+    $scope.selectTo = function(value,caption,ngModel){
+        ngModel.value = value;
+        ngModel.caption = caption;
+    }
+    customerFactory.customerShow().success(function(data){
+        $scope.customerInfo =data;
+        $scope.ready=true;
+    });
 
-    $scope.viewClick = "recentCustomer" ;
-    $scope.customerInfo ='';
-    $scope.memberInfo = '';
+});
+app.controller('memberController', function($scope, $http, customerFactory,$modal){
+
+    $scope.VarMaxSize =util.VarMaxSize;
+    $scope.VarItemPerPage=2;
+    $scope.totalItems =0;
+    $scope.currentPage=1;
+    $scope.ready=false;
 
     $scope.menuType = "small-menu";
     $scope.menuNoshow = false;
     $scope.iconAndAction = {"memberIconAction":util.memberIconAction };
     $scope.blockClass = "reserveClick"
     $scope.clicked = false;
-    $scope.sorter = {};
     $scope.memSorter = {};
+
     $scope.selectTo = function(value,caption,ngModel){
         ngModel.value = value;
         ngModel.caption = caption;
     }
+
     $scope.clearMEMIDfilter = function(){
         if($scope.memberID == '') delete $scope.memberID;
     };
@@ -474,39 +406,13 @@ app.controller('customerController', function($scope, $http, customerFactory,$mo
     $scope.clearMEMphonefilter = function(){
         if($scope.memPhone == '') delete $scope.memPhone;
     };
-
-    customerFactory.customerShow().success(function(data){
-        $scope.customerInfo =data;
+    customerFactory.memberShow().success(function(data){
+        $scope.memberInfo =data;
         $scope.ready=true;
+        for (var i =0 ; i< $scope.memberInfo.length; i++){
+            $scope.memberInfo[i].blockClass=[];
+        }
     });
-
-
-
-    $scope.viewClickCustomer = function(){
-        $scope.viewClick = "recentCustomer";
-        if ($scope.customerInfo == '') {
-            $scope.ready=false;
-            customerFactory.customerShow().success(function(data){
-                $scope.customerInfo =data;
-                $scope.ready=true;
-            });
-        }
-
-    };
-
-    $scope.viewClickMember = function(){
-        $scope.viewClick = "membership";
-        if ($scope.memberInfo == '') {
-            $scope.ready=false;
-            customerFactory.memberShow().success(function(data){
-                $scope.memberInfo =data;
-                $scope.ready=true;
-                for (var i =0 ; i< $scope.memberInfo.length; i++){
-                    $scope.memberInfo[i].blockClass=[];
-                }
-            });
-        }
-    };
 
     $scope.addNewCustomer = function(){
         var modalInstance = $modal.open({
@@ -539,7 +445,6 @@ app.controller('customerController', function($scope, $http, customerFactory,$mo
             }
         });
     }
-
     $scope.open = function (member) {
         $scope.LightUp(member);
         $scope.clicked = true;
@@ -564,7 +469,6 @@ app.controller('customerController', function($scope, $http, customerFactory,$mo
     }
 
 });
-
 app.controller('accountingController', function($scope, $http, accountingFactory,$modal){
 
     /******************************************     utilities     **********************************************/

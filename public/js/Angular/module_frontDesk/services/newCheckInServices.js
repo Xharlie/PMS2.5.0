@@ -64,6 +64,14 @@ app.factory('newCheckInFactory',function($http){
                 data: SubmitInfo
             });
         },
+        setWakeUpCall: function(SubmitInfo){
+            return $http({
+                method: 'POST',
+                heasders: {'content-Type':'application/json'},
+                url: 'setWakeUpCall',
+                data: SubmitInfo
+            });
+        },
 
 /******************************** obselete ***********************************************/
         RoomSoldOut: function(checkInDt,checkOtDt){

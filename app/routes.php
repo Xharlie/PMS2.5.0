@@ -195,6 +195,9 @@ Route::post('/submitCheckIn','NewCheckInController@submitCheckIn');
 // room check in modify
 Route::post('/submitModify','NewCheckInController@submitModify');
 
+// setWakeUpCall
+Route::post('/setWakeUpCall','NewCheckInController@setWakeUpCall');
+
 // room deposit
 Route::post('/submitDeposit','NewCheckInController@submitDeposit');
 
@@ -307,16 +310,21 @@ Route::post('/planAdd','SettingRoomController@addPlan');
 //use Illuminate\Http\Request;
 
 App::before(function($request){
-//    if($request->ajax()){
-//    }
+
     if(Request::getUri() == URL::to('logonPost') || Request::getUri() == URL::to('logon')
         || Request::getUri() == URL::to('logout')
         || Request::getUri() == URL::to('test')
     ) return ;
 
+
+
     if (!Auth::check() || !UserController::checkSessionTimeOutNValidity())
     {
-        return Redirect::intended('/logout');
+        if(Request::ajax()) {
+            return 'logout!';
+        }else{
+            return Redirect::intended('/logout');
+        }
     }
 });
 

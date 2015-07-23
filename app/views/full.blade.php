@@ -64,6 +64,7 @@
         <script src="js/Angular/module_frontDesk/controllers/purchaseModalController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/depositModalController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/shiftSelectModalController.js"></script>
+        <script src="js/Angular/module_frontDesk/controllers/wakeUpCallModalController.js"></script>
 
         <script src="js/Angular/module_frontDesk/controllers/directiveControllers/buildInDirController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/directiveControllers/xlabelController.js"></script>
@@ -79,6 +80,7 @@
 
         <script src="js/Angular/module_frontDesk/services/internalLogic/paymentService.js"></script>
         <script src="js/Angular/module_frontDesk/services/internalLogic/roomService.js"></script>
+        <script src="js/Angular/module_frontDesk/services/internalLogic/roomStatusService.js"></script>
 
 
         <script src="js/Angular/module_frontDesk/directives/sgDbClick.js"></script>

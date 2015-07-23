@@ -65,7 +65,7 @@ app.controller('addMemberModalController', function($scope, $http, focusInSideFa
             $scope.BookCommonInfo.PHONE = member.PHONE;
             $scope.BookCommonInfo.RMRK = member.RMRK;
             for(var i =0; i < $scope.MemberTPs.length; i++){
-                if($scope.MemberTPs[i].MEM_TP == member.MEM_TP){
+                if($scope.MemberTPs[i].MEM_TP == member.MEM_TP_NM){
                     member.MEM_IN_FEE = $scope.MemberTPs[i].MEM_IN_FEE;
                     break;
                 }
@@ -143,9 +143,6 @@ app.controller('addMemberModalController', function($scope, $http, focusInSideFa
         singleRoom.payment.payByMethods.push(createNewPayByMethod());
     }
     /************** ********************************** submit  ********************************** *************/
-
-
-
 
     $scope.submit = function(){
         if (testFail()) return;

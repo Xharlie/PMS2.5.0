@@ -26,6 +26,11 @@ app.config(['$routeProvider',function ($routeProvider){
             controller:'customerController',
             templateUrl: '../app/views/customer.blade.php'
         })
+        .when('/member',
+        {
+            controller:'memberController',
+            templateUrl: '../app/views/member.blade.php'
+        })
         .when('/accounting/',
         {
             controller:'accountingController',
@@ -49,10 +54,28 @@ app.config(['$routeProvider',function ($routeProvider){
         })
         .otherwise({redirectTo: '/roomStatus'})
     }
-]).config(['$tooltipProvider', function($tooltipProvider){
+])
+.config(['$tooltipProvider', function($tooltipProvider){
         $tooltipProvider.setTriggers({'openEvent': 'closeEvent'});   // dynamically open or close popover
-    }]);
-
+    }])
+    // for laravel Request::ajax() to find it's ajax;
+.config(['$httpProvider', function($httpProvider) {
+    $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
+    $httpProvider.interceptors.push('sessionTimeoutInterceptor');
+    }])
+    // for laravel Request::ajax() find it's ajax if session time out, then reload and logout
+.factory('sessionTimeoutInterceptor', [function(){
+        return {
+            'response': function(response){
+                if (response != null && response.data == 'logout!'){
+                    window.location.reload();
+                }else{
+                    return response;
+                }
+            }
+        }
+    }
+]);
 
 app.filter('paginate', function() {
     return function(input, start, number) {
