@@ -22,7 +22,7 @@
                 @include('sideNav')
         </div>
 		<div class="main">
-            <div class="infoCenterArea">
+            <div class="infoCenterArea" hidden>
 				@include('infoCenter')
 			</div>
             <div class="content">
@@ -96,6 +96,7 @@
         <script src="js/Angular/module_frontDesk/pan_lib/util.js"></script>
         <script src="js/Angular/module_frontDesk/pan_lib/filter.js"></script>
         <script src="js/Angular/module_frontDesk/pan_lib/structure.js"></script>
+        <script src="js/Angular/module_frontDesk/pan_lib/icons.js"></script>
 
         <script src="js/Angular/module_frontDesk/hardwareAPI/tinyPrinter.js"></script>
 

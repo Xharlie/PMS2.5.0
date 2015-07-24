@@ -106,6 +106,10 @@
                          not-show ="connectFlag" pop-menu  menu-type="roomST.menuType"
                          owner="roomST" icon-n-action="roomST.menuIconAction"
                          update-all-room="updateInfo.updateAllRoom" ng-transclude>
+                            <div >
+                                <span ng-repeat="alert in roomST.alertInfo" ng-class="alert.iconClass">
+                                </span>
+                            </div>
                             <ul>
                                 <li>
                                     <div>{{roomST.RM_ID}}</div>

@@ -170,7 +170,8 @@ app.controller('roomStatusController', function($scope, $http, roomStatusFactory
         master2BranchStyle: null,
         master2BranchID: null,
         roomSummary: null,
-        roomFloor: null
+        roomFloor: null,
+        infoCenterQueue: null
     }
     $scope.connectClick = "toStart";
     $scope.ready=false;
@@ -192,6 +193,7 @@ app.controller('roomStatusController', function($scope, $http, roomStatusFactory
         roomStatusFactory.roomShow().success(function(data){
             $scope.BookCommonInfo = roomStatusInterFactory.roomStatusPackaging(data);
             $scope.ready = true;
+            show($scope.BookCommonInfo.roomFloor['12'].rooms[0].alertInfo)
         });
     })();
 

@@ -58,6 +58,43 @@ app.factory('roomStatusInterFactory',function($http,roomStatusFactory){
         master2BranchStyle[roomST.CONN_RM_TRAN_ID][roomST.RM_ID]=roomST.blockClass;
     }
 
+    function infoCenterify(roomST,infoCenterQueue){
+        roomST.alertInfo=[];
+        if(parseFloat(roomST.DPST_RMN) < 0){
+            var depositAlert = {
+                RM_ID: roomST.RM_ID,
+                RM_TRAN_ID: roomST.RM_TRAN_ID,
+                MSG: roomST.RM_ID.toString() + '号房欠费' + (parseFloat(roomST.DPST_RMN) * (-1)).toString() + '元',
+                //DUE: parseFloat(roomST.DPST_RMN) * (-1)
+                iconClass: icons.depositAlertIcon
+            }
+            roomST.alertInfo.push(depositAlert);
+            infoCenterQueue.depositAlert.push(depositAlert);
+        }
+        if( Number(new Date(roomST.CHECK_OT_DT+' '+roomST.LEAVE_TM)) - Number(new Date()) < 1800000 ){
+            var leaveAlert = {
+                RM_ID: roomST.RM_ID,
+                RM_TRAN_ID: roomST.RM_TRAN_ID,
+                MSG: roomST.RM_ID.toString() + '号房应于' + roomST.LEAVE_TM + '离开',
+                //TSTMP: roomST.CHECK_OT_DT+' '+roomST.LEAVE_TM
+                iconClass: icons.leaveAlertIcon
+            }
+            roomST.alertInfo.push(leaveAlert);
+            infoCenterQueue.leaveAlert.push(leaveAlert);
+        }
+        if( Number(new Date(roomST.WKC_DT+' '+roomST.WKC_TM)) - Number(new Date()) < 1800000 ){
+            var wakeUpAlert = {
+                RM_ID: roomST.RM_ID,
+                RM_TRAN_ID: roomST.RM_TRAN_ID,
+                MSG: roomST.RM_ID.toString() + '号房要求于'+roomST.WKC_TM + '早叫',
+                //TSTMP: roomST.WKC_DT+' '+roomST.WKC_TM
+                iconClass: icons.wakeUpAlertIcon
+            }
+            roomST.alertInfo.push(wakeUpAlert);
+            infoCenterQueue.wakeUpAlert.push(wakeUpAlert);
+        }
+    }
+
     return {
         roomStatusPackaging: function(data){
             structure.sortByRm(data);
@@ -66,6 +103,7 @@ app.factory('roomStatusInterFactory',function($http,roomStatusFactory){
             var roomSummary = {};
             var roomFloor = {};
             var roomStatusInfo = data;
+            var infoCenterQueue = {depositAlert:[],leaveAlert:[],wakeUpAlert:[]};
             for (var i=0; i<roomStatusInfo.length; i++){
                 assignCondition(roomStatusInfo[i]);
                 if(roomStatusInfo[i]['CONN_RM_TRAN_ID'] != null){
@@ -73,6 +111,7 @@ app.factory('roomStatusInterFactory',function($http,roomStatusFactory){
                 }
                 roomCount(roomStatusInfo[i],roomSummary);
                 floorify(roomStatusInfo[i],roomFloor);
+                infoCenterify(roomStatusInfo[i],infoCenterQueue);
             }
             for (var i=0; i<roomStatusInfo.length; i++){
                 if(roomStatusInfo[i]['CONN_RM_TRAN_ID'] != null){
@@ -86,7 +125,8 @@ app.factory('roomStatusInterFactory',function($http,roomStatusFactory){
                 master2BranchStyle:master2BranchStyle,
                 master2BranchID:master2BranchID,
                 roomSummary:roomSummary,
-                roomFloor:roomFloor}
+                roomFloor:roomFloor,
+                infoCenterQueue:infoCenterQueue}
         },
         updateAllRoom: function(ori,data){
             var upt =this.roomStatusPackaging(data);
@@ -95,6 +135,7 @@ app.factory('roomStatusInterFactory',function($http,roomStatusFactory){
             ori.master2BranchID = upt.master2BranchID;
             ori.roomSummary = upt.roomSummary;
             ori.roomFloor = upt.roomFloor;
+            ori.infoCenterQueue = upt.infoCenterQueue;
         }
     }
 });

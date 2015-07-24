@@ -1,5 +1,5 @@
 <!doctype html>
-<div class="infoCenter">
+<div class="infoCenter" >
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4><div class="title-decor title-decor-md"></div>消息中心</h4>

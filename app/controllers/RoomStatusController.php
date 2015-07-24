@@ -39,11 +39,7 @@ class RoomStatusController extends BaseController{
                 'RoomTran.MEM_ID as MEM_ID',DB::raw('COALESCE(Conn.DPST_RMN,RoomTran.DPST_RMN) as CONN_DPST_RMN'))
             ->orderBy('Rooms.RM_ID', 'ASC')
             ->get();
-//        foreach($roomShow as $room){
-//            if($room->RM_CONDITION == '有人'){
-//                $room->customers = $this->showOccupied($room->RM_TRAN_ID);
-//            }
-//        }
+
         $cusShow = DB::table('Rooms')
             ->join('Customers','Customers.RM_TRAN_ID','=','Rooms.RM_TRAN_ID')
             ->select('Customers.SSN as SSN','Customers.CUS_NAME as CUS_NAME',
