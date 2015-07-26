@@ -39,6 +39,7 @@ app.controller('purchaseModalController', function($scope, $http,$modalInstance,
             }else{
                 roomMethodInit();
             }
+            $scope.viewClick ='Pay';
         });
     }
 
@@ -62,7 +63,6 @@ app.controller('purchaseModalController', function($scope, $http,$modalInstance,
     }
 
     /********************************************     common variables     ***************************************************/
-    $scope.viewClick ='Pay';
     commonInit();
     focusInSideFactory.tabInit('wholeModal');
     $timeout(function(){

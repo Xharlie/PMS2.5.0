@@ -2,7 +2,7 @@
  * Created by Xharlie on 12/22/14.
  */
 app.controller('checkInModalController', function($scope, $http, focusInSideFactory,newCheckInFactory, paymentFactory,roomFactory,
-                                                  $modalInstance,$timeout, roomST,initialString){
+                                                  sessionFactory, $modalInstance,$timeout, roomST,initialString){
 
     /********************************************     validation     ***************************************************/
     $scope.hasError = function(btnPass){
@@ -513,6 +513,12 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
             }
             j++;
         }
+        var pms ={HTL_NM:null,EMP_NM:null};
+        sessionFactory.getUserInfo().success(function(data){
+            pms.HTL_NM = data.HTL_NM;
+            pms.EMP_NM = data.EMP_NM;
+        });
+
         newCheckInFactory.submit(JSON.stringify({SubmitInfo:$scope.SubmitInfo,RESV_ID:null,unfilled:null})).success(function(data){
             $scope.submitLoading = false;
             show("办理成功!");
@@ -523,7 +529,6 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
             room.leaveTime = util.timeFormat($scope.BookCommonInfo.leaveTime);
             room.CONN_RM_TRAN_ID =data.CONN_RM_TRAN_ID;
             room.RM_TRAN_ID =data.RM_TRAN_ID;
-            var pms ={HTL_NM:"",EMP_NM:""};
             printer.checkIn(pms,room,room.GuestsInfo[0]);
             printer.deposit(pms,room,room.GuestsInfo[0]);
             $modalInstance.close("checked");

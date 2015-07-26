@@ -7,7 +7,7 @@
         </h4>
     </div>
     <div class="panel-body">
-        <div ng-show ="viewClick=='Pay'">
+        <div ng-if ="viewClick=='Pay'">
             <div  payment  book-room="BookRoomMaster" pay-method-options="payMethodOptions" pay-error="payError" rooms="rooms"></div>
             <div class="row modal-control">
                 <button class="pull-right btn btn-primary btn-lg"
