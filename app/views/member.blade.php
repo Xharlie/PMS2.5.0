@@ -6,11 +6,6 @@
         <div></div>
     </div>
 </div>
-<nav class ="mode col-sm-12">
-    <ul class="nav nav-pills">
-        <li class="buttonUnClicked" ng-class ="buttonClicked" ><a>会员管理</a></li>
-    </ul>
-</nav>
 <div class="col-sm-12" ng-show="ready">
     <div class="panel panel-default">
 

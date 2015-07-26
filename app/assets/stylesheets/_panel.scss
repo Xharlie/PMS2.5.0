@@ -29,7 +29,8 @@
 	}
 
 	.panel-heading{
-		height: 64px;
+		height: $panel-heading-height;
+		border-bottom: 1px solid #ddd;
 		.panel-title{
 			padding: 15px 0;
 			font-weight: 600;

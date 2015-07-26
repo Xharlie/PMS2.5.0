@@ -1,4 +1,8 @@
 @charset "UTF-8";
+.loader {
+  width: 60px;
+  margin: 250px auto; }
+
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
 html {
   font-family: sans-serif;
@@ -5791,8 +5795,10 @@ button.close {
   .hidden-print {
     display: none !important; } }
 .main {
+  height: 800px;
   padding-top: 60px; }
   .main .infoCenterContainer {
+    height: 100%;
     width: 18%;
     float: right;
     position: fixed;
@@ -5800,9 +5806,14 @@ button.close {
     overflow-y: scroll; }
   .main .contentContainer {
     width: 82%;
+    height: 100%;
     margin: 0; }
     .main .contentContainer .roomContainer .panel {
-      margin-bottom: 0; }
+      margin-bottom: 0;
+      height: 100%; }
+      .main .contentContainer .roomContainer .panel .panel-body {
+        min-height: 800px;
+        overflow-y: scroll; }
       .main .contentContainer .roomContainer .panel tr:hover {
         background-color: #fafafa; }
 
@@ -5823,6 +5834,10 @@ body, .main {
   height: 1px;
   margin: 16px 0;
   background-color: #ddd; }
+
+.table > tbody > tr > td, .table > tbody > tr > th {
+  border-top: none;
+  border-bottom: 1px solid #ddd; }
 
 .reserveClick > td {
   background-color: #d9edf7 !important; }
@@ -5963,7 +5978,8 @@ body, .main {
       -webkit-transition: 0.1s;
       background-color: #d9edf7 !important; }
   .panel .panel-heading {
-    height: 64px; }
+    height: 64px;
+    border-bottom: 1px solid #ddd; }
     .panel .panel-heading .panel-title {
       padding: 15px 0;
       font-weight: 600;
@@ -6029,7 +6045,9 @@ body, .main {
       border-bottom: 1px solid #E2E2E2; }
     .modal .panel .panel-body {
       padding-left: 50px;
-      padding-right: 50px; }
+      padding-right: 50px;
+      max-height: 500px;
+      overflow-y: scroll; }
       .modal .panel .panel-body .form-group {
         overflow: hidden; }
         .modal .panel .panel-body .form-group label {
@@ -6076,12 +6094,12 @@ body, .main {
     cursor: not-allowed; }
 
 .infoCenter {
-  height: 800px; }
-  .infoCenter .panel {
+  height: 100%; }
+  .infoCenter .panel-table {
     min-height: 800px; }
   .infoCenter .infoTitle {
     color: white;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     float: left; }
     .infoCenter .infoTitle b {
       background: red;

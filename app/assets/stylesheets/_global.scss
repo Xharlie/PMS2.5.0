@@ -39,6 +39,11 @@ body, .main{
 //Table
 //-----------------------------------------------
 //Change row color when hover
+.table > tbody > tr > td, .table > tbody > tr > th {
+	border-top: none;
+	border-bottom: 1px solid #ddd;
+}
+
 .reserveClick  > td{
     background-color: #d9edf7 !important;
 } 

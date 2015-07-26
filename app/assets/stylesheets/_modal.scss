@@ -51,6 +51,8 @@
 		.panel-body{
 			padding-left: 50px;
 			padding-right: 50px;
+			max-height: 500px;
+			overflow-y: scroll;
 
 			.form-group{
 				overflow: hidden;

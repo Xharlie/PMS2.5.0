@@ -3,14 +3,14 @@
 //
 
 .infoCenter{
-	height: $infoCenter-height;
-	.panel{
+	height: 100%;
+	.panel-table{
 		min-height: 800px;
 	}
 
 	.infoTitle{
 		color: white;
-		margin-bottom: 5px;
+		margin-bottom: 10px;
 		float:left;
 
 		b{

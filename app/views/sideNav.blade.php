@@ -57,7 +57,7 @@
         		    <!-- <li ng-class="tabClassObj.cust"><a href="#/customer" ng-click="emphasize('cust')">客户管理</a></li> -->
         		    <li ng-class="tabClassObj.acco"><a href="#/accounting" ng-click="emphasize('acco')">账目管理</a></li>
         		    <li hidden ng-class="tabClassObj.prob"><a ng-click="emphasize('prob')">问题汇报</a></li>
-        		    <li ng-class="tabClassObj.oneK" hidden><a href="#/oneKeyShift" ng-click="emphasize('oneK')">一键交班</a></li>
+        		    <li ng-class="tabClassObj.oneK" style="display:none;" hidden><a href="#/oneKeyShift" ng-click="emphasize('oneK')">一键交班</a></li>
             <!--        <div class="btn-group" dropdown is-open="status.sett.isopen" ng-mouseover="status.sett.isopen = true" ng-mouseleave="status.sett.isopen = false">
                         <li ng-class="tabClassObj.sett" class=" dropdown-toggle" >
                             客房设置<span class="caret" ></span>

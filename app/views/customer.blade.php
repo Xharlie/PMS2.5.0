@@ -1,9 +1,4 @@
 <!doctype html>
-<nav class ="mode col-sm-12">
-    <ul class="nav nav-pills">
-        <li class="buttonUnClicked" ng-class ="buttonClicked" ><a>在住客人</a></li>
-    </ul>
-</nav>
 <div class="col-sm-12" ng-show="ready">
     <div class="panel panel-default">
         <div class="animate-switch fixedheight">

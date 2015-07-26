@@ -5,10 +5,16 @@
 
 // Scaffolding
 
+$main-height:						  800px;
+$main-width:						  100%;
+
 $content-width:						  82%;
+$content-height:					  100%;
 $infoCenter-width:					  100%-$content-width;
-$infoCenter-height:					  800px;
+$infoCenter-height:					  100%;
 $navbar-height:					  	  50px;
+
+$panel-heading-height:				  64px;
 
 $content-outer-bg:					  none;
 $content-corner-radius:			  	  0px;

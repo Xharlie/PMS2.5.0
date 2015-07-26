@@ -3,9 +3,11 @@
 //Structure and positioning of the whole page
 
 .main{
+	height: $main-height;
 	padding-top: $navbar-height+10;
 
 	.infoCenterContainer{
+		height: $infoCenter-height;
 		width: $infoCenter-width;
 		float: right;
 		position: fixed;
@@ -15,11 +17,18 @@
 
 	.contentContainer{
 		width: $content-width;
+		height: $content-height;
 		margin: 0;
 
 		.roomContainer{
 			.panel{
 				margin-bottom: 0;
+				height: 100%;
+
+				.panel-body{
+					min-height: $main-height;
+					overflow-y: scroll;
+				}
 
 				tr{
 					&:hover{
