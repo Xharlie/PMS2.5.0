@@ -1,7 +1,7 @@
 <div id="wholeModal">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="glyphicon glyphicon-user"></span>
+            <span class="icon-vcard"></span>
             <label>添加新会员</label>
             <span class="pull-right close" ng-click="cancel()">&#x2715</span>
         </h4>
@@ -19,7 +19,7 @@
                                ng-style="BookCommonInfo.CheckOTStyle"
                                datepicker-append-to-body="true" />
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-default btn-lg" ng-click="open2($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                            <button type="button" class="btn btn-default btn-lg" ng-click="open2($event)"><i class="icon-calendar-outline"></i></button>
                         </span>
                     </div>
                 </div>

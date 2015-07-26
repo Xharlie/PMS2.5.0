@@ -11,7 +11,7 @@
                                    datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
                                    ng-required="true " close-text="Close" datepicker-append-to-body="true"/>
                             <span class="input-group-btn">
-                                <button type="button" class="btn btn-default btn-lg" ng-click="open1($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                <button type="button" class="btn btn-default btn-lg" ng-click="open1($event)"><i class="icon-calendar-outline"></i></button>
                             </span>
                         </div>
                     </div>
@@ -26,12 +26,12 @@
                                    ng-required="true" close-text="Close"
                                    datepicker-append-to-body="true"/>
                             <span class="input-group-btn">
-                                <button type="button" class="btn btn-default btn-lg" ng-click="open2($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                <button type="button" class="btn btn-default btn-lg" ng-click="open2($event)"><i class="icon-calendar-outline"></i></button>
                             </span>
                         </div>
                     </div>
                     <div class="col-sm-2">
-                        <button class="pull-right btn btn-primary btn-lg" ng-click="refreshResult()"><span class="glyphicon glyphicon-refresh"></span></button>
+                        <button class="pull-right btn btn-primary btn-lg" ng-click="refreshResult()"><span class="icon-arrows-cw"></span></button>
                     </div>
                 </div>
                 <div class="col-sm-6">

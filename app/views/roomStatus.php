@@ -3,7 +3,7 @@
     <div class="col-sm-3">
         <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="panel-title"><span class="glyphicon glyphicon-home"></span> 房型余量</h4>
+                    <h4 class="panel-title"><span class="icon-home-outline"></span> 房型余量</h4>
                 </div>
                 <table class="table">
                     <tr ng-repeat="(rmTp,status) in BookCommonInfo.roomSummary" ng-click="rmTpToggle(rmTp)" style="cursor: pointer;">
@@ -30,7 +30,7 @@
             </div>
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="panel-title"><span class="glyphicon glyphicon-time"></span> 近期预达</h4>
+                    <h4 class="panel-title"><span class="icon-user-add-outline"></span> 近期预达</h4>
                 </div>
                 <table class="table">
                     <tr ng-repeat="resv in resvComInfo | orderBy:'RESV_LATEST_TIME':false">
@@ -42,7 +42,7 @@
                 </table>
             </div>
             <div class="panel panel-default">
-                <div class="panel-heading"><h4 class="panel-title"><span class="glyphicon glyphicon-star"></span> 店长通知</h4></div>
+                <div class="panel-heading"><h4 class="panel-title"><span class="icon-news"></span> 店长通知</h4></div>
                 <div class="panel-body">
                     <p class="padded-block">今晨接到消息，本周公安将对石家庄市酒店进行抽检。请各位同事务必注意，确保入住客人一人一证。</p>
                 </div>
@@ -92,7 +92,7 @@
         </div>
         <div class="panel-body padded-block">
             <div id="roomStatusFrame" class="roomStatus" ng-repeat="(FLOOR_ID,roomsOnFloor) in BookCommonInfo.roomFloor | orderObjectByNum:'FLOOR_ID' " style="margin-bottom: 10px;">
-                <label style="font-weight: normal">
+                <label style="font-weight: normal; display:none;">
                     <span hidden>{{roomsOnFloor.FLOOR}}</span>
                 </label>
                 <div class="roomStatusFull">
@@ -106,8 +106,8 @@
                          not-show ="connectFlag" pop-menu  menu-type="roomST.menuType"
                          owner="roomST" icon-n-action="roomST.menuIconAction"
                          update-all-room="updateInfo.updateAllRoom" ng-transclude>
-                            <div >
-                                <span ng-repeat="alert in roomST.alertInfo" ng-class="alert.iconClass">
+                            <div class="roomAlert" ng-repeat="alert in roomST.alertInfo">
+                                <span ng-class="alert.iconClass">
                                 </span>
                             </div>
                             <ul>

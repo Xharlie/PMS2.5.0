@@ -1,7 +1,7 @@
 <div id="wholeModal">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="glyphicon glyphicon-wrench"></span>
+            <span class="icon-wrench-outline"></span>
             <label>账目修改</label>
             <span class="pull-right close" ng-click="cancel()">&#x2715</span>
         </h4>

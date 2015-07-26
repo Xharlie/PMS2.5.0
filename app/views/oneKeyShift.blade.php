@@ -28,7 +28,7 @@
     <div class="col-sm-6">
         <div class="leftPart card card-default">
             <div class="card-actions">
-                <h4><span class="glyphicon glyphicon-shopping-cart" style="padding: 0px 15px 0px 15px;"/>商品库存核对</h4>
+                <h4><span class="icon-basket" style="padding: 0px 15px 0px 15px;"/>商品库存核对</h4>
             </div>
             <div class="card-body">
                 <table class="table table-striped table-acct">
@@ -52,7 +52,7 @@
         <div class="rightPart oneKeyCrossTab">
             <div class="card card-default">
                 <div class="card-actions">
-                    <h4><span class="glyphicon glyphicon-refresh" style="padding: 0px 15px 0px 15px;"/>班次交换信息</h4>
+                    <h4><span class="icon-arrows-cw" style="padding: 0px 15px 0px 15px;"/>班次交换信息</h4>
                 </div>
                 <div class="card-body">
                     <ul class="col-sm-6" style="margin: 40px 25% 60px 25%;">

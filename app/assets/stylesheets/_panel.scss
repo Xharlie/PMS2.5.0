@@ -4,6 +4,7 @@
 
 .panel{
 	border-radius: 2px;
+	box-shadow: none;
 
 	.table{
 		margin-bottom: 0;
@@ -14,6 +15,16 @@
 				padding: 0;
 			}
 			padding: 15px 16px;
+
+		}
+
+		tr{
+			&:hover{
+				cursor: pointer;
+				transition: 0.1s;
+				-webkit-transition: 0.1s;
+				background-color: #d9edf7 !important;
+			}
 		}
 	}
 

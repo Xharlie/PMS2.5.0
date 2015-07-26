@@ -1,7 +1,7 @@
 <div id="wholeModal">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="glyphicon glyphicon-send"></span>
+            <span class="icon-star"></span>
             <label>{{(initialString == 'singleWalkIn')?'新入住':'入住修改'}}</label>
             <span class="pull-right close" ng-click="cancel()">&#x2715</span>
         </h4>

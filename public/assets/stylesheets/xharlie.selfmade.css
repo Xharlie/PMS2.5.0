@@ -18,13 +18,7 @@
     /*color: #555;*/
 /*}*/
 
-.removeArrow > table > tbody > .text-center {
-    display: none;
-}
 
-.reserveClick  > td{
-    background-color: #d9edf7 !important;
-}
 
 .greenOut > td, .greenOut {
     opacity: 0.1;

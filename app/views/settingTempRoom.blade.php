@@ -18,7 +18,7 @@
                         <select class="form-control RoomTypeSelection"
                                 ng-model="plan.RM_TP"
                                 ng-options="value.RM_TP as value.RM_TP for value in rmTps"
-                                ng-focus="focus(plan)"">
+                                ng-focus="focus(plan)">
                         </select>
                     </td>
                     <td><input ng-model="plan.PLAN_COV_MIN" ng-focus="focus(plan)"/ ></td>

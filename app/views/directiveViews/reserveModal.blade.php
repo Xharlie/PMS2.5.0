@@ -1,7 +1,7 @@
 <div id="wholeModal" >
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="glyphicon glyphicon-send"></span>
+            <span class="icon-user-add-outline"></span>
             <label>新预订</label>
             <span class="pull-right close" ng-click="cancel()">&#x2715</span>
         </h4>
@@ -19,7 +19,7 @@
                                ng-style="BookCommonInfo.CheckINStyle"
                                datepicker-append-to-body="true" />
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-default btn-lg" ng-click="open1($event)"><i class="glyphicon glyphicon-calendar" style="font-size:17px;"></i></button>
+                            <button type="button" class="btn btn-default btn-lg" ng-click="open1($event)"><i class="icon-calendar-outline" style="font-size:17px;"></i></button>
                         </span>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                                ng-required="true" close-text="Close" datepicker-append-to-body="true"
                                ng-style="BookCommonInfo.CheckOTStyle"/>
                                             <span class="input-group-btn">
-                                                <button type="button" class="btn btn-default btn-lg" ng-click="open2($event)"><i class="glyphicon glyphicon-calendar" style="font-size:17px;"></i></button>
+                                                <button type="button" class="btn btn-default btn-lg" ng-click="open2($event)"><i class="icon-calendar-outline" style="font-size:17px;"></i></button>
                                             </span>
                     </div>
                 </div>

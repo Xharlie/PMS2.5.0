@@ -28,6 +28,14 @@
 .pop-panel{
 	background-color: $pop-panel-bkg;
 	width: $pop-panel-width;
+
+	div{
+		padding: 16px 20px;
+
+		td{
+			padding: 0 8px;
+		}
+	}
 }
 
 .pop-group{

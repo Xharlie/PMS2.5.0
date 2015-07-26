@@ -13,8 +13,10 @@
 	border-radius: $room-border-radius;
 	border-style: none;
 	border-width: 1px;
-	overflow: hidden;
+//	overflow: hidden;
 	font-weight: 300;
+	transition: 0.15s;
+	-webkit-transition: 0.15s;
 
 	box-shadow: $room-shadow;
 
@@ -45,8 +47,6 @@
 
 }
 
-// Hotel Status
-// --------------------------------------------------
 
 
 // Room Status
@@ -57,7 +57,9 @@
 	position: relative;
 	min-width: 800px;
 	margin: 0 auto;
+	padding-top: 0-$room-alert-position;
 }
+
 
 // Empty rooms
 // --------------------------------------------------
@@ -89,4 +91,18 @@
 
 .room-dirty{
 	@include room-style($room-dirty-color,$room-dirty-bg,$room-dirty-border);
+}
+
+// Connected Rooms
+// --------------------------------------------------
+.connRoomBlock {
+  	opacity: 0.5;
+}
+
+.connRoomBlockAdd {
+    opacity: 0.3;
+}
+
+.roomBlockSelected{
+    opacity: 0.3;
 }

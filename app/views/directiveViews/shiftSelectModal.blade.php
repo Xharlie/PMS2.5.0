@@ -1,7 +1,7 @@
 <div id="wholeModal" >
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="glyphicon glyphicon-send"></span>
+            <span class="icon-coffee"></span>
             <label>选取班次</label>
         </h4>
     </div>

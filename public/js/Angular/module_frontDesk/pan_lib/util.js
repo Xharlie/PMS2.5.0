@@ -72,15 +72,15 @@ var util = {
     VarMaxSize : 15,
     VarItemPerPage : 10,
     //--------------------   房态页面  ---------------------------
-    avaIconAction : [{icon:"glyphicon glyphicon-send",action:"入住办理"},
-        {icon:"glyphicon glyphicon-wrench",action:"房间维修"}]
+    avaIconAction : [{icon:"icon-user-outline",action:"入住办理"},
+        {icon:"icon-wrench-outline",action:"房间维修"}]
     ,       //空房菜单
-    dirtIconAction : [{icon:"glyphicon glyphicon-send",action:"入住办理"},
-        {icon:"glyphicon glyphicon-thumbs-up",action:"清洁完毕"},
-        {icon:"glyphicon glyphicon-wrench",action:"房间维修"}]
+    dirtIconAction : [{icon:"icon-user-outline",action:"入住办理"},
+        {icon:"icon-ok-outline",action:"清洁完毕"},
+        {icon:"icon-wrench-outline",action:"房间维修"}]
     ,     //脏房菜单
-    mendIconAction : [{icon:"glyphicon glyphicon-send",action:"入住办理"},
-        {icon:"glyphicon glyphicon-cog",action:"维修完毕"}]
+    mendIconAction : [{icon:"icon-user-outline",action:"入住办理"},
+        {icon:"icon-thumbs-up",action:"维修完毕"}]
     //,     //维修房菜单
     //infoIconAction :  [{icon:"glyphicon glyphicon-barcode",action:"制门卡"},
     //    {icon:"glyphicon glyphicon-send",action:"客人修改"},
@@ -89,29 +89,29 @@ var util = {
     //    {icon:"glyphicon glyphicon-list-alt  ",action:"房价调整"},
     //    {icon:"glyphicon glyphicon-arrow-left",action:"退房办理"}]
     ,
-    infoIconAction :  [{icon:"glyphicon glyphicon-barcode",action:"制门卡"},
-        {icon:"glyphicon glyphicon-pencil",action:"信息修改"},
-        {icon:"glyphicon glyphicon-shopping-cart",action:"商品购买"},
-        {icon:"glyphicon glyphicon-list-alt",action:"账目查看"},
-        {icon:"glyphicon glyphicon-piggy-bank",action:"入押金"},
-        {icon:"glyphicon glyphicon-arrow-left",action:"退房办理"}]
+    infoIconAction :  [{icon:"icon-credit-card",action:"制门卡"},
+        {icon:"icon-pen",action:"信息修改"},
+        {icon:"icon-basket",action:"商品购买"},
+        {icon:"icon-chart-bar-outline",action:"账目查看"},
+        {icon:"icon-plus-outline",action:"入押金"},
+        {icon:"icon-eject",action:"退房办理"}]
     //--------------------   预定页面  ---------------------------
     ,
-    resvIconAction : [{icon:"glyphicon glyphicon-send",action:"预定入住"},
-        {icon:"glyphicon glyphicon-pencil",action:"预定修改"},
-        {icon:"glyphicon glyphicon-pencil",action:"取消预定"}]
+    resvIconAction : [{icon:"icon-user-outline",action:"预定入住"},
+        {icon:"icon-pen",action:"预定修改"},
+        {icon:"icon-cancel-outline",action:"取消预定"}]
     ,
-    iconAndActionDisabled : [{icon:"glyphicon glyphicon-pencil",action:"预定修改"}]
+    iconAndActionDisabled : [{icon:"icon-pen",action:"预定修改"}]
 
     //--------------------   会员页面  ---------------------------
     ,
-    memberIconAction : [{icon:"glyphicon glyphicon-tree-deciduous",action:"积分调整"},
-        {icon:"glyphicon glyphicon-open",action:"等级调整"},
-        {icon:"glyphicon glyphicon-pencil",action:"修改资料"}]
+    memberIconAction : [{icon:"icon-plus-outline",action:"积分调整"},
+        {icon:"icon-star",action:"等级调整"},
+        {icon:"icon-pen",action:"修改资料"}]
 
     // --------------------   商品页面  ---------------------------
     ,
-    merchIconAction : [{icon:"glyphicon glyphicon-shopping-cart",action:"商品购买"}]
+    merchIconAction : [{icon:"icon-basket",action:"商品购买"}]
     //
     // --------------------   商品历史  ---------------------------
     //,

@@ -6,8 +6,9 @@
 		<title>Pantheo BI</title>
 
             <link href="assets/stylesheets/application.css" rel="stylesheet">
-            <link href="assets/stylesheets/need2Add.css" rel="stylesheet">
             <link href="assets/stylesheets/loaders.css" rel="stylesheet">
+            <link href="assets/fonts/fontello/css/fontello.css" rel="stylesheet">
+
         <!-- Javascript -->
         <script src="assets/javascripts/application.js"></script>
 

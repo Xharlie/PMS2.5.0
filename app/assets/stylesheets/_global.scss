@@ -3,7 +3,7 @@
 //Overrides some of the bootstrap standards
 
 //List
-//
+//-----------------------------------------------
 
 ul{
 	list-style: none;
@@ -20,21 +20,21 @@ ul{
 }
 
 //Scaffolding
-//
+//-----------------------------------------------
 
 .main{
 	padding-top: 60px;
 }
 
 //Background Color
-//
+//-----------------------------------------------
 
 body, .main{
 	background-color: #efefef;
 }
 
 //Splitter
-//
+//-----------------------------------------------
 
 .splitter{
 	width: 100%;
@@ -44,4 +44,23 @@ body, .main{
 }
 
 //Table
-//
+//-----------------------------------------------
+//Change row color when hover
+.reserveClick  > td{
+    background-color: #d9edf7 !important;
+} 
+//Change row color when condition achieved
+.timeOutResv {
+}
+
+
+
+
+//Enable overflow
+//-----------------------------------------------
+//In case when overflow needs to be removed
+
+.enableOverFlow {
+    overflow: visible !important;
+}
+

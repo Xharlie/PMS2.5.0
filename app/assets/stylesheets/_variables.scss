@@ -7,18 +7,18 @@
 $content-outer-bg:					  none;
 $content-corner-radius:			  	  0px;
 $content-shadow:					  -1px 1px 3px rgba(173,173,173,0.2);
-$content-color:						  #6a6a6a;
+$content-color:						  #666;
 
 // Border
 
 $content-border-style:				  solid;
 $content-border-width:				  1px;
-$content-border-color:				  rgba(226,226,226,1);
+$content-border-color:				  #ddd;
 $content-border:					  $content-border-width $content-border-style $content-border-color;
-$content-border-radius:				  2px;
+$content-border-radius:				  3px;
 
 $splitter-height:					  1px;
-$splitter-bkg:						  #E2E2E2;
+$splitter-bkg:						  #ddd;
 $splitter-margin:					  16px 0;
 
 // Padding
@@ -30,8 +30,8 @@ $content-inner-padding:				  $content-padding-vertical*0.5 $content-padding-hori
 
 // Tables
 
-$table-border:						  $content-padding-horizontal solid #666;
-$table-cell-border:					  1px solid	#666;
+$table-border:						  $content-padding-horizontal solid #ddd;
+$table-cell-border:					  1px solid	#ddd;
 
 
 // Text

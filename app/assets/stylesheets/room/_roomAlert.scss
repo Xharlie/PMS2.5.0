@@ -1,0 +1,16 @@
+// Room Alert
+// -------------------------------------------------
+.roomAlert{
+	width: $room-alert-size;
+	height: $room-alert-size;
+	border-radius: $room-alert-size/2;
+	background-color: red;
+	float: right;
+	position: relative;
+	top: $room-alert-position;
+	right: $room-alert-position;
+	margin-left: 1px;
+	font-size: 11px;
+	text-align: center;
+
+}

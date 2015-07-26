@@ -9,7 +9,7 @@
     <div ng-show="ready">
         <div class="panel-heading">
             <h4 class="panel-title">
-                <span class="glyphicon glyphicon-send"></span>
+                <span class="icon-user-outline"></span>
                 <label>{{(initialString == 'singleWalkIn')?'新入住':'入住修改'}}</label>
                 <span class="pull-right close" ng-click="cancel()">&#x2715</span>
             </h4>
@@ -27,7 +27,7 @@
                                    datepicker-append-to-body="true"
                                    />
                             <span class="input-group-btn">
-                                <button type="button" class="btn btn-default btn-lg" ng-click="open2($event)"><i class="glyphicon glyphicon-calendar" style="font-size:17px;"></i></button>
+                                <button type="button" class="btn btn-default btn-lg" ng-click="open2($event)"><i class="icon-calendar-outline" style="font-size:17px;"></i></button>
                             </span>
                         </div>
                     </div>

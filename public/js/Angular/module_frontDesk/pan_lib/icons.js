@@ -2,9 +2,9 @@
  * Created by charlie on 7/24/15.
  */
 var icons ={
-    depositAlertIcon : "glyphicon glyphicon-send"
+    depositAlertIcon : "glyphicon glyphicon-usd"
     ,
-    leaveAlertIcon : "glyphicon glyphicon-pencil"
+    leaveAlertIcon : "icon-eject"
     ,
-    wakeUpAlertIcon : "glyphicon glyphicon-barcode"
+    wakeUpAlertIcon : "icon-clock"
 }

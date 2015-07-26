@@ -1,4 +1,5 @@
 
+
 <div id="wholeModal" >
     <div ng-hide="ready" class="loader loader-main">
         <div class="loader-inner ball-scale-multiple">
@@ -10,8 +11,8 @@
     <div ng-show="ready">
         <div class="panel-heading" id="go">
             <h4 class="panel-title">
-                <span ng-if="initialString =='checkOut'" class="glyphicon glyphicon-arrow-left"></span>
-                <span ng-if="initialString =='checkLedger'" class="glyphicon glyphicon-arrow-usd"></span>
+                <span ng-if="initialString =='checkOut'" class="icon-eject-outline"></span>
+                <span ng-if="initialString =='checkLedger'" class="icon-sort-numeric-outline"></span>
                 <label ng-if="initialString =='checkOut'" >退房办理</label>
                 <label ng-if="initialString =='checkLedger'" >房间账目</label>
                 <span class="pull-right close" ng-click="cancel()">&#x2715</span>
@@ -68,7 +69,7 @@
                         <td>超时{{bill.exceedTime}}分钟</td>
                         <td><input class="form-control input-lg"
                                    ng-model="bill.RM_PAY_AMNT" /></td>
-                        <td><span class="glyphicon glyphicon-remove-circle btn gly-spin" ng-click="deleteItem(bill,acct.exceedPay,$index)"/></td>
+                        <td><span class="icon-cancel btn gly-spin" ng-click="deleteItem(bill,acct.exceedPay,$index)"/></td>
                     </tr>
                     <tr ng-repeat = "bill in acct.AcctPay | filter: {show : 'true'} | orderBy: BILL_TSTMP  ">
                         <td><input ng-if="BookCommonInfo.transferable" class="input-lg" type="checkbox" ng-model="bill.transfer" ng-checked="bill.transfer" ng-change="updateSumation()"/></td>
@@ -113,7 +114,7 @@
                         <td>{{item.RM_ID}}</td>
                         <td>{{item.showUp}}</td>
                         <td>{{twoDigit(item.PAY_AMNT)}}元</td>
-                        <td><a ng-click="deleteItem(item,addedItems,$index)"><span class="glyphicon glyphicon-trash gly-spin text-info"></span></a></td>
+                        <td><a ng-click="deleteItem(item,addedItems,$index)"><span class="icon-cancel gly-spin text-info"></span></a></td>
                     </tr>
                     <tr>
                         <td></td>

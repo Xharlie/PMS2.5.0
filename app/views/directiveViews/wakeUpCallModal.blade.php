@@ -1,7 +1,7 @@
 <div id="wholeModal">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="glyphicon glyphicon-user"></span>
+            <span class="icon-clock"></span>
             <label>早叫设置</label>
             <span class="pull-right close" ng-click="cancel()">&#x2715</span>
         </h4>

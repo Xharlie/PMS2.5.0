@@ -72,7 +72,7 @@
     <div class="col-md-4">
         <div class="purchaseBoard panel panel-default">
             <div class="panel-heading">
-                <h4 class="panel-title"><span class="glyphicon glyphicon-shopping-cart"></span>
+                <h4 class="panel-title"><span class="icon-basket"></span>
                     购物篮
                 </h4>
             </div>
@@ -85,7 +85,7 @@
                                ng-model="buy.AMOUNT"
                                ng-init="buy.AMOUNT=1;">
                     </td>
-                    <td><a ng-click="removeBuy($index);"><span class="glyphicon glyphicon-trash gly-spin text-info"></span></a></td>
+                    <td><a ng-click="removeBuy($index);"><span class="icon-cancel gly-spin text-info"></span></a></td>
                 </tr>
             </table>
             <div class="panel-body">

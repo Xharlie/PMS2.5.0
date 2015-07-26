@@ -5,6 +5,10 @@
 .btn-lg, .btn, .btn-sm, .btn-xs{
 	border-radius: $content-border-radius;
 	font-size: $content-font-size;
+
+	i{
+		line-height: 1.2;
+	}
 }
 
 .btn-disabled{
@@ -21,4 +25,9 @@
 	text-decoration: underline;
 	padding-right: 5px;
 	padding-left: 5px;
+}
+
+.btn{
+	transition: 0.1s;
+	-webkit-transition: 0.1s;
 }
