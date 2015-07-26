@@ -1,0 +1,28 @@
+//InfoCenter Style 
+//---------------------
+//
+
+.infoCenter{
+	height: $infoCenter-height;
+	.panel{
+		min-height: 800px;
+	}
+
+	.infoTitle{
+		color: white;
+		margin-bottom: 5px;
+		float:left;
+
+		b{
+			background: red;
+			border-radius: 25px;
+  			padding: 2px 5px;
+		}
+	}
+
+	.infoTime{
+		color: #bbb;
+		float:right;
+	}
+}
+

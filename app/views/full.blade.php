@@ -19,17 +19,15 @@
         <script>
             var uni ={userInfo : JSON.parse('<?php echo json_encode($userInfo); ?>')};
         </script>
-		<div class="sideNavArea" ng-controller="sideBarController" >
+		<div class="sideNavContainer" ng-controller="sideBarController" >
                 @include('sideNav')
         </div>
 		<div class="main">
-            <div class="infoCenterArea" >
+            <div class="infoCenterContainer">
 				@include('infoCenter')
 			</div>
-            <div class="content">
-    			<div class="contentArea container-fluid" ng-view ng-style="contentNgStyle = {'min-height': '500px'}">
-    			</div>
-            </div>
+			<div class="contentContainer container-fluid" ng-view ng-style="contentNgStyle = {'min-height': '500px'}">
+			</div>
 		</div>
 
         <!-- JS third party libraries

@@ -1,8 +1,14 @@
 // Variables shared
 // --------------------------------------------------
 
-//** Scaffolding
-//Provides variables used in _scaffolding.scss
+//** General Structures
+
+// Scaffolding
+
+$content-width:						  82%;
+$infoCenter-width:					  100%-$content-width;
+$infoCenter-height:					  800px;
+$navbar-height:					  	  50px;
 
 $content-outer-bg:					  none;
 $content-corner-radius:			  	  0px;

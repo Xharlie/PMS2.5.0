@@ -1,55 +1,54 @@
 <!doctype html >
-<div class="hotelStatus" >
-    <div class="col-sm-3">
-        <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title"><span class="icon-home-outline"></span> 房型余量</h4>
-                </div>
-                <table class="table">
-                    <tr ng-repeat="(rmTp,status) in BookCommonInfo.roomSummary" ng-click="rmTpToggle(rmTp)" style="cursor: pointer;">
-                        <td>
-                            <div>
-                                <div>
-                                    <div class="pull-left">{{rmTp}}</div>
-                                    <div class="pull-right">
-                                        <span style="font-size:18px;">{{status['空房']}}</span>
-                                        <span  style="font-size:12px;vertical-align:text-bottom;"> 间</span>
-                                    </div>
-                                </div>
-                                <div class="progress col-md-12">
-                                    <div class="progress-bar progress-bar-striped active" role="progressbar"
-                                         aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
-                                         style="width: {{status['空房']*100/status.total}}%;">
-                                        <span class="sr-only">60% Complete</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title"><span class="icon-user-add-outline"></span> 近期预达</h4>
-                </div>
-                <table class="table">
-                    <tr ng-repeat="resv in resvComInfo | orderBy:'RESV_LATEST_TIME':false">
-                        <td>
-                            <div class="pull-left" ng-bind="resv.RESVER_NAME"></div>
-                            <div class="pull-right" >今天 {{resv.RESV_LATEST_TIME}}</div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading"><h4 class="panel-title"><span class="icon-news"></span> 店长通知</h4></div>
-                <div class="panel-body">
-                    <p class="padded-block">今晨接到消息，本周公安将对石家庄市酒店进行抽检。请各位同事务必注意，确保入住客人一人一证。</p>
-                </div>
-            </div>  
+
+<div class="col-sm-3">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title"><span class="icon-home-outline"></span> 房型余量</h4>
         </div>
+        <table class="table">
+            <tr ng-repeat="(rmTp,status) in BookCommonInfo.roomSummary" ng-click="rmTpToggle(rmTp)" style="cursor: pointer;">
+                <td>
+                    <div>
+                        <div>
+                            <div class="pull-left">{{rmTp}}</div>
+                            <div class="pull-right">
+                                <span style="font-size:18px;">{{status['空房']}}</span>
+                                <span  style="font-size:12px;vertical-align:text-bottom;"> 间</span>
+                            </div>
+                        </div>
+                        <div class="progress col-md-12">
+                            <div class="progress-bar progress-bar-striped active" role="progressbar"
+                                 aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                                 style="width: {{status['空房']*100/status.total}}%;">
+                                <span class="sr-only">60% Complete</span>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title"><span class="icon-user-add-outline"></span> 近期预达</h4>
+        </div>
+        <table class="table">
+            <tr ng-repeat="resv in resvComInfo | orderBy:'RESV_LATEST_TIME':false">
+                <td>
+                    <div class="pull-left" ng-bind="resv.RESVER_NAME"></div>
+                    <div class="pull-right" >今天 {{resv.RESV_LATEST_TIME}}</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading"><h4 class="panel-title"><span class="icon-news"></span> 店长通知</h4></div>
+        <div class="panel-body">
+            <p class="padded-block">今晨接到消息，本周公安将对石家庄市酒店进行抽检。请各位同事务必注意，确保入住客人一人一证。</p>
+        </div>
+    </div>  
 </div>
-<div class="col-sm-9" ng-show="ready">
+<div class="roomContainer col-sm-9" ng-show="ready">
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-control" ng-switch on="connectClick" >

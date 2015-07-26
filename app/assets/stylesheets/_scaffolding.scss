@@ -1,0 +1,32 @@
+//Scaffolding Style 
+//---------------------
+//Structure and positioning of the whole page
+
+.main{
+	padding-top: $navbar-height+10;
+
+	.infoCenterContainer{
+		width: $infoCenter-width;
+		float: right;
+		position: fixed;
+		left: 100% - $infoCenter-width;
+		overflow-y: scroll;
+	}
+
+	.contentContainer{
+		width: $content-width;
+		margin: 0;
+
+		.roomContainer{
+			.panel{
+				margin-bottom: 0;
+
+				tr{
+					&:hover{
+						background-color: #fafafa;
+					}
+				}
+			}
+		}
+	}
+}
