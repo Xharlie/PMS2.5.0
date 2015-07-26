@@ -3,7 +3,17 @@
  */
 
 app.controller('checkOutModalController', function($scope, $http, focusInSideFactory,newCheckOutFactory, $modalInstance,merchandiseFactory,
-                                                   $timeout, RM_TRAN_IDFortheRoom,connRM_TRAN_IDs,ori_Mastr_RM_TRAN_ID,initialString){
+                                               paymentFactory,$timeout, RM_TRAN_IDFortheRoom,connRM_TRAN_IDs,ori_Mastr_RM_TRAN_ID,initialString){
+    /********************************************     validation     ***************************************************/
+
+    $scope.hasError = function(btnPass){
+        if(eval("$scope."+btnPass)==null) eval("$scope."+btnPass+"=0");
+        eval("$scope."+btnPass+"++");
+    }
+    $scope.noError = function(btnPass){
+        eval("$scope."+btnPass+"--");
+    }
+    $scope.payError=0;
     /********************************************     utility     ***************************************************/
     var today = new Date();
     var tomorrow = new Date(today.getTime()+86400000);
@@ -58,15 +68,6 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
         return Math.abs(limitee);
     }
 
-    var createNewPayByMethod = function(){
-        var payByMethod =  {payAmount:"",payMethod:""};
-        return payByMethod;
-    }
-
-    var createNewPayment = function(){
-        var Payment =  {paymentRequest:"", paymentType:"住房押金", payInDue:"",payByMethods:[createNewPayByMethod()]};
-        return Payment;
-    }
 
     var createNewAddedItem = function(category){
         var newAddedItem = {RM_TRAN_ID:RM_TRAN_IDFortheRoom, itemCategory:category, paymentRequest:"",RMRK:""
@@ -158,15 +159,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
             }
         }
     }
-
-    $scope.updatePayInDue = function(singleRoom){
-        var totalDue= parseFloat(singleRoom.payment.paymentRequest);
-        for (var i=0; i<singleRoom.payment.payByMethods.length; i++){
-            totalDue = totalDue - singleRoom.payment.payByMethods[i].payAmount;
-        }
-        singleRoom.payment.payInDue = util.Limit(parseFloat(totalDue));
-        singleRoom.payment.payInDue = (isNaN(singleRoom.payment.payInDue))? 0.00: singleRoom.payment.payInDue;
-    };
+        ;
 
     var testFail = function(){
         return false;
@@ -325,7 +318,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
 
     $scope.newItemID = 0;
     $scope.BookCommonInfo = {selectAll:false,Master:{mastr_RM_TRAN_ID:"",transferable:false,
-                             ori_Mastr_RM_TRAN_ID:ori_Mastr_RM_TRAN_ID, payment:createNewPayment()}};
+                             ori_Mastr_RM_TRAN_ID:ori_Mastr_RM_TRAN_ID, payment: paymentFactory.createNewPayment('住房押金'), check:true}};
     $scope.watcher = {member:true, selected:true, selectAll:true, addedItems:true,exceedPay:true};
     $scope.TRAN2RMmapping = {};
     $scope.addedItems=[];
@@ -336,6 +329,8 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
     $timeout(function(){
         focusInSideFactory.manual('wholeModal');
     },0)
+    $scope.BookRoomMaster = [$scope.BookCommonInfo.Master];
+    $scope.payMethodOptions=paymentFactory.checkInPayMethodOptions();
 
     /************** ********************************** Initialize by conditions ********************************** *************/
     $scope.initialString = initialString;
@@ -450,7 +445,6 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
 
     $scope.confirm = function(page){
         $scope.viewClick = page;
-
         // Master's paymentRequested has already bound to summation
         $scope.BookCommonInfo.Master.payment.payByMethods[0].payAmount =  $scope.BookCommonInfo.Master.payment.paymentRequest;
         $scope.BookCommonInfo.Master.payment.payInDue = 0;

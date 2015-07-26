@@ -162,6 +162,18 @@ app.factory('roomStatusFactory',function($http){
     };
 });
 
+app.factory('infoCenterFactory',function($http){
+    return{
+        getInfoCenterInfo: function(){
+            return $http({
+                method: 'GET',
+                heasders: {'content-Type':'application/json'},
+                url: 'getInfoCenterInfo'
+            });
+        }
+    }
+});
+
 app.factory('customerFactory',function($http){
     return{
         customerShow: function(){
@@ -211,7 +223,7 @@ app.factory('customerFactory',function($http){
 //            });
 //        }
     }
- });
+});
 
 app.factory('accountingFactory',function($http){
     return{
@@ -247,14 +259,14 @@ app.factory('accountingFactory',function($http){
             });
         }
         /*    obselete
-        getTargetAcct: function(InfoArray){
-            return $http({
-                method: 'GET',
-                heasders: {'content-Type':'application/json'},
-                url: 'getTargetAcct/'+InfoArray[0]+"/"+InfoArray[1]
-            });
-        }
-        */
+         getTargetAcct: function(InfoArray){
+         return $http({
+         method: 'GET',
+         heasders: {'content-Type':'application/json'},
+         url: 'getTargetAcct/'+InfoArray[0]+"/"+InfoArray[1]
+         });
+         }
+         */
     };
 });
 

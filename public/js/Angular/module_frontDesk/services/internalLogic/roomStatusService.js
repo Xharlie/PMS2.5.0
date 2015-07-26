@@ -82,11 +82,12 @@ app.factory('roomStatusInterFactory',function($http,roomStatusFactory){
             roomST.alertInfo.push(leaveAlert);
             infoCenterQueue.leaveAlert.push(leaveAlert);
         }
-        if( Number(new Date(roomST.WKC_DT+' '+roomST.WKC_TM)) - Number(new Date()) < 1800000 ){
+        if( roomST.WKC_TSTMP!=null &&
+            ( Number(new Date(roomST.WKC_TSTMP)) - Number(new Date()) < 1800000 ) ){
             var wakeUpAlert = {
                 RM_ID: roomST.RM_ID,
                 RM_TRAN_ID: roomST.RM_TRAN_ID,
-                MSG: roomST.RM_ID.toString() + '号房要求于'+roomST.WKC_TM + '早叫',
+                MSG: roomST.RM_ID.toString() + '号房要求于'+roomST.WKC_TSTMP + '早叫',
                 //TSTMP: roomST.WKC_DT+' '+roomST.WKC_TM
                 iconClass: icons.wakeUpAlertIcon
             }

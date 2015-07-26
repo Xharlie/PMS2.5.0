@@ -23,7 +23,7 @@
                 @include('sideNav')
         </div>
 		<div class="main">
-            <div class="infoCenterArea" hidden>
+            <div class="infoCenterArea" >
 				@include('infoCenter')
 			</div>
             <div class="content">
@@ -53,6 +53,7 @@
         <script src="js/Angular/module_frontDesk/module.js"></script>
 
         <script src="js/Angular/module_frontDesk/controllers/frontDeskController.js"></script>
+        <script src="js/Angular/module_frontDesk/controllers/infoCenterController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/menu/smallMenuController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/menu/largeMenuController.js"></script>
         <script src="js/Angular/module_frontDesk/controllers/menu/contentMenuController.js"></script>

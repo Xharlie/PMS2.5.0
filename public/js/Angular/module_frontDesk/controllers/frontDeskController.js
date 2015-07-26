@@ -185,15 +185,14 @@ app.controller('roomStatusController', function($scope, $http, roomStatusFactory
     };
 
 
-/******************* allRoomComparer to compare every single room ******************/
+    /******************* allRoomComparer to compare every single room ******************/
 
 
-/****************************     init      ****************************/
+    /****************************     init      ****************************/
     (function roomStatusInit(){
         roomStatusFactory.roomShow().success(function(data){
             $scope.BookCommonInfo = roomStatusInterFactory.roomStatusPackaging(data);
             $scope.ready = true;
-            show($scope.BookCommonInfo.roomFloor['12'].rooms[0].alertInfo)
         });
     })();
 
@@ -256,7 +255,7 @@ app.controller('roomStatusController', function($scope, $http, roomStatusFactory
                 }
             }).result.then(function(data) {
                     $scope.updateInfo.updateAllRoom();
-            });
+                });
 
         }
         for (var i =0; i< $scope.connectRooms.length; i++){
@@ -327,7 +326,7 @@ app.controller('roomStatusController', function($scope, $http, roomStatusFactory
                 }
             }).result.then(function(data) {
                     $scope.updateInfo.updateAllRoom();
-            });
+                });
 
         }else if($scope.connectFlag == false && roomST.RM_CONDITION == "有人"){
             var modalInstance = $modal.open({
@@ -343,8 +342,8 @@ app.controller('roomStatusController', function($scope, $http, roomStatusFactory
                     }
                 }
             }).result.then(function(data) {
-                $scope.updateInfo.updateAllRoom();
-            });
+                    $scope.updateInfo.updateAllRoom();
+                });
         }else if($scope.connectFlag == false && roomST.RM_CONDITION == "脏房"){
             cusModalFactory.Change2Cleaned(roomST.RM_ID).success(function(data){
                 roomST.RM_CONDITION = "空房";

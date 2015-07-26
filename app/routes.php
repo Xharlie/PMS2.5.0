@@ -79,10 +79,10 @@ Route::get('/newResv', function()
 });
 
 Route::post('/newCheckIn/',function(){
-            $data['pageType']='newCheckIn';
-            $rooms = Input::all();
-            return View::make('new', array( 'data'=> $data, 'roomsID'=> $rooms ));
-        }
+    $data['pageType']='newCheckIn';
+    $rooms = Input::all();
+    return View::make('new', array( 'data'=> $data, 'roomsID'=> $rooms ));
+}
 );
 
 
@@ -145,10 +145,10 @@ Route::post('/editMemberSubmit', 'CustomerController@editMemberSubmit');
 
 
 Route::filter('checkInFilter', function($RM_ID,$RM_TP){
-        if (is_null($RM_ID)){
-            return "Room Id not been past.....";
-        }
+    if (is_null($RM_ID)){
+        return "Room Id not been past.....";
     }
+}
 );
 
 // get clicked room's  info in single check in;
@@ -162,6 +162,8 @@ Route::post('/putShiftChosen', 'UserController@putShiftChosen');
 
 // get  all rooms info with availability;
 Route::post('/getRMInfoWithAvail', 'ReservationController@getRMInfoWithAvail');
+// get  get InfoCenter Info;
+Route::get('/getInfoCenterInfo', 'InfoCenterController@getInfoCenterInfo');
 
 
 

@@ -9,26 +9,22 @@
     <div class="panel-body">
         <div ng-show ="viewClick=='Info'">
             <div class="row">
-                <div class="form-group col-sm-4">
-                    <label xlabel ng-transclude checker="isDate" checkee="BookCommonInfo.CHECK_OT_DT" btn-pass="infoError" >离店日期</label>
-                    <div class="input-group datePick" ng-controller="Datepicker" >
-                        <input type="text" class="form-control input-lg" show-weeks="false" datepicker-popup="yyyy-MM-dd"
-                               ng-model="BookCommonInfo.CHECK_OT_DT" is-open="opened2" min-date="minDate" max-date="'2020-06-22'"
-                               datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
-                               ng-required="true" close-text="Close"
-                               ng-style="BookCommonInfo.CheckOTStyle"
-                               datepicker-append-to-body="true" />
-                        <span class="input-group-btn">
-                            <button type="button" class="btn btn-default btn-lg" ng-click="open2($event)"><i class="icon-calendar-outline"></i></button>
-                        </span>
-                    </div>
+                <div class=" form-group col-sm-4 ">
+                    <label>卡类型</label>
+                    <select class="form-control input-lg" ng-model="BookCommonInfo.MEM_TP" ng-options="MemTP.MEM_TP as MemTP.MEM_TP for MemTP in MemberTPs"
+                            ng-disabled="initialstring!='levelAdjustment' && initialstring!='addMember'" />
                 </div>
-                <div class="form-group col-sm-4">
-                    <label xlabel ng-transclude checker="isDate" checkee="BookCommonInfo.leaveTime" btn-pass="infoError" >离店时间</label>
-                    <div ng-controller="TimePickerDemoCtrl" class="removeArrow">
-                        <timepicker ng-model="BookCommonInfo.leaveTime" show-meridian="true"
-                                    meridians="chineseM" mousewheel="false"></timepicker>
-                    </div>
+                <div class=" form-group col-sm-4" hidden>
+                    <label>会员卡号</label>
+                    <input class="form-control input-lg" ng-model="BookCommonInfo.MEM_ID" disabled/>
+                </div>
+                <div class="form-group  col-sm-4 ">
+                    <label xlabel ng-transclude checker="isNotEmpty|isNumber|isLargerEqualThan0" checkee="BookCommonInfo.POINTS" btn-pass="infoError">
+                        <spam ng-if="initialstring=='addMember'">初始积分</spam>
+                        <spam ng-if="initialstring!='addMember'">现有积分</spam>
+                    </label>
+                    <input class="form-control input-lg" ng-model="BookCommonInfo.POINTS"
+                           ng-disabled="initialstring!='pointsAjustment' && initialstring!='addMember'"/>
                 </div>
             </div>
             <div class="row" >

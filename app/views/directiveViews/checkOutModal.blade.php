@@ -171,48 +171,7 @@
         </div>
         <div class="panel-body">
             <div ng-show="viewClick=='Pay'">
-               <!--  <div class="col-sm-12 form-group" >
-                   <h4>退房账款:
-                        <p ng-repeat="singleRoom in BookRoom | filter: {selected:true}">
-                            {{singleRoom.RM_ID}}</p>
-                    </h4>
-                </div> -->
-                <div class="row">
-                    <div class="col-sm-6 form-group">
-                        <label>应收数目</label>
-                        <input class="form-control input-lg" ng-model="BookCommonInfo.Master.payment.paymentRequest"
-                               disabled/>
-                    </div>
-                    <div class="col-sm-6 form-group">
-                        <label>账目类型</label>
-                        <select class="form-control input-lg"  ng-model="BookCommonInfo.Master.payment.paymentType"
-                                ng-change="sourceChange()">
-                            <option value="住房押金">住房押金</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row" ng-repeat="singlePay in BookCommonInfo.Master.payment.payByMethods" ng-controller="chotSingleMasterPayCtrl" >
-                    <div class="col-sm-6 form-group">
-                        <label>实收数目</label>
-                        <input class="form-control input-lg" ng-model="singlePay.payAmount" />
-                    </div>
-                    <div class="col-sm-6 form-group">
-                        <label>支付方式</label>
-                        <select class="form-control input-lg"  ng-model="singlePay.payMethod" >
-                            <option value="现金">现金</option>
-                            <option value="银行卡">银行卡</option>
-                            <option value="信用卡">信用卡</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row">
-                    <a class="pull-right btn btn-link btn-lg" ng-click="addNewPayByMethod(BookCommonInfo.Master)">添加支付方式</a>
-                </div>
-                <div class="splitter"></div>
-                <div class="row">
-                    <label>未收数目</label>
-                    <label class="text-danger text-lg">{{BookCommonInfo.Master.payment.payInDue}}元</label>
-                </div>
+                <div  payment  book-room="BookRoomMaster" pay-method-options="payMethodOptions" pay-error="payError"></div>
                 <div class="row modal-control">
                     <button class="pull-right btn btn-primary btn-lg"
                             btn-loading="submitLoading"

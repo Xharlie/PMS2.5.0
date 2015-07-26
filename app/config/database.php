@@ -63,7 +63,7 @@ return array(
             'prefix'    => '',
         ),
  **/
-/****           for Ben   **/
+/****           for Ben  **/
     		'mysql' => array(
     			'driver'    => 'mysql',
     			'host'      => '182.92.189.254',
@@ -75,7 +75,7 @@ return array(
     			'prefix'    => '',
     		),
 
-        /****   for xharlie 
+        /****   for xharlie
     		'mysql' => array(
     			'driver'    => 'mysql',
     			'host'      => 'localhost',
@@ -86,7 +86,7 @@ return array(
     			'collation' => 'utf8_general_ci',
     			'prefix'    => '',
     		),
-***/
+         ***/
 
 		'pgsql' => array(
 			'driver'   => 'pgsql',
