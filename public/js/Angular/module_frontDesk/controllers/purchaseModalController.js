@@ -78,7 +78,7 @@ app.controller('purchaseModalController', function($scope, $http,$modalInstance,
         var RoomStoreTranArray = null;
         var ProductInTran = [];
         var StoreTransactionArray = {
-            "STR_TRAN_TSTAMP" : util.tstmpFormat(today),
+            "STR_TRAN_TSTMP" : util.tstmpFormat(today),
             "STR_PAY_METHOD" : pay.payByMethods[0].payMethod,
             "STR_PAY_AMNT" : pay.paymentRequest
         };
@@ -97,7 +97,7 @@ app.controller('purchaseModalController', function($scope, $http,$modalInstance,
                 "PROD_QUAN" :  owner[i]["AMOUNT"]
             });
         }
-
+        show($scope.BookCommonInfo.Master)
         merchandiseFactory.buySubmit(StoreTransactionArray,RoomStoreTranArray,ProductInTran).success(function(data){
             show("办理成功!");
             $scope.submitLoading = false;

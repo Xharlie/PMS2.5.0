@@ -72,6 +72,7 @@ class NewCheckOutController extends BaseController{
                     'RoomStoreTran.TKN_RM_TRAN_ID as TKN_RM_TRAN_ID','RoomStoreTran.FILLED as FILLED',
                     'StoreTransaction.STR_TRAN_TSTMP as STR_TRAN_TSTMP','StoreTransaction.STR_PAY_METHOD as STR_PAY_METHOD',
                     'StoreTransaction.STR_PAY_AMNT as STR_PAY_AMNT','StoreTransaction.ORGN_ACCT_ID as ORGN_ACCT_ID',
+                    'ProductInTran.PROD_QUAN as PROD_QUAN','ProductInfo.PROD_NM as PROD_NM',
                     'StoreTransaction.EMP_ID as EMP_ID','StoreTransaction.RMRK as RMRK',
                     'RoomTran.RM_ID')
                 ->get();
