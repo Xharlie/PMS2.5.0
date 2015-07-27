@@ -97,7 +97,6 @@ app.controller('purchaseModalController', function($scope, $http,$modalInstance,
                 "PROD_QUAN" :  owner[i]["AMOUNT"]
             });
         }
-        show($scope.BookCommonInfo.Master)
         merchandiseFactory.buySubmit(StoreTransactionArray,RoomStoreTranArray,ProductInTran).success(function(data){
             show("办理成功!");
             $scope.submitLoading = false;
