@@ -8,6 +8,7 @@
 
 class AccountingController extends BaseController{
 
+/********************************* to be edited *************************************/
     public function summerize(){
         // get last shift info, last end time is the start time
         $lastShiftId = DB::table('Shifts')->max("SHFT_ID");
@@ -107,11 +108,14 @@ class AccountingController extends BaseController{
         return $cardSum;
     }
 
+    /********************************* to be edited *************************************/
+
+
     public function accountingGetAll(){
         $startTime = Input::get('startTime');
         $endTime = date('Y-m-d',strtotime(Input::get('endTime'))+86400000);
         $DepoAcct =  DB::table('RoomDepositAcct')
-//            ->where("RoomDepositAcct.HTL_ID",S)
+            ->where("RoomDepositAcct.HTL_ID",Session::get('userInfo.HTL_ID'))
             ->whereRaw("RoomDepositAcct.DEPO_TSTMP BETWEEN '".$startTime."' AND '".$endTime."'")
 //            ->whereRaw("UNIX_TIMESTAMP(RoomDepositAcct.DEPO_TSTMP) BETWEEN ".$twoDaysAgo." AND ".$today)
             ->leftjoin('RoomTran','RoomTran.RM_TRAN_ID','=','RoomDepositAcct.RM_TRAN_ID')
@@ -148,6 +152,7 @@ class AccountingController extends BaseController{
 //            '' as 'CONSUME_PAY_AMNT',RoomDepositAcct.DEPO_AMNT as 'SUBMIT_PAY_AMNT',RoomDepositAcct.RMRK as RMRK,false as CON,true as PAY "));
 
         $PenalAcct =  DB::table('PenaltyAcct')
+            ->where("PenaltyAcct.HTL_ID",Session::get('userInfo.HTL_ID'))
             ->whereRaw("PenaltyAcct.BILL_TSTMP BETWEEN '".$startTime."' AND '".$endTime."'")
 //            ->whereRaw("UNIX_TIMESTAMP(PenaltyAcct.BILL_TSTMP) BETWEEN ".$twoDaysAgo." AND ".$today)
             ->leftjoin('RoomTran','RoomTran.RM_TRAN_ID','=','PenaltyAcct.TKN_RM_TRAN_ID')
@@ -164,6 +169,7 @@ class AccountingController extends BaseController{
             PenaltyAcct.BRK_EQPMT_RMRK as RMRK,true as CON,false as PAY "));
 
         $BillAcct =  DB::table('RoomAcct')
+            ->where("RoomAcct.HTL_ID",Session::get('userInfo.HTL_ID'))
             ->whereRaw("RoomAcct.BILL_TSTMP BETWEEN '".$startTime."' AND '".$endTime."'")
 //            ->whereRaw("UNIX_TIMESTAMP(RoomAcct.BILL_TSTMP) BETWEEN ".$twoDaysAgo." AND ".$today)
             ->leftjoin('RoomTran','RoomTran.RM_TRAN_ID','=','RoomAcct.TKN_RM_TRAN_ID')
@@ -180,6 +186,7 @@ class AccountingController extends BaseController{
                 ,true as CON,false as PAY" ));
 
         $StoreAcct =  DB::table('StoreTransaction')
+            ->where("StoreTransaction.HTL_ID",Session::get('userInfo.HTL_ID'))
             ->whereRaw("StoreTransaction.STR_TRAN_TSTMP BETWEEN '".$startTime."' AND '".$endTime."'")
 //            ->whereRaw("UNIX_TIMESTAMP(StoreTransaction.STR_TRAN_TSTMP) BETWEEN ".$twoDaysAgo." AND ".$today)
             ->leftjoin('RoomStoreTran','RoomStoreTran.STR_TRAN_ID','=','StoreTransaction.STR_TRAN_ID')
@@ -219,6 +226,7 @@ class AccountingController extends BaseController{
         $targetAcct="";
         if($DB == "RoomDepositAcct"){
             $targetAcct =  DB::table('RoomDepositAcct')
+                ->where("RoomDepositAcct.HTL_ID",Session::get('userInfo.HTL_ID'))
                 ->where("RoomDepositAcct.RM_DEPO_ID","$ACCT_ID")
                 ->leftjoin('RoomTran','RoomTran.RM_TRAN_ID','=','RoomDepositAcct.RM_TRAN_ID')
                 ->select(DB::raw("RoomDepositAcct.DEPO_TSTMP as TSTMP,
@@ -234,6 +242,7 @@ class AccountingController extends BaseController{
                 ->get();
         }elseif($DB == "PenaltyAcct"){
             $targetAcct =  DB::table('PenaltyAcct')
+                ->where("PenaltyAcct.HTL_ID",Session::get('userInfo.HTL_ID'))
                 ->where("PenaltyAcct.PEN_BILL_ID","$ACCT_ID")
                 ->leftjoin('RoomTran','RoomTran.RM_TRAN_ID','=','PenaltyAcct.RM_TRAN_ID')
                 ->select(DB::raw("PenaltyAcct.BILL_TSTMP as TSTMP,'损坏罚金' as CLASS,
@@ -244,6 +253,7 @@ class AccountingController extends BaseController{
                 ->get();
         }elseif($DB == "RoomAcct"){
             $targetAcct =  DB::table('RoomAcct')
+                ->where("RoomAcct.HTL_ID",Session::get('userInfo.HTL_ID'))
                 ->where("RoomAcct.RM_BILL_ID","$ACCT_ID")
                 ->leftjoin('RoomTran','RoomTran.RM_TRAN_ID','=','RoomAcct.RM_TRAN_ID')
                 ->select(DB::raw("RoomAcct.BILL_TSTMP as TSTMP,'夜核房费' as CLASS,
@@ -253,6 +263,7 @@ class AccountingController extends BaseController{
                 ->get();
         }elseif($DB == "StoreTransaction"){
             $targetAcct =  DB::table('StoreTransaction')
+                ->where("StoreTransaction.HTL_ID",Session::get('userInfo.HTL_ID'))
                 ->where("StoreTransaction.STR_TRAN_ID","$ACCT_ID")
                 ->leftjoin('RoomStoreTran','RoomStoreTran.STR_TRAN_ID','=','StoreTransaction.STR_TRAN_ID')
                 ->select(DB::raw("StoreTransaction.STR_TRAN_TSTMP as TSTMP,'商品' as CLASS,
@@ -281,7 +292,8 @@ class AccountingController extends BaseController{
                     "ORGN_ACCT_ID" => $info["ORGN_ACCT_ID"],
                     "SUB_CAT" => '改帐',
                     "RMRK" => $info["RMRK"],
-                    "FILLED" => $info["FILLED"]
+                    "FILLED" => $info["FILLED"],
+                    "HTL_ID" => Session::get('userInfo.HTL_ID')
                 );
                 $RM_DEPO_ID = DB::table('RoomDepositAcct')->insertGetId($InsertArray);
                 DB::update('update RoomTran set DPST_RMN = DPST_RMN + ? where RM_TRAN_ID = ?',
@@ -296,7 +308,8 @@ class AccountingController extends BaseController{
                     "PAY_METHOD" => $info["payMethod"],
                     "TKN_RM_TRAN_ID" => $info["TKN_RM_TRAN_ID"],
                     "FILLED" => $info["FILLED"],
-                    "BRK_EQPMT_RMRK" => $info["RMRK"]
+                    "BRK_EQPMT_RMRK" => $info["RMRK"],
+                    "HTL_ID" => Session::get('userInfo.HTL_ID')
                 );
                 $PEN_BILL_ID = DB::table('PenaltyAcct')->insertGetId($InsertArray);
 
@@ -311,8 +324,8 @@ class AccountingController extends BaseController{
                     "TKN_RM_TRAN_ID" => $info["TKN_RM_TRAN_ID"],
                     "FILLED" => $info["FILLED"],
                     "SUB_CAT" => '改帐',
-                    "RMRK"=>$info["RMRK"]
-
+                    "RMRK"=>$info["RMRK"],
+                    "HTL_ID" => Session::get('userInfo.HTL_ID')
                 );
                 $RM_BILL_ID = DB::table('RoomAcct')->insertGetId($InsertArray);
 
@@ -323,7 +336,8 @@ class AccountingController extends BaseController{
                     "STR_PAY_METHOD" => $info["payMethod"],
                     "STR_PAY_AMNT" => $info["Amount"],
                     "ORGN_ACCT_ID" => $info["ORGN_ACCT_ID"],
-                    "RMRK"=>$info["RMRK"]
+                    "RMRK"=>$info["RMRK"],
+                    "HTL_ID" => Session::get('userInfo.HTL_ID')
                 );
                 $STR_TRAN_ID = DB::table('StoreTransaction')->insertGetId($InsertArray);
 
@@ -333,7 +347,8 @@ class AccountingController extends BaseController{
                         "STR_TRAN_ID" =>$STR_TRAN_ID,
                         "RM_ID" => $info["RM_ID"],
                         "TKN_RM_TRAN_ID" => $info["TKN_RM_TRAN_ID"],
-                        "FILLED" => $info["FILLED"]
+                        "FILLED" => $info["FILLED"],
+                        "HTL_ID" => Session::get('userInfo.HTL_ID')
                     );
                     DB::table('RoomStoreTran')->insert($Insert);
                 }
@@ -348,14 +363,3 @@ class AccountingController extends BaseController{
         }
     }
 }
-////
-//$scope.submitInfo["CLASS"]=$scope.oldTarget.CLASS;
-//        $scope.submitInfo["ACCT_ID"]=$scope.oldTarget.ACCT_ID;
-//        $scope.submitInfo["RM_TRAN_ID"]=$scope.oldTarget.RM_TRAN_ID;
-//        $scope.submitInfo["Amount"]=$scope.Amount;
-//        $scope.submitInfo["RMRK"]=$scope.RMRK;
-//        $scope.submitInfo["payMethod"]=$scope.payMethod;
-//        $scope.submitInfo["RM_ID"]=$scope.oldTarget.RM_ID;
-//
-//        $scope.submitInfo["PAYER_NM"]=$scope.oldTarget.PAYER_NM;
-//        $scope.submitInfo["PAYER_PHONE"]=$scope.oldTarget.PAYER_PHONE;

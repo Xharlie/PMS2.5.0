@@ -9,7 +9,10 @@ class CustomerController extends BaseController{
 
     public function showCustomer(){
         $customerShow = DB::table('Rooms')
-            ->join('RoomTran', 'RoomTran.RM_TRAN_ID','=','Rooms.RM_TRAN_ID')
+            ->join('RoomTran', function ($join) {
+                $join->on('RoomTran.RM_TRAN_ID','=','Rooms.RM_TRAN_ID')
+                    ->where('Rooms.HTL_ID', '=', Session::get('userInfo.HTL_ID'));
+            })
             ->join('Customers', 'Rooms.RM_TRAN_ID', '=', 'Customers.RM_TRAN_ID')
             ->select('Rooms.RM_ID as RM_ID','Customers.SSN as SSN','Customers.CUS_NAME as CUS_NM',
                 'RoomTran.CHECK_TP as CHECK_TP','Customers.MEM_ID as MEM_ID','Customers.MEM_TP as MEM_TP',
@@ -21,12 +24,14 @@ class CustomerController extends BaseController{
 
     public function showMembers(){
         $memberShow = DB::table('MemberInfo')
+            ->where('MemberInfo.CRP_ID', '=', Session::get('userInfo.CRP_ID'))
             ->get();
         return Response::json($memberShow);
     }
 
     public function showMemberType(){
         $memberShow = DB::table('MemberType')
+            ->where('MemberType.CRP_ID', '=', Session::get('userInfo.CRP_ID'))
             ->get();
         return Response::json($memberShow);
     }
@@ -98,12 +103,13 @@ class CustomerController extends BaseController{
     public function memTranIn($MEM_ID,&$acct){
         $memTranArrary = array(
              "MEM_ID" =>$MEM_ID,
-             "EMP_ID" => null,
+             "EMP_ID" => Session::get('userInfo.EMP_ID'),
              "MEM_TSTMP" => (new DateTime())->format('Y-m-d H:i:s'),
              "FEE_AMNT" => $acct["paymentRequest"],
              "FEE_TP" => $acct["paymentType"],
              "RMRK" => null,
-             "FILLED" => "T"
+             "FILLED" => "T",
+             "HTL_ID" => Session::get('userInfo.HTL_ID')
         );
         return $memTranArrary;
     }
@@ -112,10 +118,11 @@ class CustomerController extends BaseController{
         $memTDArrary = array(
             "MEM_TRAN_ID" =>$MEM_TRAN_ID,
             "PAY_MTHD" => $depo["payMethod"],
-            "EMP_ID" => null,
+            "EMP_ID" => Session::get('userInfo.EMP_ID'),
             "MEM_ID" => $MEM_ID,
             "PAY_AMNT" => $depo["payAmount"],
-            "RMRK" => null
+            "RMRK" => null,
+            "HTL_ID" => Session::get('userInfo.HTL_ID')
         );
         array_push($memTranDepoArray,$memTDArrary);
     }

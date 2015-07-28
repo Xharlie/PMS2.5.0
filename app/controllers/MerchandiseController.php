@@ -11,6 +11,7 @@ class MerchandiseController extends BaseController{
 
     public function showProduct(){
         $productShow = DB::table('ProductInfo')
+            ->where('ProductInfo.HTL_ID','=',Session::get('userInfo.HTL_ID'))
             ->select('ProductInfo.PROD_ID as PROD_ID','ProductInfo.PROD_TP as PROD_TP',
                 'ProductInfo.PROD_NM as PROD_NM', 'ProductInfo.PROD_COST as PROD_COST',
                 'ProductInfo.PROD_PRICE as PROD_PRICE','ProductInfo.PROD_AVA_QUAN as PROD_AVA_QUAN',
@@ -22,14 +23,22 @@ class MerchandiseController extends BaseController{
 
     public function showMerchanRoom(){
         $roomShow = DB::table('Rooms')
-            ->join("RoomTran","RoomTran.RM_TRAN_ID","=","Rooms.RM_TRAN_ID")
+            ->join('RoomTran', function ($join) {
+                $join->on('RoomTran.RM_TRAN_ID','=','Rooms.RM_TRAN_ID')
+                    ->where('Rooms.HTL_ID', '=', Session::get('userInfo.HTL_ID'));
+            })
             ->get();
         return json_encode($roomShow);
     }
 
     public function buySubmit(){
         $StoreTransactionArray = Input::get('StoreTransactionArray');
+        $StoreTransactionArray['EMP_ID'] = Session::get('userInfo.EMP_ID');
+        $StoreTransactionArray['HTL_ID'] = Session::get('userInfo.HTL_ID');
+
         $RoomStoreTranArray = Input::get('RoomStoreTranArray');
+        $RoomStoreTranArray['HTL_ID'] = Session::get('userInfo.HTL_ID');
+
         $ProductInTran = Input::get('ProductInTran');
         try {
             DB::beginTransaction();   //////  Important !! TRANSACTION Begin!!!
@@ -61,6 +70,7 @@ class MerchandiseController extends BaseController{
 
     public function showHistoPurchase(){
         $histoPurchase = DB::table('StoreTransaction')
+            ->where('StoreTransaction.HTL_ID','=', Session::get('userInfo.HTL_ID'))
             ->leftjoin('RoomStoreTran', 'RoomStoreTran.STR_TRAN_ID', '=', 'StoreTransaction.STR_TRAN_ID')
             ->select('StoreTransaction.STR_TRAN_ID as STR_TRAN_ID','StoreTransaction.STR_PAY_METHOD as STR_PAY_METHOD',
                 'StoreTransaction.STR_PAY_AMNT as STR_PAY_AMNT', 'StoreTransaction.STR_TRAN_TSTMP as STR_TRAN_TSTMP',

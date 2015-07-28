@@ -49,7 +49,7 @@
 <body onload="load()">
 <object id="plugin0" type="application/x-hdinterface" width="300" height="300">
     <param name="onload" value="pluginLoaded" />
-</object><br />
+</object><br/>
 
 <a href="#" onclick="javascript:pluginValid()">Click me!</a> <br />
 <a href="#" onclick="javascript:ReadCard()">Read</a> <br />

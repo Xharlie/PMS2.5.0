@@ -3,7 +3,7 @@
  */
 
 app.controller('checkOutModalController', function($scope, $http, focusInSideFactory,newCheckOutFactory, $modalInstance,merchandiseFactory,
-                                               paymentFactory,$timeout, RM_TRAN_IDFortheRoom,connRM_TRAN_IDs,ori_Mastr_RM_TRAN_ID,initialString){
+                               sessionFactory,paymentFactory,$timeout, RM_TRAN_IDFortheRoom,connRM_TRAN_IDs,ori_Mastr_RM_TRAN_ID,initialString){
     /********************************************     validation     ***************************************************/
 
     $scope.hasError = function(btnPass){
@@ -315,7 +315,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
         });
     };
     /************** ********************************** Common initial setting  ******************************************* ********/
-
+    var printerRCtransactions = []; // for printer info
     $scope.newItemID = 0;
     $scope.BookCommonInfo = {selectAll:false,Master:{mastr_RM_TRAN_ID:"",transferable:false,
                              ori_Mastr_RM_TRAN_ID:ori_Mastr_RM_TRAN_ID, payment: paymentFactory.createNewPayment('住房押金'), check:true}};
@@ -459,11 +459,27 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
                         editAcct:$scope.submitPrepEditAcct(),
                         addAcct:$scope.submitPrepAddAcct(),
                         addDepoArray:$scope.submitPrepAddDepo()};
-        newCheckOutFactory.checkOT(submitObj).success(function(data){
-                $scope.submitLoading = false;
-                show("办理成功!");
-                $modalInstance.close("checked");
-                //util.closeCallback();
+
+        /***********  for printer   *************/
+        var rooms = [];
+        for (var i = 0; i < $scope.BookRoom.length; i++){
+            var rm = $scope.BookRoom[i];
+            if(rm.selected && $scope.BookCommonInfo.Master.mastr_RM_TRAN_ID == rm.RM_TRAN_ID){
+                rooms.push(rm);
+            }
+        }
+        var pms ={HTL_NM:null,EMP_NM:null};
+        sessionFactory.getUserInfo().success(function(data){
+            pms.HTL_NM = data.HTL_NM;
+            pms.EMP_NM = data.EMP_NM;
+            /***********  for printer   *************/
+            newCheckOutFactory.checkOT(submitObj).success(function(data){
+                    $scope.submitLoading = false;
+                    printer.receipt(pms, rooms[0], rooms[0].Customers[0],printerRCtransactions);
+                    show("办理成功!");
+                    $modalInstance.close("checked")
+                    //util.closeCallback();
+            });
         });
     }
 
@@ -504,6 +520,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
                             FILLED: 'T' });
                         break;
                 }
+                printer.tranPush2printer(key,ac,printerRCtransactions);
             }
         }
         return editAcct;
@@ -539,14 +556,17 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
                         SUB_CAT:'手录',RMRK: ac.RMRK, RM_PAY_AMNT: ac.PAY_AMNT,BILL_TSTMP:ac.TSTMP,
                         FILLED: (!ac.transfer && initialString == "checkOut")?'T':'F' });
                     break;
-
             }
+            printer.tranPush2printer(ac.itemCategory,ac,printerRCtransactions);
+
         }
         for(var i = 0; i < $scope.acct['exceedPay'].length; i++){
             var ac = $scope.acct['exceedPay'][i];
-            addAcct.RoomAcct.push({RM_TRAN_ID:ac.RM_TRAN_ID,TKN_RM_TRAN_ID:$scope.BookCommonInfo.Master.mastr_RM_TRAN_ID,
+            var exceedPay = {RM_TRAN_ID:ac.RM_TRAN_ID,TKN_RM_TRAN_ID:$scope.BookCommonInfo.Master.mastr_RM_TRAN_ID,
                 SUB_CAT:'超时',RMRK: '', RM_PAY_AMNT: ac.RM_PAY_AMNT,BILL_TSTMP:ac.BILL_TSTMP,
-                FILLED: (!ac.transfer && initialString == "checkOut" )?'T':'F' });
+                FILLED: (!ac.transfer && initialString == "checkOut" )?'T':'F' };
+            addAcct.RoomAcct.push(exceedPay);
+            printer.tranPush2printer('AcctPay',exceedPay,printerRCtransactions);
         }
         return addAcct;
     }
@@ -563,10 +583,12 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
         var today = new Date();
         var addDepoArray =[];
         for(var i = 0; i < $scope.BookCommonInfo.Master.payment.payByMethods.length; i++){
-            var me = $scope.BookCommonInfo.Master.payment.payByMethods[i];
-            addDepoArray.push({RM_TRAN_ID:$scope.BookCommonInfo.Master.mastr_RM_TRAN_ID,DEPO_AMNT:me.payAmount,
-                               PAY_METHOD:me.payMethod,DEPO_TSTMP:util.tstmpFormat(today),SUB_CAT:'存入',RMRK:"",FILLED:'T'});
+            var ac = $scope.BookCommonInfo.Master.payment.payByMethods[i];
+            var depo = {RM_TRAN_ID:$scope.BookCommonInfo.Master.mastr_RM_TRAN_ID,DEPO_AMNT:ac.payAmount,
+                PAY_METHOD:ac.payMethod,DEPO_TSTMP:util.tstmpFormat(today),SUB_CAT:'存入',RMRK:"",FILLED:'T'}
+            addDepoArray.push(depo);
         }
+        printer.tranPush2printer('AcctDepo',depo,printerRCtransactions);
         return addDepoArray;
     }
 

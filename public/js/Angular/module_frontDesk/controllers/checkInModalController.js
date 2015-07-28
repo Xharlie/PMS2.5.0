@@ -405,6 +405,7 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
     }
     // check the identity, guest history through ssn
     $scope.showIdentity = function(singleGuest,index){
+        /*****
         var $SSN = singleGuest.SSN.trim();
         if($SSN == "") {
             singleGuest.SSN = "";
@@ -424,6 +425,12 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
                 $scope.openPopover('guest'+index.toString()+'SSN');
             }
         });
+        ******/
+    }
+
+    $scope.readFromIDCard = function(){
+        var cusSSNInfo = printer.IDcardreader();
+        show(cusSSNInfo);
     }
 
     /************************************************/
@@ -513,26 +520,27 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
             }
             j++;
         }
+
         var pms ={HTL_NM:null,EMP_NM:null};
         sessionFactory.getUserInfo().success(function(data){
             pms.HTL_NM = data.HTL_NM;
             pms.EMP_NM = data.EMP_NM;
-        });
 
-        newCheckInFactory.submit(JSON.stringify({SubmitInfo:$scope.SubmitInfo,RESV_ID:null,unfilled:null})).success(function(data){
-            $scope.submitLoading = false;
-            show("办理成功!");
-            var room = $scope.BookRoom[0];
-            room.CHECK_IN_DT = util.dateFormat($scope.BookCommonInfo.CHECK_IN_DT);
-            room.inTime = util.timeFormat($scope.BookCommonInfo.inTime);
-            room.CHECK_OT_DT = util.dateFormat($scope.BookCommonInfo.CHECK_OT_DT);
-            room.leaveTime = util.timeFormat($scope.BookCommonInfo.leaveTime);
-            room.CONN_RM_TRAN_ID =data.CONN_RM_TRAN_ID;
-            room.RM_TRAN_ID =data.RM_TRAN_ID;
-            printer.checkIn(pms,room,room.GuestsInfo[0]);
-            printer.deposit(pms,room,room.GuestsInfo[0]);
-            $modalInstance.close("checked");
-            //util.closeCallback();
+            newCheckInFactory.submit(JSON.stringify({SubmitInfo:$scope.SubmitInfo,RESV_ID:null,unfilled:null})).success(function(data){
+                $scope.submitLoading = false;
+                show("办理成功!");
+                var room = $scope.BookRoom[0];
+                room.CHECK_IN_DT = util.dateFormat($scope.BookCommonInfo.CHECK_IN_DT);
+                room.inTime = util.timeFormat($scope.BookCommonInfo.inTime);
+                room.CHECK_OT_DT = util.dateFormat($scope.BookCommonInfo.CHECK_OT_DT);
+                room.leaveTime = util.timeFormat($scope.BookCommonInfo.leaveTime);
+                room.CONN_RM_TRAN_ID =data.CONN_RM_TRAN_ID;
+                room.RM_TRAN_ID =data.RM_TRAN_ID;
+                printer.checkIn(pms,room,room.GuestsInfo[0]);
+                printer.deposit(pms,room,room.GuestsInfo[0]);
+                $modalInstance.close("checked");
+                //util.closeCallback();
+            });
         });
     }
 

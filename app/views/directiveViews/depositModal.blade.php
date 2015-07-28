@@ -2,7 +2,7 @@
     <div class="panel-heading">
         <h4 class="panel-title">
             <span class="icon-star"></span>
-            <label>{{(initialString == 'singleWalkIn')?'新入住':'入住修改'}}</label>
+            <label>入押金</label>
             <span class="pull-right close" ng-click="cancel()">&#x2715</span>
         </h4>
     </div>

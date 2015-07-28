@@ -15,9 +15,18 @@
         <!----      IE detection          --->
         <!--[if lt IE 9]><script src="js/Angular/module_frontDesk/pan_lib/browserDetection.js"></script><![endif]-->
 	</head>
-	<body>
+	<body >
+        <object hidden id="plugin0" type="application/x-hdinterface">
+            <param name="onload" value="pluginLoaded" />
+        </object>
         <script>
-            var uni ={userInfo : JSON.parse('<?php echo json_encode($userInfo); ?>')};
+            var uni = {userInfo : JSON.parse('<?php echo json_encode($userInfo); ?>')};
+            function plugin0()
+            {
+                return document.getElementById('plugin0');
+            }
+            plugin = plugin0;
+            plugin().initPrinter();
         </script>
 		<div class="sideNavContainer" ng-controller="sideBarController" >
                 @include('sideNav')

@@ -40,9 +40,11 @@ class UserController extends BaseController{
             ->where('id', '=', $id)
             ->first(array('EmployeeSysAccess.id as id', 'EmployeeSysAccess.EMP_NM as EMP_NM',
                 'EmployeeSysAccess.username as username','EmployeeSysAccess.EMP_SYS_LVL as EMP_SYS_LVL',
-                'HotelEmployeeMapping.HTL_ID as HTL_ID','HotelInfo.HTL_NM as HTL_NM'));
+                'HotelEmployeeMapping.HTL_ID as HTL_ID','HotelInfo.HTL_NM as HTL_NM','HotelInfo.CRP_ID as CRP_ID'));
         // add condition
         $userInfo = array(
+            'EMP_ID'=>$emp->id,
+            'CRP_ID'=>$emp->CRP_ID,
             'HTL_ID'=>$emp->HTL_ID,
             'HTL_NM'=>$emp->HTL_NM,
             'username' => $emp->username,

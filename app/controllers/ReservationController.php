@@ -11,10 +11,17 @@ class ReservationController extends BaseController{
     public function getRMInfoWithAvail(){
         $CHECK_IN_DT = Input::get('CHECK_IN_DT');
         $CHECK_OT_DT = Input::get('CHECK_OT_DT');
+        $HTL_ID = Session::get('userInfo.HTL_ID');
         $RoomInfo = DB::table('Rooms')
-            ->join('RoomsTypes', 'RoomsTypes.RM_TP','=','Rooms.RM_TP')
+            ->join('RoomsTypes', function($join)
+            {
+                $join->where('Rooms.HTL_ID','=',Session::get('userInfo.HTL_ID'))
+                    ->where('RoomsTypes.HTL_ID','=',Session::get('userInfo.HTL_ID'))
+                    ->on('RoomsTypes.RM_TP','=','Rooms.RM_TP');
+            })
             ->leftjoin(DB::raw("(select RoomOccupation.RM_TP AS RM_TP, MAX(RoomOccupation.RESV_QUAN + RoomOccupation.CHECK_QUAN) AS QUAN
-                                from RoomOccupation where RoomOccupation.DATE between '$CHECK_IN_DT' AND '$CHECK_OT_DT' group by RM_TP)  mostOccupied"),
+                                from RoomOccupation where RoomOccupation.HTL_ID = $HTL_ID and
+                                RoomOccupation.DATE between '$CHECK_IN_DT' AND '$CHECK_OT_DT' group by RM_TP)  mostOccupied"),
                 function($join){
                     $join->on('mostOccupied.RM_TP', '=', 'Rooms.RM_TP');
                 }
@@ -29,26 +36,36 @@ class ReservationController extends BaseController{
 // status has 预订,预付,Filled,NoShow, Cancelled，NoShowExpired
     public function showResv(){
         $resvShow = DB::table('Reservations')
-                        ->join('ReservationRoom', 'Reservations.RESV_ID','=','ReservationRoom.RESV_ID')
-                        ->whereNotIn("ReservationRoom.STATUS",["Filled","Cancelled","NoShowExpired"])
-                        ->select('ReservationRoom.RESV_DAY_PAY as RESV_DAY_PAY','Reservations.RESV_ID as RESV_ID',
-                                'Reservations.RESVER_PHONE as RESVER_PHONE', 'Reservations.RESVER_NAME as RESVER_NAME',
-                                'Reservations.RESV_WAY as RESV_WAY','Reservations.RESV_TMESTMP as RESV_TMESTMP',
-                                'Reservations.CHECK_IN_DT as CHECK_IN_DT','Reservations.CHECK_OT_DT as CHECK_OT_DT',
-                                'Reservations.RESV_LATEST_TIME as RESV_LATEST_TIME',
-                                'ReservationRoom.RM_TP as RM_TP','ReservationRoom.RM_QUAN as RM_QUAN',
-                                'Reservations.TREATY_ID as TREATY_ID','Reservations.MEMBER_ID as MEMBER_ID',
-                                'Reservations.RMRK as RMRK','ReservationRoom.STATUS as STATUS',
-                                'Reservations.PRE_PAID_RMN as PRE_PAID_RMN')
-                        ->get();
+            ->join('ReservationRoom', function($join)
+            {
+                $join->where('Reservations.HTL_ID','=',Session::get('userInfo.HTL_ID'))
+                    ->where('ReservationRoom.HTL_ID','=',Session::get('userInfo.HTL_ID'))
+                    ->on('Reservations.RESV_ID','=','ReservationRoom.RESV_ID');
+            })
+            ->whereNotIn("ReservationRoom.STATUS",["Filled","Cancelled","NoShowExpired"])
+            ->select('ReservationRoom.RESV_DAY_PAY as RESV_DAY_PAY','Reservations.RESV_ID as RESV_ID',
+                    'Reservations.RESVER_PHONE as RESVER_PHONE', 'Reservations.RESVER_NAME as RESVER_NAME',
+                    'Reservations.RESV_WAY as RESV_WAY','Reservations.RESV_TMESTMP as RESV_TMESTMP',
+                    'Reservations.CHECK_IN_DT as CHECK_IN_DT','Reservations.CHECK_OT_DT as CHECK_OT_DT',
+                    'Reservations.RESV_LATEST_TIME as RESV_LATEST_TIME',
+                    'ReservationRoom.RM_TP as RM_TP','ReservationRoom.RM_QUAN as RM_QUAN',
+                    'Reservations.TREATY_ID as TREATY_ID','Reservations.MEMBER_ID as MEMBER_ID',
+                    'Reservations.RMRK as RMRK','ReservationRoom.STATUS as STATUS',
+                    'Reservations.PRE_PAID_RMN as PRE_PAID_RMN')
+            ->get();
         return Response::json($resvShow);
     }
 
     public function showComResv($today){
         $resvShow = DB::table('Reservations')
-            ->join('ReservationRoom', 'Reservations.RESV_ID','=','ReservationRoom.RESV_ID')
+            ->join('ReservationRoom', function($join) use($today)
+            {
+                $join->where('Reservations.HTL_ID','=',Session::get('userInfo.HTL_ID'))
+                    ->where('ReservationRoom.HTL_ID','=',Session::get('userInfo.HTL_ID'))
+                    ->where("Reservations.CHECK_IN_DT","=",$today)
+                    ->on('Reservations.RESV_ID','=','ReservationRoom.RESV_ID');
+            })
             ->whereNotIn("ReservationRoom.STATUS",["Filled","Cancelled","NoShowExpired"])
-            ->where("Reservations.CHECK_IN_DT","=",$today)
             ->select('Reservations.RESV_ID as RESV_ID','Reservations.RESVER_PHONE as RESVER_PHONE',
                 'Reservations.RESVER_NAME as RESVER_NAME','Reservations.RESV_LATEST_TIME as RESV_LATEST_TIME',
                 'ReservationRoom.RM_TP as RM_TP','ReservationRoom.RM_QUAN as RM_QUAN',
@@ -57,14 +74,14 @@ class ReservationController extends BaseController{
             ->get();
         return Response::json($resvShow);
     }
-
-    public function storeResv(){
-
-    }
-
-    public function deleteResv(){
-
-    }
+//
+//    public function storeResv(){
+//
+//    }
+//
+//    public function deleteResv(){
+//
+//    }
 
 
 
@@ -90,6 +107,7 @@ class ReservationController extends BaseController{
                 "RM_QUAN"=> $tpInfo["roomAmount"],
                 "RESV_DAY_PAY"=> $tpInfo["finalPrice"],
                 "STATUS"=>$newResv["STATUS"],
+                "HTL_ID"=>Session::get('userInfo.HTL_ID')
             );
             array_push($ReservationRoomArray,$typeArray);
             /********************************hange Room  occupation******************************/
@@ -119,6 +137,7 @@ class ReservationController extends BaseController{
         $this->intoReseravtion($reResv,$ReservationsArray);
 
         DB::table('Reservations')
+            ->where('Reservations.HTL_ID','=',Session::get('userInfo.HTL_ID'))
             ->where('RESV_ID',$RESV_ID)
             ->update($ReservationsArray);
 
@@ -139,6 +158,7 @@ class ReservationController extends BaseController{
                 "RM_QUAN"=> $tpInfo["roomAmount"],
                 "RESV_DAY_PAY"=> $tpInfo["finalPrice"],
                 "STATUS"=>$reResv["STATUS"],
+                "HTL_ID"=>Session::get('userInfo.HTL_ID')
             );
             array_push($ReservationRoomArray,$typeArray);
             /********************************hange Room  occupation******************************/
@@ -168,7 +188,8 @@ class ReservationController extends BaseController{
             "RESVER_PHONE" => $newResv["Phone"],
             "RESVER_EMAIL" => $newResv["email"],
             "RMRK"=> $newResv["RMRK"],
-            "PRE_PAID_RMN"=> $newResv["PRE_PAID_RMN"]
+            "PRE_PAID_RMN"=> $newResv["PRE_PAID_RMN"],
+            "HTL_ID" => Session::get('userInfo.HTL_ID')
         );
         if($ReservationsArray["RESV_WAY"] == "会员卡"){
             $ReservationsArray["MEMEBER_ID"] = $newResv["roomSourceID"];
@@ -179,12 +200,13 @@ class ReservationController extends BaseController{
 
     public function updateRoomOccupation(&$period,&$rmTP,&$tpInfo,$CHECK_IN_DT,$CHECK_OT_DT){
 
-        DB::update('update RoomOccupation set RESV_QUAN = RESV_QUAN + ? where RM_TP = ? and DATE >=  ? and DATE < ? ',
-            array($tpInfo["roomAmount"],$rmTP,$CHECK_IN_DT,$CHECK_OT_DT) );
+        DB::update('update RoomOccupation set RESV_QUAN = RESV_QUAN + ? where HTL_ID =? and RM_TP = ? and DATE >=  ? and DATE < ? ',
+            array($tpInfo["roomAmount"],Session::get('userInfo.HTL_ID'),$rmTP,$CHECK_IN_DT,$CHECK_OT_DT) );
 
         foreach ( $period as $dt ){
             $dtMatch = $dt->format( "Y-m-d" );
             $has = DB::table('RoomOccupation')
+                ->where('RoomOccupation.HTL_ID','=',Session::get('userInfo.HTL_ID'))
                 ->where('RoomOccupation.DATE','=',$dtMatch)
                 ->where('RoomOccupation.RM_TP','=',$rmTP)
                 ->get();
@@ -207,15 +229,16 @@ class ReservationController extends BaseController{
                 "RESV_ID" => $RESV_ID,
                 "DEPO_AMNT"=>$payByMethod["payAmount"],
                 "PAY_METHOD" => $payByMethod["payMethod"],
-                "DEPO_TSTMP"=> $RESV_TMESTMP
+                "DEPO_TSTMP"=> $RESV_TMESTMP,
+                "EMP_ID" => Session::get('userInfo.EMP_ID'),
+                "HTL_ID" => Session::get('userInfo.HTL_ID')
             );
             array_push($DepositArray,$depo);
         }
     }
-
-
     public function deleteResvRoom(&$RESV_ID, &$oriRmTP){
             DB::table("ReservationRoom")
+                ->where('ReservationRoom.HTL_ID','=',Session::get('userInfo.HTL_ID'))
                 ->where('RESV_ID', $RESV_ID)
                 ->where('RM_TP', $oriRmTP["RM_TP"])
                 ->where("STATUS",$oriRmTP["STATUS"])
@@ -223,8 +246,8 @@ class ReservationController extends BaseController{
     }
 //  didn't delete the row even check quan and resv quan both are 0
     public function deleteResvRoomOccupation( &$oriRmTP){
-            DB::update('update RoomOccupation set RESV_QUAN = RESV_QUAN - ? where RM_TP = ? and DATE >=  ? and DATE < ?  ',
-                array((int)$oriRmTP["RM_QUAN"],$oriRmTP["RM_TP"],$oriRmTP["CHECK_IN_DT"], $oriRmTP["CHECK_OT_DT"]) );
+            DB::update('update RoomOccupation set RESV_QUAN = RESV_QUAN - ? where HTL_ID = ? and RM_TP = ? and DATE >=  ? and DATE < ?  ',
+                array((int)$oriRmTP["RM_QUAN"],Session::get('userInfo.HTL_ID'),$oriRmTP["RM_TP"],$oriRmTP["CHECK_IN_DT"], $oriRmTP["CHECK_OT_DT"]) );
 
     }
 }

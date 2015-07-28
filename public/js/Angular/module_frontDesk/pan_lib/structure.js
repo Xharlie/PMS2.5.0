@@ -34,5 +34,11 @@ var structure = {
         sortee.sort(function(a, b) {
             return parseInt(a.RM_ID) - parseInt(b.RM_ID);
         });
+    },
+    sortByProperties : function(sortee,property){
+        if(!sortee.sort) return;
+        sortee.sort(function(a, b) {
+            return (a[property] > b[property]);
+        });
     }
 }

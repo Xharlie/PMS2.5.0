@@ -58,7 +58,7 @@ app.controller('depositModalController', function($scope, $http,paymentFactory,n
             var pms ={HTL_NM:"",EMP_NM:""};
             printer.deposit(pms,room,room.GuestsInfo[0]);
             $modalInstance.close("checked");
-            util.closeCallback();
+            //util.closeCallback();
         });
     }
 });

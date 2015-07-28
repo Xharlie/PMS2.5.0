@@ -9,6 +9,7 @@ class NewCheckOutController extends BaseController{
     function checkOutGetInfo(){
         $info = Input::all();
         $allInfoArray = DB::table('RoomTran')
+            ->where('RoomTran.HTL_ID','=',Session::get('userInfo.HTL_ID'))
             ->whereIn('RoomTran.RM_TRAN_ID',$info)
             ->leftjoin('Rooms','Rooms.RM_TRAN_ID','=','RoomTran.RM_TRAN_ID')
             ->leftjoin('RoomsTypes','Rooms.RM_TP','=','RoomsTypes.RM_TP')
@@ -22,12 +23,18 @@ class NewCheckOutController extends BaseController{
         for ($i = 0; $i < count($allInfoArray); $i++){
 
             $allInfoArray[$i]->Customers= DB::table('Customers')
+                ->where('Customers.HTL_ID','=',Session::get('userInfo.HTL_ID'))
                 ->where('Customers.RM_TRAN_ID',$allInfoArray[$i]->RM_TRAN_ID)
                 ->get();
 
             $acctPay = DB::table('RoomAcct')
-                ->where('TKN_RM_TRAN_ID','=',$allInfoArray[$i]->RM_TRAN_ID)
-                ->join('RoomTran','RoomTran.RM_TRAN_ID','=','RoomAcct.RM_TRAN_ID')
+                ->join('RoomTran', function($join) use($allInfoArray,$i)
+                {
+                    $join->where('RoomTran.HTL_ID','=',Session::get('userInfo.HTL_ID'))
+                        ->where('RoomAcct.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+                        ->where('RoomAcct.TKN_RM_TRAN_ID','=',$allInfoArray[$i]->RM_TRAN_ID)
+                        ->on('RoomTran.RM_TRAN_ID','=','RoomAcct.RM_TRAN_ID');
+                })
                 ->where(function($query)
                 {
                     $query->where('RoomAcct.FILLED', '!=', 'T')
@@ -42,8 +49,13 @@ class NewCheckOutController extends BaseController{
                 ->get();
 
             $acctRoomDepo= DB::table('RoomDepositAcct')
-                ->where('RoomDepositAcct.RM_TRAN_ID','=',$allInfoArray[$i]->RM_TRAN_ID)
-                ->join('RoomTran','RoomTran.RM_TRAN_ID','=','RoomDepositAcct.RM_TRAN_ID')
+                ->join('RoomTran', function($join) use($allInfoArray,$i)
+                {
+                    $join->where('RoomTran.HTL_ID','=',Session::get('userInfo.HTL_ID'))
+                        ->where('RoomDepositAcct.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+                        ->where('RoomDepositAcct.RM_TRAN_ID','=',$allInfoArray[$i]->RM_TRAN_ID)
+                        ->on('RoomTran.RM_TRAN_ID','=','RoomDepositAcct.RM_TRAN_ID');
+                })
                 ->where(function($query)
                 {
                     $query->where('RoomDepositAcct.FILLED', '!=', 'T')
@@ -58,8 +70,13 @@ class NewCheckOutController extends BaseController{
                 ->get();
 
             $acctRoomStore = DB::table('RoomStoreTran')
-                ->where('RoomStoreTran.TKN_RM_TRAN_ID',$allInfoArray[$i]->RM_TRAN_ID)
-                ->join('RoomTran','RoomTran.RM_TRAN_ID','=','RoomStoreTran.RM_TRAN_ID')
+                ->join('RoomTran', function($join) use($allInfoArray,$i)
+                {
+                    $join->where('RoomTran.HTL_ID','=',Session::get('userInfo.HTL_ID'))
+                        ->where('RoomStoreTran.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+                        ->where('RoomStoreTran.TKN_RM_TRAN_ID','=',$allInfoArray[$i]->RM_TRAN_ID)
+                        ->on('RoomTran.RM_TRAN_ID','=','RoomStoreTran.RM_TRAN_ID');
+                })
                 ->leftjoin('StoreTransaction','StoreTransaction.STR_TRAN_ID','=','RoomStoreTran.STR_TRAN_ID')
                 ->leftjoin('ProductInTran','ProductInTran.STR_TRAN_ID','=','RoomStoreTran.STR_TRAN_ID')
                 ->leftjoin('ProductInfo','ProductInfo.PROD_ID','=','ProductInTran.PROD_ID')
@@ -78,9 +95,14 @@ class NewCheckOutController extends BaseController{
                 ->get();
 
             $acctPenalty = DB::table('PenaltyAcct')
-                ->where('TKN_RM_TRAN_ID','=',$allInfoArray[$i]->RM_TRAN_ID)
-                ->join('RoomTran','RoomTran.RM_TRAN_ID','=','PenaltyAcct.RM_TRAN_ID')
-                ->where('PenaltyAcct.FILLED', '!=', 'T')
+                ->join('RoomTran', function($join) use($allInfoArray,$i)
+                {
+                    $join->where('RoomTran.HTL_ID','=',Session::get('userInfo.HTL_ID'))
+                        ->where('PenaltyAcct.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+                        ->where('PenaltyAcct.TKN_RM_TRAN_ID','=',$allInfoArray[$i]->RM_TRAN_ID)
+                        ->where('PenaltyAcct.FILLED', '!=', 'T')
+                        ->on('RoomTran.RM_TRAN_ID','=','PenaltyAcct.RM_TRAN_ID');
+                })
                 ->where(function($query)
                 {
                     $query->where('PenaltyAcct.FILLED', '!=', 'T')
@@ -92,14 +114,11 @@ class NewCheckOutController extends BaseController{
                     'PenaltyAcct.EMP_ID as EMP_ID','PenaltyAcct.TKN_RM_TRAN_ID as TKN_RM_TRAN_ID',
                     'PenaltyAcct.FILLED as FILLED','PenaltyAcct.BRK_EQPMT_RMRK as BRK_EQPMT_RMRK','RoomTran.RM_ID')
                 ->get();
-
             $acct["AcctPay"] = array_merge($acct["AcctPay"],(array)$acctPay);
             $acct["AcctDepo"] = array_merge($acct["AcctDepo"],(array)$acctRoomDepo);
             $acct["AcctStore"] = array_merge($acct["AcctStore"],(array)$acctRoomStore);
             $acct["AcctPenalty"] = array_merge($acct["AcctPenalty"],(array)$acctPenalty);
-
         }
-
         return Response::json(array("room"=>$allInfoArray,"acct"=>$acct));
     }
 
@@ -121,33 +140,43 @@ class NewCheckOutController extends BaseController{
                     "DPST_RMN" => "0",
                     "FILLED" => "T"
                 );
-                DB::table('RoomTran')->where('RM_TRAN_ID',$room["RM_TRAN_ID"])->update($RoomTranUpdateArray);
-
+                DB::table('RoomTran')
+                    ->where('RoomTran.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+                    ->where('RM_TRAN_ID',$room["RM_TRAN_ID"])->update($RoomTranUpdateArray);
                 /*------------------------- change Room Status ---------------- ---------------------------------*/
                 $RoomUpdateArray = array(
                     "RM_TRAN_ID" => null,
                     "RM_CONDITION" => "脏房",
                 );
-                DB::table('Rooms')->where('RM_TRAN_ID',$room["RM_TRAN_ID"])->update($RoomUpdateArray);
-
+                DB::table('Rooms')
+                    ->where('Rooms.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+                    ->where('Rooms.RM_TRAN_ID',$room["RM_TRAN_ID"])->update($RoomUpdateArray);
                 /*------------------------- change Room Availablilty Check Quan ---------------------------------*/
                 if($today < $room["oriCHECK_OT_DT"]){
-                    DB::update('update RoomOccupation set CHECK_QUAN = CHECK_QUAN - ? where RM_TP = ? and DATE >= ? and DATE < ?   ',
-                        array(1,$room["RM_TP"],$today, $room["oriCHECK_OT_DT"]) );
+                    DB::update('update RoomOccupation set CHECK_QUAN = CHECK_QUAN - ? where HTL_ID=? and RM_TP = ? and DATE >= ? and DATE < ?',
+                        array(1, $room["RM_TP"], Session::get('userInfo.HTL_ID'), $today, $room["oriCHECK_OT_DT"]) );
                 }
             }
             /*------------------------- update all Accts  -------------------------------------------------------*/
             foreach($editAcct["RoomAcct"] as $updateArray){
-                DB::table('RoomAcct')->where('RM_BILL_ID',$updateArray["RM_BILL_ID"])->update($updateArray);
+                DB::table('RoomAcct')
+                    ->where('RoomAcct.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+                    ->where('RoomAcct.RM_BILL_ID',$updateArray["RM_BILL_ID"])->update($updateArray);
             }
             foreach($editAcct["PenaltyAcct"] as $updateArray){
-                DB::table('PenaltyAcct')->where('PEN_BILL_ID',$updateArray["PEN_BILL_ID"])->update($updateArray);
+                DB::table('PenaltyAcct')
+                    ->where('PenaltyAcct.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+                    ->where('PEN_BILL_ID',$updateArray["PEN_BILL_ID"])->update($updateArray);
             }
             foreach($editAcct["RoomStoreTran"] as $updateArray){
-                DB::table('RoomStoreTran')->where('STR_TRAN_ID',$updateArray["STR_TRAN_ID"])->update($updateArray);
+                DB::table('RoomStoreTran')
+                    ->where('RoomStoreTran.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+                    ->where('RoomStoreTran.STR_TRAN_ID',$updateArray["STR_TRAN_ID"])->update($updateArray);
             }
             foreach($editAcct["RoomDepositAcct"] as $updateArray){
-                DB::table('RoomDepositAcct')->where('RM_DEPO_ID',$updateArray["RM_DEPO_ID"])->update($updateArray);
+                DB::table('RoomDepositAcct')
+                    ->where('RoomDepositAcct.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+                    ->where('RoomDepositAcct.RM_DEPO_ID',$updateArray["RM_DEPO_ID"])->update($updateArray);
             }
             /*------------------------- add all new Accts  -------------------------------------------------------*/
             foreach($addDepoArray as $insertArray){
@@ -168,12 +197,22 @@ class NewCheckOutController extends BaseController{
             }
             if($ori_Mastr_RM_TRAN_ID != "" && $ori_Mastr_RM_TRAN_ID != $mastr_RM_TRAN_ID){
                 /*------------------------- update all connected room master room number-----------------------------*/
-                DB::table('RoomTran')->where('CONN_RM_TRAN_ID',$ori_Mastr_RM_TRAN_ID)->update(array("CONN_RM_TRAN_ID"=>$mastr_RM_TRAN_ID));
+                DB::table('RoomTran')
+                    ->where('RoomTran.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+                    ->where('RoomTran.CONN_RM_TRAN_ID',$ori_Mastr_RM_TRAN_ID)->update(array("CONN_RM_TRAN_ID"=>$mastr_RM_TRAN_ID));
                 /*------------------------- update all connected room master room number-----------------------------*/
-                DB::table('RoomAcct')->where('TKN_RM_TRAN_ID',$ori_Mastr_RM_TRAN_ID)->update(array("TKN_RM_TRAN_ID"=>$mastr_RM_TRAN_ID));
-                DB::table('PenaltyAcct')->where('TKN_RM_TRAN_ID',$ori_Mastr_RM_TRAN_ID)->update(array("TKN_RM_TRAN_ID"=>$mastr_RM_TRAN_ID));
-                DB::table('RoomStoreTran')->where('TKN_RM_TRAN_ID',$ori_Mastr_RM_TRAN_ID)->update(array("TKN_RM_TRAN_ID"=>$mastr_RM_TRAN_ID));
-                DB::table('RoomDepositAcct')->where('RM_TRAN_ID',$ori_Mastr_RM_TRAN_ID)->update(array("RM_TRAN_ID"=>$mastr_RM_TRAN_ID));
+                DB::table('RoomAcct')
+                    ->where('RoomAcct.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+                    ->where('RoomAcct.TKN_RM_TRAN_ID',$ori_Mastr_RM_TRAN_ID)->update(array("TKN_RM_TRAN_ID"=>$mastr_RM_TRAN_ID));
+                DB::table('PenaltyAcct')
+                    ->where('PenaltyAcct.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+                    ->where('PenaltyAcct.TKN_RM_TRAN_ID',$ori_Mastr_RM_TRAN_ID)->update(array("TKN_RM_TRAN_ID"=>$mastr_RM_TRAN_ID));
+                DB::table('RoomStoreTran')
+                    ->where('RoomStoreTran.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+                    ->where('TKN_RM_TRAN_ID',$ori_Mastr_RM_TRAN_ID)->update(array("TKN_RM_TRAN_ID"=>$mastr_RM_TRAN_ID));
+                DB::table('RoomDepositAcct')
+                    ->where('RoomDepositAcct.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+                    ->where('RM_TRAN_ID',$ori_Mastr_RM_TRAN_ID)->update(array("RM_TRAN_ID"=>$mastr_RM_TRAN_ID));
                 /*-------------update DPST_RMN to new RoomTran--------------------******/
                 $this->updateDPST_RMN($mastr_RM_TRAN_ID);
             }
@@ -228,27 +267,43 @@ class NewCheckOutController extends BaseController{
     }
 
     function updateDPST_RMN($RM_TRAN_ID){
-        DB::update('update RoomTran set DPST_RMN = ? where RM_TRAN_ID = ?',
-            array($this->calculateDPST_RMN($RM_TRAN_ID),$RM_TRAN_ID) );
+        DB::update('update RoomTran set DPST_RMN = ? where HTL_ID =? and RM_TRAN_ID = ?',
+            array($this->calculateDPST_RMN($RM_TRAN_ID),Session::get('userInfo.HTL_ID'),$RM_TRAN_ID) );
     }
 
     function calculateDPST_RMN($RM_TRAN_ID){
-        $RoomTran = DB::table('RoomTran')->where('RM_TRAN_ID',$RM_TRAN_ID)->first();
+        $RoomTran = DB::table('RoomTran')
+            ->where('RoomTran.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+            ->where('RM_TRAN_ID',$RM_TRAN_ID)->first();
         $searchTranID = $RoomTran->RM_TRAN_ID;
         // if  connected room but not main room, no deposit
         if(!is_null($RoomTran->CONN_RM_TRAN_ID) && $RoomTran->RM_TRAN_ID != $RoomTran->CONN_RM_TRAN_ID){
             return 0;
         // if connected room and main room, search by
         }
-        $RoomAcct = DB::table('RoomAcct')->where('TKN_RM_TRAN_ID',$searchTranID)->where('FILLED','!=','T')
-                                        ->sum('RM_PAY_AMNT');
-        $PenaltyAcct = DB::table('PenaltyAcct')->where('TKN_RM_TRAN_ID',$searchTranID)->where('FILLED','!=','T')
-                                                ->sum('PNLTY_PAY_AMNT');
-        $RoomStoreTran = DB::table('RoomStoreTran')->where('TKN_RM_TRAN_ID',$searchTranID)->where('FILLED','!=','T')
-                                                    ->join('StoreTransaction','StoreTransaction.STR_TRAN_ID','=','RoomStoreTran.STR_TRAN_ID')
-                                                    ->sum('STR_PAY_AMNT');
-        $RoomDepositAcct = DB::table('RoomDepositAcct')->where('RM_TRAN_ID',$searchTranID)->where('FILLED','!=','T')
-                                                        ->sum('DEPO_AMNT');
+        $RoomAcct = DB::table('RoomAcct')
+            ->where('RoomAcct.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+            ->where('TKN_RM_TRAN_ID',$searchTranID)->where('FILLED','!=','T')
+            ->sum('RM_PAY_AMNT');
+        $PenaltyAcct = DB::table('PenaltyAcct')
+            ->where('PenaltyAcct.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+            ->where('TKN_RM_TRAN_ID',$searchTranID)->where('FILLED','!=','T')
+            ->sum('PNLTY_PAY_AMNT');
+        $RoomStoreTran = DB::table('RoomStoreTran')
+            ->join('StoreTransaction', function($join) use($searchTranID)
+            {
+                $join->where('RoomStoreTran.HTL_ID','=',Session::get('userInfo.HTL_ID'))
+                    ->where('StoreTransaction.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+                    ->where('RoomStoreTran.TKN_RM_TRAN_ID','=',$searchTranID)
+                    ->where('RoomStoreTran.FILLED','!=','T')
+                    ->on('StoreTransaction.STR_TRAN_ID','=','RoomStoreTran.STR_TRAN_ID');
+            })
+            ->sum('STR_PAY_AMNT');
+        $RoomDepositAcct = DB::table('RoomDepositAcct')
+            ->where('RoomDepositAcct.HTL_ID', '=', Session::get('userInfo.HTL_ID'))
+            ->where('RM_TRAN_ID',$searchTranID)
+            ->where('FILLED','!=','T')
+            ->sum('DEPO_AMNT');
         return ($RoomDepositAcct-$RoomStoreTran-$PenaltyAcct-$RoomAcct);
     }
 }
