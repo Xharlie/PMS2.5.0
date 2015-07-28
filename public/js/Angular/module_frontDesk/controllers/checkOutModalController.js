@@ -464,7 +464,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
         var rooms = [];
         for (var i = 0; i < $scope.BookRoom.length; i++){
             var rm = $scope.BookRoom[i];
-            if(rm.selected && $scope.BookCommonInfo.Master.mastr_RM_TRAN_ID == rm.RM_TRAN_ID){
+            if($scope.BookCommonInfo.Master.mastr_RM_TRAN_ID == rm.RM_TRAN_ID){
                 rooms.push(rm);
             }
         }
@@ -475,8 +475,8 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
             /***********  for printer   *************/
             newCheckOutFactory.checkOT(submitObj).success(function(data){
                     $scope.submitLoading = false;
-                    printer.receipt(pms, rooms[0], rooms[0].Customers[0],printerRCtransactions);
                     show("办理成功!");
+                    printer.receipt(pms, rooms[0], rooms[0].Customers[0],printerRCtransactions);
                     $modalInstance.close("checked")
                     //util.closeCallback();
             });

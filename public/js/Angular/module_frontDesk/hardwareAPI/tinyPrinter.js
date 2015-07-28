@@ -49,24 +49,24 @@ var printer = {
     },
     checkIn: function (pms, room, guest) {
         try {
-            plugin().RoomReceiptNumber = this.toPrintable(room.RM_TRAN_ID); // – 房单号
-            plugin().HotelName = pms.HTL_NM; // -- 酒店名字
-            plugin().GuestName = guest.Name; // – 客人姓名
-            plugin().PartnerCompany = ''; // – 协议单位
-            plugin().GuestDOB = guest.DOB; // – 客人出生日期
-            plugin().GuestIDType = '身份证'; // – 客人证件类型
-            plugin().GuestIDCode = this.toPrintable(guest.SSN); // – 客人ID卡号信息
-            plugin().GuestAddress = guest.Address; // – 客人地址
-            plugin().InDate = room.CHECK_IN_DT; // – 到店日期
-            plugin().EstimateOutDate = room.CHECK_OT_DT; // – 预离日期
-            plugin().MemberNumber = this.toPrintable(guest.MemberId); // – 会员卡号
-            plugin().RoomType = room.RM_TP; // – 房型
-            plugin().RoomPrice = this.toPrintable(room.finalPrice); // – 房价
-            plugin().RoomNumber = this.toPrintable(room.RM_ID); // – 房号
-            plugin().SecurityDeposit = ((room["payment"]["paymentRequest"] == "" || room["payment"]["paymentRequest"] == null) ? '0' : room["payment"]["paymentRequest"].toString()); // – 预收押金
-            plugin().FoodTicket = ''; // – 餐卷
-            plugin().Misc = ''; // – 备注
-            plugin().Operator = pms.EMP_NM; // – 操作员
+            plugin().roomReceiptNumber = this.toPrintable(room.RM_TRAN_ID); // – 房单号
+            plugin().hotelName = pms.HTL_NM; // -- 酒店名字
+            plugin().guestName = guest.Name; // – 客人姓名
+            plugin().partnerCompany = ''; // – 协议单位
+            plugin().guestDOB = guest.DOB; // – 客人出生日期
+            plugin().guestIDType = '身份证'; // – 客人证件类型
+            plugin().guestIDCode = this.toPrintable(guest.SSN); // – 客人ID卡号信息
+            plugin().guestAddress = guest.Address; // – 客人地址
+            plugin().inDate = room.CHECK_IN_DT; // – 到店日期
+            plugin().estimateOutDate = room.CHECK_OT_DT; // – 预离日期
+            plugin().memberNumber = this.toPrintable(guest.MemberId); // – 会员卡号
+            plugin().roomType = room.RM_TP; // – 房型
+            plugin().roomPrice = this.toPrintable(room.finalPrice); // – 房价
+            plugin().roomNumber = this.toPrintable(room.RM_ID); // – 房号
+            plugin().securityDeposit = ((room["payment"]["paymentRequest"] == "" || room["payment"]["paymentRequest"] == null) ? '0' : room["payment"]["paymentRequest"].toString()); // – 预收押金
+            plugin().foodTicket = ''; // – 餐卷
+            plugin().misc = ''; // – 备注
+            plugin().operator = pms.EMP_NM; // – 操作员
             plugin().updateInfo();
             plugin().printMoveInCheck();
         } catch (err) {
@@ -94,18 +94,18 @@ var printer = {
     },
     receipt: function (pms, room, guest,printerRCtransactions) {
         try {
-            plugin().HotelName = pms.HTL_NM; // – 酒店名字
-            plugin().HotelPhone = '' // – 酒店电话
-            plugin().RoomReceiptNumber = this.toPrintable(room.RM_TRAN_ID); // – 房单号
-            plugin().GuestName = guest.Name; // – 客人姓名
-            plugin().RoomType = room.RM_TP; // – 房型
-            plugin().RoomNumber = this.toPrintable(room.RM_ID); // – 房号
-            plugin().RoomPrice = this.toPrintable(room.RM_AVE_PRCE); // – 房价
-            plugin().MemberNumber = this.toPrintable(guest.MEM_ID); // – 会员卡号
-            plugin().PartnerCompany = ''; // – 协议单位
-            plugin().InDate = room.CHECK_IN_DT; // – 到店日期
-            plugin().OutDate = room.CHECK_OT_DT; // – 离店日期
-            plugin().Operator = pms.EMP_NM; // – 操作员
+            plugin().hotelName = pms.HTL_NM; // – 酒店名字
+            plugin().hotelPhone = '' // – 酒店电话
+            plugin().roomReceiptNumber = this.toPrintable(room.RM_TRAN_ID); // – 房单号
+            plugin().guestName = guest.Name; // – 客人姓名
+            plugin().roomType = room.RM_TP; // – 房型
+            plugin().roomNumber = this.toPrintable(room.RM_ID); // – 房号
+            plugin().roomPrice = this.toPrintable(room.RM_AVE_PRCE); // – 房价
+            plugin().memberNumber = this.toPrintable(guest.MEM_ID); // – 会员卡号
+            plugin().partnerCompany = ''; // – 协议单位
+            plugin().inDate = room.CHECK_IN_DT; // – 到店日期
+            plugin().outDate = room.CHECK_OT_DT; // – 离店日期
+            plugin().operator = pms.EMP_NM; // – 操作员
             var detailUnit ='';
             var detailCost ='';
             var detailPay ='';
@@ -131,15 +131,15 @@ var printer = {
         try {
             plugin().readIDCard();
             var IDcardInfo = {
-                CUS_NAME: plugin().GuestName,    //客人姓名
-                CUS_GNDR: plugin().GuestGender,  //客人性别
-                CUS_ETHNC: plugin().GuestRace,    //客人民族
-                DOB: plugin().GuestDOB, //客人出生日期
-                ADDRSS: plugin().GuestAddress, //客人地址
-                CUS_ATRT: plugin().GuestIDAuthority, //客人发证机关
-                CUS_ID_ST_DT: plugin().GuestIDStartDate, //客人ID有效开始日期
-                CUS_ID_ED_DT: plugin().GuestIDExpireDate,    //客人ID失效日期
-                SSN: plugin().GuestIDCode   //客人ID卡号信息
+                CUS_NAME: plugin().guestName,    //客人姓名
+                CUS_GNDR: plugin().guestGender,  //客人性别
+                CUS_ETHNC: plugin().guestRace,    //客人民族
+                DOB: plugin().guestDOB, //客人出生日期
+                ADDRSS: plugin().guestAddress, //客人地址
+                CUS_ATRT: plugin().guestIDAuthority, //客人发证机关
+                CUS_ID_ST_DT: plugin().guestIDStartDate, //客人ID有效开始日期
+                CUS_ID_ED_DT: plugin().guestIDExpireDate,    //客人ID失效日期
+                SSN: plugin().guestIDCode   //客人ID卡号信息
             }
             return IDcardInfo;
         } catch (err) {

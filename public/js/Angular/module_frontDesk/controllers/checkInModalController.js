@@ -428,9 +428,12 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
         ******/
     }
 
-    $scope.readFromIDCard = function(){
+    $scope.readFromIDCard = function(singleGuest){
         var cusSSNInfo = printer.IDcardreader();
-        show(cusSSNInfo);
+        singleGuest.Name = cusSSNInfo.CUS_NAME;
+        singleGuest.SSN = cusSSNInfo.SSN;
+        singleGuest.DOB = cusSSNInfo.guestDOB;
+        singleGuest.Address = cusSSNInfo.guestAddress;
     }
 
     /************************************************/
@@ -537,7 +540,9 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
                 room.CONN_RM_TRAN_ID =data.CONN_RM_TRAN_ID;
                 room.RM_TRAN_ID =data.RM_TRAN_ID;
                 printer.checkIn(pms,room,room.GuestsInfo[0]);
-                printer.deposit(pms,room,room.GuestsInfo[0]);
+                setTimeout (function(){
+                        printer.deposit(pms,room,room.GuestsInfo[0])
+                    }, 5000);
                 $modalInstance.close("checked");
                 //util.closeCallback();
             });

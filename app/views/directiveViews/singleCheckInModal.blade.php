@@ -112,7 +112,7 @@
                                        popover="{{singleGuest.notFindWarning}}"
                                        popover-trigger="openEvent"
                                        popover-append-to-body="true"/>
-                                <span class="input-group-addon btn" ng-click="readFromIDCard()"
+                                <span class="input-group-addon btn" ng-click="readFromIDCard(singleGuest)"
                                       ng-mouseleave="closePopover('guest'+$index+'SSN')" >识别</span>
                             </div>
                         </div>

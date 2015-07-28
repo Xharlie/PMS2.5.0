@@ -439,7 +439,8 @@ class NewCheckInController extends BaseController{
                     "DATE" => $dtMatch,
                     "RM_TP"=>$room["roomType"],
                     "RESV_QUAN"=> 0,
-                    "CHECK_QUAN" => 1
+                    "CHECK_QUAN" => 1,
+                    "HTL_ID"=>Session::get('userInfo.HTL_ID')
                 );
                 DB::table('RoomOccupation')->insert($OccArray);
             }

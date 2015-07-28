@@ -180,6 +180,7 @@ class NewCheckOutController extends BaseController{
             }
             /*------------------------- add all new Accts  -------------------------------------------------------*/
             foreach($addDepoArray as $insertArray){
+                $insertArray['HTL_ID'] = Session::get('userInfo.HTL_ID');
                 DB::table('RoomDepositAcct')->insertGetId($insertArray);
             }
             foreach($addAcct["RoomAcct"] as $insertArray){
