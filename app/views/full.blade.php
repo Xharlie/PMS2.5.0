@@ -16,7 +16,7 @@
         <!--[if lt IE 9]><script src="js/Angular/module_frontDesk/pan_lib/browserDetection.js"></script><![endif]-->
 	</head>
 	<body >
-        <object hidden id="plugin0" type="application/x-hdinterface">
+        <object style="display: none;" id="plugin0" type="application/x-hdinterface">
             <param name="onload" value="pluginLoaded" />
         </object>
         <script>
@@ -26,7 +26,7 @@
                 return document.getElementById('plugin0');
             }
             plugin = plugin0;
-            plugin().initPrinter();
+            plugin(). ();
         </script>
 		<div class="sideNavContainer" ng-controller="sideBarController" >
                 @include('sideNav')
