@@ -84,7 +84,7 @@ var printer = {
             plugin().Operator = pms.EMP_NM; // – 操作员
             plugin().RoomReceiptNumber = this.toPrintable(room.RM_TRAN_ID); // – 房单号
             plugin().GuestName = guest.Name; // – 客人姓名
-            plugin().RoomNumber = this.printable(room.RM_ID); // – 房单号
+            plugin().RoomNumber = this.toPrintable(room.RM_ID); // – 房单号
 
             plugin().updateInfo();
             plugin().printDepositCheck();
@@ -121,7 +121,6 @@ var printer = {
             plugin().detailCost = detailCost;
             plugin().detailPay = detailPay;
             plugin().detailDate = detailDate;
-            show(plugin());
             plugin().updateInfo();
             plugin().printDetailCheck();
         } catch (err) {
