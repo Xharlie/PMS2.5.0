@@ -229,6 +229,7 @@ class NewCheckInController extends BaseController{
         $CustomerArray = array();
         $CONN_RM_TRAN_ID = "";
         $DepositArray = array();
+        $printerInfo = array();
         try {
             DB::beginTransaction();   //////  Important !! TRANSACTION Begin!!!
             foreach($info as $room){
@@ -257,6 +258,10 @@ class NewCheckInController extends BaseController{
                         array($room["finalPrice"],$TKN_ID,Session::get('userInfo.HTL_ID')) );
                     $this->roomAcctIn($RM_TRAN_ID,$room['finalPrice'],$TKN_ID,$SUB_CAT,$RMRK);
                 }
+                array_push($printerInfo,array(
+                    'RM_TRAN_ID' => $RM_TRAN_ID,
+                    'CONN_RM_TRAN_ID' =>$CONN_RM_TRAN_ID
+                ));
             }
             DB::table('RoomDepositAcct')->insert($DepositArray);
             DB::table('Customers')->insert($CustomerArray);
@@ -270,15 +275,10 @@ class NewCheckInController extends BaseController{
             DB::rollback();
             $message=($e->getLine())."&&".$e->getMessage();
             throw new Exception($message);
-            return Response::json($message);
         }finally{
             DB::commit();
-            return Response::json(array(
-                'RM_TRAN_ID' => $RM_TRAN_ID,
-                'CONN_RM_TRAN_ID' =>$CONN_RM_TRAN_ID
-            ));
+            return Response::json($printerInfo);
         }
-
     }
 
     public function roomAcctIn(&$RM_TRAN_ID,&$RM_PAY_AMNT,&$TKN_RM_TRAN_ID,$SUB_CAT,$RMRK){

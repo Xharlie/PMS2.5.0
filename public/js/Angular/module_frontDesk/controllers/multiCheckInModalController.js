@@ -2,7 +2,7 @@
  * Created by Xharlie on 12/22/14.
  */
 app.controller('MultiCheckInModalController', function($scope, $http, newCheckInFactory,focusInSideFactory,paymentFactory,roomFactory,
-                                                       $modalInstance, $timeout, roomST,initialString,RESV){
+                                                       sessionFactory,$modalInstance, $timeout, roomST,initialString,RESV){
 
     /********************************************     validation     ***************************************************/
 
@@ -368,6 +368,7 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
         }
     }
     // check the identity, guest history through ssn
+    /***********
     $scope.showIdentity = function(singleGuest,index){
         var $SSN = singleGuest.SSN.trim();
         if($SSN == "") {
@@ -388,6 +389,29 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
                 $scope.openPopover('guest'+index.toString()+'SSN');
             }
         });
+    }
+     **********/
+    /************** ********************************** hardware functions ********************************** *************/
+
+    $scope.readFromIDCard = function(singleGuest){
+        var cusSSNInfo = printer.readIDCard();
+        singleGuest.Name = cusSSNInfo.CUS_NAME;
+        singleGuest.SSN = cusSSNInfo.SSN;
+        singleGuest.DOB = cusSSNInfo.guestDOB;
+        singleGuest.Address = cusSSNInfo.guestAddress;
+    }
+
+    function preparePrintInfo(room,pms,data){
+        room.CHECK_IN_DT = util.dateFormat($scope.BookCommonInfo.CHECK_IN_DT);
+        room.inTime = util.timeFormat($scope.BookCommonInfo.inTime);
+        room.CHECK_OT_DT = util.dateFormat($scope.BookCommonInfo.CHECK_OT_DT);
+        room.leaveTime = util.timeFormat($scope.BookCommonInfo.leaveTime);
+        room.CONN_RM_TRAN_ID = data.CONN_RM_TRAN_ID;
+        room.RM_TRAN_ID = data.RM_TRAN_ID;
+        //printer.printMoveInCheck(pms,room,room.GuestsInfo[0]);
+        //setTimeout (function(){
+        printer.printDepositCheck(pms,room,room.GuestsInfo[0]);
+        //}, 5000);
     }
 
     /************************************************/
@@ -515,22 +539,31 @@ app.controller('MultiCheckInModalController', function($scope, $http, newCheckIn
             if(Object.keys(unfilled).length == 0) unfilled = null;
         }
 
-//    var resetAvail=[];
-//    if (initialString!="singleWalkIn"){
-//        resetAvail =[decodeURI(RoomNumArray[1]),RoomNumArray[2],new Date(RoomNumArray[4].replace("-","/"))
-//            ,new Date(RoomNumArray[5].replace("-","/"))];
-//    }
-//        show(unfilled);
-        newCheckInFactory.submit(JSON.stringify({SubmitInfo:$scope.SubmitInfo,RESV:RESV,unfilled:unfilled})).success(function(data){
-            show("办理成功!");
-            $scope.submitLoading = false;
-            $modalInstance.close("checked");
-            //util.closeCallback();
+        var pms ={HTL_NM:null,EMP_NM:null};
+        sessionFactory.getUserInfo().success(function(data){
+            pms.HTL_NM = data.HTL_NM;
+            pms.EMP_NM = data.EMP_NM;
+
+            newCheckInFactory.submit(JSON.stringify({SubmitInfo:$scope.SubmitInfo,RESV:RESV,unfilled:unfilled})).success(function(data){
+                show("办理成功!");
+                $scope.submitLoading = false;
+                for(var i =0; i < $scope.BookRoom.length; i++){
+                    if($scope.Connected){
+                        if ($scope.BookRoom[i].RM_ID == $scope.BookCommonInfo.Master.CONN_RM_ID){
+                            $scope.BookRoom[i].payment = $scope.BookCommonInfo.Master.payment;
+                            preparePrintInfo($scope.BookRoom[i],pms,data[i]);
+                            break;
+                        }
+                    }else{
+                        preparePrintInfo($scope.BookRoom[i],pms,data[i]);
+                    }
+                }
+                $modalInstance.close("checked");
+                //util.closeCallback();
+            });
         });
     }
 
-
-    /*********************************************/
 
 })
 /************************                       singleRoom sub controller                      ***********************/

@@ -55,7 +55,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
                 sumation = sumation + util.Limit($scope.addedItems[i].PAY_AMNT) // * (($scope.addedItems[i].itemCategory=="newDepo")?-1:1);
             }
         }
-        $scope.BookCommonInfo.Master.payment.paymentRequest = sumation;
+        $scope.BookCommonInfo.Master.payment.paymentRequest = util.Limit(sumation);
     }
 
 
@@ -158,8 +158,8 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
                 newIds.push("newItem"+$scope.newItemID.toString());
             }
         }
-    }
-        ;
+        show($scope.addedItems)
+    };
 
     var testFail = function(){
         return false;
@@ -315,7 +315,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
         });
     };
     /************** ********************************** Common initial setting  ******************************************* ********/
-    var printerRCtransactions = []; // for printer info
+    var printerRCtransactions = {}; // for printer info
     $scope.newItemID = 0;
     $scope.BookCommonInfo = {selectAll:false,Master:{mastr_RM_TRAN_ID:"",transferable:false,
                              ori_Mastr_RM_TRAN_ID:ori_Mastr_RM_TRAN_ID, payment: paymentFactory.createNewPayment('住房押金'), check:true}};
@@ -461,14 +461,16 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
                         addDepoArray:$scope.submitPrepAddDepo()};
 
         /***********  for printer   *************/
-        var rooms = [];
+        var rooms = {};
+        var roomss = [];
         for (var i = 0; i < $scope.BookRoom.length; i++){
             var rm = $scope.BookRoom[i];
-            if($scope.BookCommonInfo.Master.mastr_RM_TRAN_ID == rm.RM_TRAN_ID){
-                rooms.push(rm);
+            if(rm.selected || rm.RM_TRAN_ID == $scope.BookCommonInfo.Master.mastr_RM_TRAN_ID){
+                rooms[rm.RM_TRAN_ID] = rm;
+                roomss.push(rm);
             }
         }
-        var pms ={HTL_NM:null,EMP_NM:null};
+        var pms ={HTL_NM:null,EMP_NM:null};;
         sessionFactory.getUserInfo().success(function(data){
             pms.HTL_NM = data.HTL_NM;
             pms.EMP_NM = data.EMP_NM;
@@ -476,7 +478,7 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
             newCheckOutFactory.checkOT(submitObj).success(function(data){
                     $scope.submitLoading = false;
                     show("办理成功!");
-                    printer.receipt(pms, rooms[0], rooms[0].Customers[0],printerRCtransactions);
+                    printer.printDetailCheck(pms, roomss[0], roomss[0].Customers[0],rooms,printerRCtransactions);
                     $modalInstance.close("checked")
                     //util.closeCallback();
             });

@@ -42,6 +42,14 @@ app.controller('addMemberModalController', function($scope, $http, focusInSideFa
         $modalInstance.dismiss('cancel');
     };
 
+    /************** ********************************** hardware functions ******************************************* *************/
+
+    $scope.readFromIDCard = function(singleGuest){
+        var cusSSNInfo = printer.readIDCard();
+        singleGuest.MEM_NM = cusSSNInfo.CUS_NAME;
+        singleGuest.SSN = cusSSNInfo.SSN;
+    }
+
     /************** ********************************** Initial functions ******************************************* *************/
     var initAddMember = function(){
         $scope.BookCommonInfo.MEM_ID = "待定";

@@ -43,6 +43,8 @@ class CustomerController extends BaseController{
         try {
             DB::beginTransaction();   //////  Important !! TRANSACTION Begin!!!
             /***************                    Insert to Member info                   ***************/
+            $memberInfo['CRP_ID'] = Session::get('userInfo.CRP_ID');
+            $memberInfo['EMP_ID'] = Session::get('userInfo.EMP_ID');
             $MEM_ID = DB::table('MemberInfo')->insertGetId($memberInfo);
             /***************                    prepare and insert to memTran                    ***************/
             if($acct!=null && $acct!=""){
@@ -118,6 +120,7 @@ class CustomerController extends BaseController{
         $memTDArrary = array(
             "MEM_TRAN_ID" =>$MEM_TRAN_ID,
             "PAY_MTHD" => $depo["payMethod"],
+            "DEPO_TSTMP" => (new DateTime())->format('Y-m-d H:i:s'),
             "EMP_ID" => Session::get('userInfo.EMP_ID'),
             "MEM_ID" => $MEM_ID,
             "PAY_AMNT" => $depo["payAmount"],

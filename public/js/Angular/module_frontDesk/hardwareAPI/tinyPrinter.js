@@ -11,43 +11,43 @@ var printer = {
     tranPush2printer: function(key,ac,printerRCtransactions){
         switch(key){
             case 'AcctDepo':
-                printerRCtransactions.push(
+                structure.keyPushArray(printerRCtransactions,ac.RM_TRAN_ID,
                     {detailUnit:ac.PAY_METHOD+ac.SUB_CAT+'押金',detailCost:'0.0',detailPay:util.Limit(ac.DEPO_AMNT),detailDate:ac.DEPO_TSTMP}
                 );
                 break;
             case 'AcctPay':
-                printerRCtransactions.push(
+                structure.keyPushArray(printerRCtransactions,ac.RM_TRAN_ID,
                     {detailUnit:ac.SUB_CAT+'房费',detailCost:util.Limit(ac.RM_PAY_AMNT),detailPay:'0.0',detailDate:ac.BILL_TSTMP}
                 );
                 break;
             case 'AcctPenalty':
-                printerRCtransactions.push(
+                structure.keyPushArray(printerRCtransactions,ac.RM_TRAN_ID,
                     {detailUnit:'赔偿费',detailCost:util.Limit(ac.PNLTY_PAY_AMNT),detailPay:'0.0',detailDate:ac.BILL_TSTMP}
                 );
                 break;
             case 'AcctStore':
-                printerRCtransactions.push(
+                structure.keyPushArray(printerRCtransactions,ac.RM_TRAN_ID,
                     {detailUnit:ac.PROD_NM+'X'+ac.PROD_QUAN,detailCost:util.Limit(ac.STR_PAY_AMNT),detailPay:'0.0',detailDate:ac.STR_TRAN_TSTMP}
                 );
                 break;
             case 'merchant':
-                printerRCtransactions.push(
+                structure.keyPushArray(printerRCtransactions,ac.RM_TRAN_ID,
                     {detailUnit:ac.showUp,detailCost:util.Limit(ac.PAY_AMNT),detailPay:'0.0',detailDate:ac.TSTMP}
                 );
                 break;
             case 'penalty':
-                printerRCtransactions.push(
+                structure.keyPushArray(printerRCtransactions,ac.RM_TRAN_ID,
                     {detailUnit:ac.showUp,detailCost:util.Limit(ac.PAY_AMNT),detailPay:'0.0',detailDate:ac.TSTMP}
                 );
                 break;
             case 'newAcct':
-                printerRCtransactions.push(
+                structure.keyPushArray(printerRCtransactions,ac.RM_TRAN_ID,
                     {detailUnit:ac.showUp,detailCost:util.Limit(ac.PAY_AMNT),detailPay:'0.0',detailDate:ac.TSTMP}
                 );
                 break;
         }
     },
-    checkIn: function (pms, room, guest) {
+    printMoveInCheck: function (pms, room, guest) {
         try {
             plugin().roomReceiptNumber = this.toPrintable(room.RM_TRAN_ID); // – 房单号
             plugin().hotelName = pms.HTL_NM; // -- 酒店名字
@@ -73,7 +73,7 @@ var printer = {
             console.log(err.message);
         }
     },
-    deposit: function (pms, room, guest) {
+    printDepositCheck: function (pms, room, guest) {
         try {
             var deposit = 0;
             for (var i = 0; i < room.payment.payByMethods.length; i++) {
@@ -85,21 +85,18 @@ var printer = {
             plugin().RoomReceiptNumber = this.toPrintable(room.RM_TRAN_ID); // – 房单号
             plugin().GuestName = guest.Name; // – 客人姓名
             plugin().RoomNumber = this.toPrintable(room.RM_ID); // – 房单号
-
             plugin().updateInfo();
             plugin().printDepositCheck();
         } catch (err) {
             console.log(err.message);
         }
     },
-    receipt: function (pms, room, guest,printerRCtransactions) {
+    printDetailCheck: function (pms, room, guest, rooms,printerRCtransactions) {
         try {
             plugin().hotelName = pms.HTL_NM; // – 酒店名字
             plugin().hotelPhone = '' // – 酒店电话
             plugin().roomReceiptNumber = this.toPrintable(room.RM_TRAN_ID); // – 房单号
             plugin().guestName = guest.Name; // – 客人姓名
-            plugin().roomType = room.RM_TP; // – 房型
-            plugin().roomNumber = this.toPrintable(room.RM_ID); // – 房号
             plugin().roomPrice = this.toPrintable(room.RM_AVE_PRCE); // – 房价
             plugin().memberNumber = this.toPrintable(guest.MEM_ID); // – 会员卡号
             plugin().partnerCompany = ''; // – 协议单位
@@ -110,24 +107,38 @@ var printer = {
             var detailCost ='';
             var detailPay ='';
             var detailDate ='';
+            var roomType = '';
+            var roomNumber = '';
             structure.sortByProperties(printerRCtransactions,'detailDate');
-            for(var i =0 ;i < printerRCtransactions.length; i++){
-                detailUnit = detailUnit + this.toPrintable(printerRCtransactions[i].detailUnit) + ',';
-                detailCost = detailCost + this.toPrintable(printerRCtransactions[i].detailCost) + ',';
-                detailPay = detailPay + this.toPrintable(printerRCtransactions[i].detailPay) + ',';
-                detailDate = detailDate + this.toPrintable(printerRCtransactions[i].detailDate).substring(0,10)+ ',';
+            for (var key in printerRCtransactions){
+                roomType = roomType + rooms[key].RM_TP + ','; // – 房型
+                roomNumber = roomNumber + this.toPrintable(rooms[key].RM_ID) + ','; // – 房号
+                for(var i =0 ;i < printerRCtransactions[key].length; i++){
+                    detailUnit = detailUnit + this.toPrintable(printerRCtransactions[key][i].detailUnit) + ',';
+                    detailCost = detailCost + this.toPrintable(printerRCtransactions[key][i].detailCost) + ',';
+                    detailPay = detailPay + this.toPrintable(printerRCtransactions[key][i].detailPay) + ',';
+                    detailDate = detailDate + this.toPrintable(printerRCtransactions[key][i].detailDate).substring(0,10)+ ',';
+                }
+                detailUnit = detailUnit.substring(0,detailUnit.length-1) + ";";
+                detailCost = detailCost.substring(0,detailCost.length-1) + ";";
+                detailPay = detailPay.substring(0,detailPay.length-1) + ";";
+                detailDate = detailDate.substring(0,detailDate.length-1) + ";";
             }
+            roomType = roomType.substring(0,roomType.length-1) + ";";
+            roomNumber = roomNumber.substring(0,roomNumber.length-1) + ";";
             plugin().detailUnit = detailUnit;
             plugin().detailCost = detailCost;
             plugin().detailPay = detailPay;
             plugin().detailDate = detailDate;
+            plugin().roomType = roomType;
+            plugin().roomNumber = roomNumber;
             plugin().updateInfo();
             plugin().printDetailCheck();
         } catch (err) {
             console.log(err.message);
         }
     },
-    IDcardreader: function () {
+    readIDCard: function () {
         try {
             plugin().readIDCard();
             var IDcardInfo = {

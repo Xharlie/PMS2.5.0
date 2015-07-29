@@ -40,5 +40,12 @@ var structure = {
         sortee.sort(function(a, b) {
             return (a[property] > b[property]);
         });
+    },
+    keyPushArray : function(obj,key,item){
+        if(key in obj){
+            obj[key].push(item);
+        }else{
+            obj[key] = [item];
+        }
     }
 }

@@ -50,7 +50,7 @@
                                popover-trigger="openEvent"
                                popover-append-to-body="true"
                                ng-disabled=" initialstring!='editProfile' &&  initialstring!='addMember'"/>
-                        <span class="input-group-addon btn" ng-click="showIdentity(singleGuest,$index)"
+                        <span class="input-group-addon btn" ng-click="readFromIDCard(BookCommonInfo)"
                                           ng-mouseleave="closePopover('guest'+$index+'SSN')" >识别</span>
                     </div>
                 </div>

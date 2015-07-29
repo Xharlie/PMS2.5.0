@@ -427,13 +427,28 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
         });
         ******/
     }
+    /************** ********************************** hardware functions ******************************************* *************/
+
 
     $scope.readFromIDCard = function(singleGuest){
-        var cusSSNInfo = printer.IDcardreader();
+        var cusSSNInfo = printer.readIDCard();
         singleGuest.Name = cusSSNInfo.CUS_NAME;
         singleGuest.SSN = cusSSNInfo.SSN;
         singleGuest.DOB = cusSSNInfo.guestDOB;
         singleGuest.Address = cusSSNInfo.guestAddress;
+    }
+
+    function preparePrintInfo(room,pms,data){
+        room.CHECK_IN_DT = util.dateFormat($scope.BookCommonInfo.CHECK_IN_DT);
+        room.inTime = util.timeFormat($scope.BookCommonInfo.inTime);
+        room.CHECK_OT_DT = util.dateFormat($scope.BookCommonInfo.CHECK_OT_DT);
+        room.leaveTime = util.timeFormat($scope.BookCommonInfo.leaveTime);
+        room.CONN_RM_TRAN_ID = data.CONN_RM_TRAN_ID;
+        room.RM_TRAN_ID = data.RM_TRAN_ID;
+        //printer.printMoveInCheck(pms,room,room.GuestsInfo[0]);
+        //setTimeout (function(){
+        printer.printDepositCheck(pms,room,room.GuestsInfo[0]);
+        //}, 5000);
     }
 
     /************************************************/
@@ -533,21 +548,12 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
                 $scope.submitLoading = false;
                 show("办理成功!");
                 var room = $scope.BookRoom[0];
-                room.CHECK_IN_DT = util.dateFormat($scope.BookCommonInfo.CHECK_IN_DT);
-                room.inTime = util.timeFormat($scope.BookCommonInfo.inTime);
-                room.CHECK_OT_DT = util.dateFormat($scope.BookCommonInfo.CHECK_OT_DT);
-                room.leaveTime = util.timeFormat($scope.BookCommonInfo.leaveTime);
-                room.CONN_RM_TRAN_ID =data.CONN_RM_TRAN_ID;
-                room.RM_TRAN_ID =data.RM_TRAN_ID;
-                printer.checkIn(pms,room,room.GuestsInfo[0]);
-                setTimeout (function(){
-                        printer.deposit(pms,room,room.GuestsInfo[0])
-                    }, 5000);
+                preparePrintInfo($scope.BookRoom[0], pms, data[0]);
                 $modalInstance.close("checked");
-                //util.closeCallback();
             });
         });
     }
+
 
 
     // for edit
