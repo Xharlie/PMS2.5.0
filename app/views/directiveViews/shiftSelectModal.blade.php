@@ -7,8 +7,10 @@
     </div>
     <div class="panel-body">
         <div class="row">
-            <div class="col-sm-4 form-group" ng-repeat="shift in shifts">
-                <button ng-click="submit(shift)" class="btn btn-primary">{{shift.SHFT_NM}}</button>
+            <div class="col-md-10 col-md-offset-1">
+                <div class="col-md-4" ng-repeat="shift in shifts">
+                    <button ng-click="submit(shift)" class="btn btn-shift btn-primary">{{shift.SHFT_NM}}</button>
+                </div>
             </div>
         </div>
     </div>

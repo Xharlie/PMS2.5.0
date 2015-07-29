@@ -6,10 +6,10 @@
                 <button ng-click = "addNew()" class="btn btn-primary btn-lg">新预定</button>
                 <div class="pull-right">
                     <input type="text"  ng-model = "resvName" placeholder="预订人" class="searchBox input-lg">
-                    <!-----------------------------------         roomtype filter         ----------------------------------------->
+                    <!--       roomtype filter        -->
                     <div class="btn-group" dropdown is-open="roomType.isopen"
                          ng-init="selectTo('','所有房型',roomType)" dropdown-append-to-body>
-                        <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                        <button type="button" class="btn btn-drop dropdown-toggle" dropdown-toggle>
                             {{roomType.caption}} <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu">
@@ -19,10 +19,10 @@
                             </li>
                         </ul>
                     </div>
-                    <!-----------------------------------         sorter         ----------------------------------------->
+                    <!--        sorter        -->
                     <div class="btn-group" dropdown is-open="sorter.isopen"
                          ng-init="selectTo('','排序',sorter)" dropdown-append-to-body>
-                        <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                        <button type="button" class="btn btn-drop dropdown-toggle" dropdown-toggle>
                             {{sorter.caption}} <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu">

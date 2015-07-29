@@ -21,7 +21,7 @@
                     <input class="input-lg searchBox" type="text" ng-change = "clearMEMphonefilter()" ng-model = "memPhone" placeholder="手机号">
                     <div class="btn-group" dropdown is-open="memSorter.isopen"
                          ng-init="selectTo('','排序',memSorter)" dropdown-append-to-body>
-                        <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                        <button type="button" class="btn btn-drop dropdown-toggle" dropdown-toggle>
                             {{memSorter.caption}} <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu">

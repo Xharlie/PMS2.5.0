@@ -8,10 +8,10 @@
                         <input class="input-lg searchBox" type="text"  ng-change = "clearMEMIDfilter()" ng-model = "memberID" placeholder="会员编号">
                         <input class="input-lg searchBox" type="text" ng-model = "CustomerNM" placeholder="客人姓名">
                         <input class="input-lg searchBox" type="text" ng-model = "RoomID" placeholder="房间号">
-                        <!-------------------------------------------   sorter   ------------------------------------------->
+                        <!--  sorter  -->
                         <div class="btn-group" dropdown is-open="sorter.isopen"
                              ng-init="selectTo('','排序',sorter)" dropdown-append-to-body>
-                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                            <button type="button" class="btn btn-drop dropdown-toggle" dropdown-toggle>
                                 {{sorter.caption}} <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu">

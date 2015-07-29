@@ -18,16 +18,16 @@ $room-shadow:           		  none;
 //
 
 $room-empty-color:			 	  #fff;
-$room-empty-bg:				 	  #19B5FE;
-$room-empty-border:				  #169DDD;
+$room-empty-bg:				 	  $brand-primary;
+$room-empty-border:				  darken($room-empty-bg, 5%);
 
 $room-full-color:			  	  #fff;
-$room-full-bg:				  	  #2980B9;
-$room-full-border:				  #2471A3;
+$room-full-bg:				  	  #226BBE;//#2980B9;
+$room-full-border:				  darken($room-full-bg, 5%);//#2471A3;
 
 $room-disabled-color:		 	  #fff;
-$room-disabled-bg:			 	  #F8BE3B;
-$room-disabled-border:			  #E4AD32;
+$room-disabled-bg:			 	  $brand-warning;//#F8BE3B;
+$room-disabled-border:			  darken($room-disabled-bg, 5%);//#E4AD32;
 
 $room-dirty-color:			 	  #fff;
 $room-dirty-bg:				 	  #676D72;

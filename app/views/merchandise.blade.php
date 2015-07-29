@@ -11,7 +11,7 @@
                     <div class="prodSearch pull-right">
                         <div class="btn-group" dropdown is-open="prodTypeFilter.isopen" on-toggle="nullify(prodTypeFilter.value);"
                              ng-init="selectTo('','全部商品类别',prodTypeFilter)" dropdown-append-to-body>
-                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle >
+                            <button type="button" class="btn btn-drop dropdown-toggle" dropdown-toggle >
                                 {{prodTypeFilter.caption}} <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu">
@@ -22,7 +22,7 @@
                             </ul>
                         </div>
                         <div class="btn-group" dropdown is-open="prodSorter.isopen" dropdown-append-to-body ng-init="selectTo('','排序',prodSorter);">
-                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle >
+                            <button type="button" class="btn btn-drop dropdown-toggle" dropdown-toggle >
                                 {{prodSorter.caption}} <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu">

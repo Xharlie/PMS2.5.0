@@ -38,7 +38,7 @@
                     <div class="pull-right">
                         <div class="btn-group" dropdown is-open="Type.isopen"
                              ng-init="selectTo('','费用与结算',Type)" dropdown-append-to-body>
-                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                            <button type="button" class="btn btn-drop dropdown-toggle" dropdown-toggle>
                                 {{Type.caption}} <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu">
@@ -49,7 +49,7 @@
                         </div>
                         <div class="btn-group" dropdown is-open="class.isopen"
                              ng-init="selectTo('','所有类别',class)" dropdown-append-to-body>
-                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                            <button type="button" class="btn btn-drop dropdown-toggle" dropdown-toggle>
                                 {{class.caption}} <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu">
@@ -63,7 +63,7 @@
                         </div>
                         <div class="btn-group" dropdown is-open="payMethod.isopen"
                              ng-init="selectTo('','所有方式',payMethod)" dropdown-append-to-body>
-                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                            <button type="button" class="btn btn-drop dropdown-toggle" dropdown-toggle>
                                 {{payMethod.caption}} <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu">
@@ -77,7 +77,7 @@
                         </div>
                         <div class="btn-group" dropdown is-open="sorter.isopen"
                              ng-init="selectTo('','排序',sorter)" dropdown-append-to-body>
-                            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                            <button type="button" class="btn btn-drop dropdown-toggle" dropdown-toggle>
                                 {{sorter.caption}} <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu">
