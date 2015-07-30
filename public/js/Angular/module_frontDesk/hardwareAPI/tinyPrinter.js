@@ -12,12 +12,12 @@ var printer = {
         switch(key){
             case 'AcctDepo':
                 structure.keyPushArray(printerRCtransactions,ac.RM_TRAN_ID,
-                    {detailUnit:ac.PAY_METHOD+ac.SUB_CAT+'押金',detailCost:'0.0',detailPay:util.Limit(ac.DEPO_AMNT),detailDate:ac.DEPO_TSTMP}
+                    {detailUnit:this.toPrintable(ac.PAY_METHOD)+this.toPrintable(ac.SUB_CAT)+'押金',detailCost:'0.0',detailPay:util.Limit(ac.DEPO_AMNT),detailDate:ac.DEPO_TSTMP}
                 );
                 break;
             case 'AcctPay':
                 structure.keyPushArray(printerRCtransactions,ac.RM_TRAN_ID,
-                    {detailUnit:ac.SUB_CAT+'房费',detailCost:util.Limit(ac.RM_PAY_AMNT),detailPay:'0.0',detailDate:ac.BILL_TSTMP}
+                    {detailUnit:this.toPrintable(ac.SUB_CAT)+'房费',detailCost:util.Limit(ac.RM_PAY_AMNT),detailPay:'0.0',detailDate:ac.BILL_TSTMP}
                 );
                 break;
             case 'AcctPenalty':
@@ -27,22 +27,22 @@ var printer = {
                 break;
             case 'AcctStore':
                 structure.keyPushArray(printerRCtransactions,ac.RM_TRAN_ID,
-                    {detailUnit:ac.PROD_NM+'X'+ac.PROD_QUAN,detailCost:util.Limit(ac.STR_PAY_AMNT),detailPay:'0.0',detailDate:ac.STR_TRAN_TSTMP}
+                    {detailUnit:this.toPrintable(ac.PROD_NM)+'X'+this.toPrintable(ac.PROD_QUAN),detailCost:util.Limit(ac.STR_PAY_AMNT),detailPay:'0.0',detailDate:ac.STR_TRAN_TSTMP}
                 );
                 break;
             case 'merchant':
                 structure.keyPushArray(printerRCtransactions,ac.RM_TRAN_ID,
-                    {detailUnit:ac.showUp,detailCost:util.Limit(ac.PAY_AMNT),detailPay:'0.0',detailDate:ac.TSTMP}
+                    {detailUnit:this.toPrintable(ac.showUp),detailCost:util.Limit(ac.PAY_AMNT),detailPay:'0.0',detailDate:ac.TSTMP}
                 );
                 break;
             case 'penalty':
                 structure.keyPushArray(printerRCtransactions,ac.RM_TRAN_ID,
-                    {detailUnit:ac.showUp,detailCost:util.Limit(ac.PAY_AMNT),detailPay:'0.0',detailDate:ac.TSTMP}
+                    {detailUnit:this.toPrintable(ac.showUp),detailCost:util.Limit(ac.PAY_AMNT),detailPay:'0.0',detailDate:ac.TSTMP}
                 );
                 break;
             case 'newAcct':
                 structure.keyPushArray(printerRCtransactions,ac.RM_TRAN_ID,
-                    {detailUnit:ac.showUp,detailCost:util.Limit(ac.PAY_AMNT),detailPay:'0.0',detailDate:ac.TSTMP}
+                    {detailUnit:this.toPrintable(ac.showUp),detailCost:util.Limit(ac.PAY_AMNT),detailPay:'0.0',detailDate:ac.TSTMP}
                 );
                 break;
         }
@@ -79,12 +79,12 @@ var printer = {
             for (var i = 0; i < room.payment.payByMethods.length; i++) {
                 if (room.payment.payByMethods[i].payMethod == "现金") deposit = deposit + parseFloat(room.payment.payByMethods[i].payAmount);
             }
-            plugin().Deposit = this.toPrintable(deposit); // – 押金
-            plugin().HotelName = pms.HTL_NM; // – 酒店名字
-            plugin().Operator = pms.EMP_NM; // – 操作员
-            plugin().RoomReceiptNumber = this.toPrintable(room.RM_TRAN_ID); // – 房单号
-            plugin().GuestName = guest.Name; // – 客人姓名
-            plugin().RoomNumber = this.toPrintable(room.RM_ID); // – 房单号
+            plugin().deposit = this.toPrintable(deposit); // – 押金
+            plugin().hotelName = pms.HTL_NM; // – 酒店名字
+            plugin().operator = pms.EMP_NM; // – 操作员
+            plugin().roomReceiptNumber = this.toPrintable(room.RM_TRAN_ID); // – 房单号
+            plugin().guestName = guest.Name; // – 客人姓名
+            plugin().roomNumber = this.toPrintable(room.RM_ID); // – 房单号
             plugin().updateInfo();
             plugin().printDepositCheck();
         } catch (err) {
@@ -93,16 +93,6 @@ var printer = {
     },
     printDetailCheck: function (pms, room, guest, rooms,printerRCtransactions) {
         try {
-            plugin().hotelName = pms.HTL_NM; // – 酒店名字
-            plugin().hotelPhone = '' // – 酒店电话
-            plugin().roomReceiptNumber = this.toPrintable(room.RM_TRAN_ID); // – 房单号
-            plugin().guestName = guest.Name; // – 客人姓名
-            plugin().roomPrice = this.toPrintable(room.RM_AVE_PRCE); // – 房价
-            plugin().memberNumber = this.toPrintable(guest.MEM_ID); // – 会员卡号
-            plugin().partnerCompany = ''; // – 协议单位
-            plugin().inDate = room.CHECK_IN_DT; // – 到店日期
-            plugin().outDate = room.CHECK_OT_DT; // – 离店日期
-            plugin().operator = pms.EMP_NM; // – 操作员
             var detailUnit ='';
             var detailCost ='';
             var detailPay ='';
@@ -111,7 +101,7 @@ var printer = {
             var roomNumber = '';
             structure.sortByProperties(printerRCtransactions,'detailDate');
             for (var key in printerRCtransactions){
-                roomType = roomType + rooms[key].RM_TP + ','; // – 房型
+                roomType = roomType + this.toPrintable(rooms[key].RM_TP) + ','; // – 房型
                 roomNumber = roomNumber + this.toPrintable(rooms[key].RM_ID) + ','; // – 房号
                 for(var i =0 ;i < printerRCtransactions[key].length; i++){
                     detailUnit = detailUnit + this.toPrintable(printerRCtransactions[key][i].detailUnit) + ',';
@@ -124,14 +114,28 @@ var printer = {
                 detailPay = detailPay.substring(0,detailPay.length-1) + ";";
                 detailDate = detailDate.substring(0,detailDate.length-1) + ";";
             }
-            roomType = roomType.substring(0,roomType.length-1) + ";";
-            roomNumber = roomNumber.substring(0,roomNumber.length-1) + ";";
+            roomType = roomType.substring(0,roomType.length-1);
+            roomNumber = roomNumber.substring(0,roomNumber.length-1);
+            detailUnit = detailUnit.substring(0,detailUnit.length-1);
+            detailCost = detailCost.substring(0,detailCost.length-1);
+            detailPay = detailPay.substring(0,detailPay.length-1);
+            detailDate = detailDate.substring(0,detailDate.length-1);
             plugin().detailUnit = detailUnit;
             plugin().detailCost = detailCost;
             plugin().detailPay = detailPay;
             plugin().detailDate = detailDate;
             plugin().roomType = roomType;
             plugin().roomNumber = roomNumber;
+            plugin().hotelName = pms.HTL_NM; // – 酒店名字
+            plugin().hotelPhone = '';// – 酒店电话
+            plugin().roomReceiptNumber = this.toPrintable(room.RM_TRAN_ID); // – 房单号
+            plugin().guestName = this.toPrintable(guest.CUS_NAME); // – 客人姓名
+            plugin().roomPrice = this.toPrintable(room.RM_AVE_PRCE); // – 房价
+            plugin().memberNumber = this.toPrintable(guest.MEM_ID); // – 会员卡号
+            plugin().partnerCompany = ''; // – 协议单位
+            plugin().inDate = room.CHECK_IN_DT; // – 到店日期
+            plugin().outDate = room.CHECK_OT_DT; // – 离店日期
+            plugin().operator = pms.EMP_NM; // – 操作员
             plugin().updateInfo();
             plugin().printDetailCheck();
         } catch (err) {

@@ -85,7 +85,7 @@ class UserController extends BaseController{
 //        return Redirect::to('/test')->with("test", $SESSION_ID);
         if ($SESSION_ID != Session::getId()
             || !(Session::get('LAST_ACTIVITY'))
-            || (time() - Session::get('LAST_ACTIVITY')) > 2*3600)           // 2 hours idle time
+            || (time() - Session::get('LAST_ACTIVITY')) > 60*3600)           // 2 hours idle time
         {
             // Delete session data created by this app:
             return false;

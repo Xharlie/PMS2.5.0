@@ -240,14 +240,18 @@ class NewCheckOutController extends BaseController{
 
             /*------------------------- add all new Accts  -------------------------------------------------------*/
             foreach($addAcct["RoomAcct"] as $insertArray){
+                $insertArray['HTL_ID'] = Session::get('userInfo.HTL_ID');
                 DB::table('RoomAcct')->insertGetId($insertArray);
             }
             foreach($addAcct["PenaltyAcct"] as $insertArray){
+                $insertArray['HTL_ID'] = Session::get('userInfo.HTL_ID');
                 DB::table('PenaltyAcct')->insertGetId($insertArray);
             }
             foreach($addAcct["RoomStore"] as $RoomStore){
+                $RoomStore["StoreTransaction"]['HTL_ID'] = Session::get('userInfo.HTL_ID');
                 $STR_TRAN_ID = DB::table('StoreTransaction')->insertGetId($RoomStore["StoreTransaction"]);
                 $RoomStore["RoomStoreTran"]["STR_TRAN_ID"] = $STR_TRAN_ID;
+                $RoomStore["RoomStoreTran"]['HTL_ID'] = Session::get('userInfo.HTL_ID');
                 $RoomStore["ProductInTran"]["STR_TRAN_ID"] = $STR_TRAN_ID;
                 DB::table('ProductInTran')->insertGetId($RoomStore["ProductInTran"]);
                 DB::table('RoomStoreTran')->insertGetId($RoomStore["RoomStoreTran"]);

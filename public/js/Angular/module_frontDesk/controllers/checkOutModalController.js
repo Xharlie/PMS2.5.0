@@ -158,7 +158,6 @@ app.controller('checkOutModalController', function($scope, $http, focusInSideFac
                 newIds.push("newItem"+$scope.newItemID.toString());
             }
         }
-        show($scope.addedItems)
     };
 
     var testFail = function(){

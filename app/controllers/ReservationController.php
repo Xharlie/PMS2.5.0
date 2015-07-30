@@ -216,7 +216,8 @@ class ReservationController extends BaseController{
                     "DATE" => $dtMatch,
                     "RM_TP"=>$rmTP,
                     "RESV_QUAN"=> $tpInfo["roomAmount"],
-                    "CHECK_QUAN" => 0
+                    "CHECK_QUAN" => 0,
+                    "HTL_ID" => Session::get('userInfo.HTL_ID')
                 );
                 DB::table('RoomOccupation')->insert($OccArray);
             }

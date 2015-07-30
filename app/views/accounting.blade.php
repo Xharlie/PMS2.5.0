@@ -101,6 +101,7 @@
     		<tr>
 <!--                    <th>调账</th>-->
                 <th>帐单号</th>
+                <th>房单号</th>
                 <th>发生时间</th>
                 <th>房号</th>
                 <th>账目类型</th>
@@ -120,6 +121,9 @@
 <!--                            </td>-->
                 <td >
                     {{acct.ACCT_ID+((acct.ORGN_ACCT_ID!=null)?'(原账目:'+acct.ORGN_ACCT_ID+')':'')}}
+                </td>
+                <td>
+                    {{acct.RM_TRAN_ID}}
                 </td>
                 <td>
                     {{acct.adjustedTSTMP}}

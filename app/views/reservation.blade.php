@@ -21,7 +21,7 @@
                     </div>
                     <!--        sorter        -->
                     <div class="btn-group" dropdown is-open="sorter.isopen"
-                         ng-init="selectTo('','排序',sorter)" dropdown-append-to-body>
+                         ng-init="selectTo('CHECK_OT_DT','预离日期',sorter)" dropdown-append-to-body>
                         <button type="button" class="btn btn-drop dropdown-toggle" dropdown-toggle>
                             {{sorter.caption}} <span class="caret"></span>
                         </button>
@@ -59,7 +59,7 @@
     			<th>备注</th>
                 <th>状态</th>
     		</tr>
-    			<tr ng-repeat = "reserve in resvInfo | filter : {RESVER_NAME: resvName, RM_TP: roomType.value} | orderBy:sorter.value "
+    			<tr ng-repeat = "reserve in resvInfo | filter : {RESVER_NAME: resvName, RM_TP: roomType.value} | orderBy:sorter.value:true "
                     ng-mouseenter="sameIDLightUp(reserve)"
                     ng-mouseleave = 'sameIDLightBack(reserve)'
                     ng-dblclick="fastAction(reserve)"

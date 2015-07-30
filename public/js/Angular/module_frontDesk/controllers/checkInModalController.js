@@ -434,8 +434,8 @@ app.controller('checkInModalController', function($scope, $http, focusInSideFact
         var cusSSNInfo = printer.readIDCard();
         singleGuest.Name = cusSSNInfo.CUS_NAME;
         singleGuest.SSN = cusSSNInfo.SSN;
-        singleGuest.DOB = cusSSNInfo.guestDOB;
-        singleGuest.Address = cusSSNInfo.guestAddress;
+        singleGuest.DOB = cusSSNInfo.DOB;
+        singleGuest.Address = cusSSNInfo.ADDRSS;
     }
 
     function preparePrintInfo(room,pms,data){

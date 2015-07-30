@@ -52,7 +52,7 @@ app.controller('reservationController', function($scope, $http, resrvFactory,$mo
     $scope.timeOutClass = "timeOutResv";
     $scope.clicked = false;
     $scope.roomType = {};
-    $scope.sorter = {};
+    $scope.sorter ={};
 
     roomStatusFactory.getAllRoomTypes().success(function(data){
         $scope.allType = data;
