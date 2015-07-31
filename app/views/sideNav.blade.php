@@ -13,7 +13,7 @@
         </div>
         <!-- add inline style!!!!!!! -->
         <div class="navbar-right">
-        	<div class="collapse navbar-collapse" ng-controller="sideBarController" style="overflow: visible;" >
+        	<div class="collapse navbar-collapse"  style="overflow: visible;" >
             <!-- add inline style!!!!!!! -->
                 <ul class="nav navbar-nav" style="overflow: visible; margin-right:200px;">
                 <!-- add inline style!!!!!!! -->
