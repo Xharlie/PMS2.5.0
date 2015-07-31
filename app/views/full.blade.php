@@ -50,11 +50,12 @@
 
         <script src="Scripts/jquery/jquery-1.11.1.js"></script>
         <script src="Scripts/angularjs/angular_1.3.0/angular.min.js"></script>
-        <!--  <script src="Scripts/angularjs/ui-bootstrap-tpls-0.11.0.js"></script>     any problem, try change back to this version-->
+        <!--  <script src="Scripts/angularjs/ui-bootstrap-tpls-0.11.0.js"></script>     any problem, try change back to this version -->
                 <script src="Scripts/angularjs/angular_1.3.0/ui-bootstrap-tpls.min.js"></script>
                 <script src="Scripts/angularjs/angular_1.3.0/angular-route.min.js"></script>
                 <script src="Scripts/angularjs/angular_1.3.0/angular-animate.min.js"></script>
                 <script src="Scripts/angularjs/angular_1.3.0/angular-cookies.min.js"></script>
+                <script src="Scripts/angularjs/angular_1.3.0/angular-locale_zh-cn.js"></script>
 
                 <!-- JS Angular for front Desk-->
         <script src="js/Angular/module_frontDesk/module.js"></script>
