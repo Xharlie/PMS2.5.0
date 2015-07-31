@@ -6,9 +6,8 @@
 //
 
 .modal{
-	width: 720px;
-	height: 80%;
-	margin: 64px auto;
+	width: 100%;
+	height: 100%;
 
 	.modal-control{
 		margin-top: 32px;
@@ -27,6 +26,9 @@
 	.panel{
 		background-color: #FBFBFB;
 		margin: 0;
+		width: $modal-width;
+		margin: 80px auto;
+
 
 		.table{
 			th,td{
@@ -44,14 +46,14 @@
 		}
 
 		.panel-heading{
-			width: 718px;
+			width: $modal-width;
 			border-bottom: 1px solid #E2E2E2;
 		}
 
 		.panel-body{
 			padding-left: 50px;
 			padding-right: 50px;
-			max-height: 500px;
+			max-height: $modal-body-height;
 			overflow-y: scroll;
 
 			.form-group{

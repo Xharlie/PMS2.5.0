@@ -50,3 +50,9 @@ $table-cell-border:					  1px solid	#ddd;
 
 $content-font-size:					  12px;
 
+// Modal
+
+$modal-width:						  720px;
+$modal-height:						  500 + $panel-heading-height;
+$modal-body-height:					  $modal-height - $panel-heading-height;
+
