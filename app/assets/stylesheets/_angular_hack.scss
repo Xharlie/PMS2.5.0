@@ -28,3 +28,17 @@
     opacity: 0.1;
     background-color: #79C3F7!important;
 }
+
+.dropdown-menu{
+	z-index: 1050;
+}
+
+.ng-valid-date{
+	&:focus, li:focus, div:focus{
+		outline: none;
+	}
+
+	.btn{
+		border: none;
+	}
+}
