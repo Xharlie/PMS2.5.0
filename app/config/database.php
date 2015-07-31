@@ -51,7 +51,7 @@ return array(
 			'database' => __DIR__.'/../database/production.sqlite',
 			'prefix'   => '',
 		),
-/***    for server
+/***    for server  **/
         'mysql' => array(
             'driver'    => 'mysql',
             'host'      => 'localhost',
@@ -62,7 +62,7 @@ return array(
             'collation' => 'utf8_general_ci',
             'prefix'    => '',
         ),
- **/
+
 /****           for Ben
     		'mysql' => array(
     			'driver'    => 'mysql',
@@ -75,7 +75,7 @@ return array(
     			'prefix'    => '',
     		),
  *****/
-        /****   for xharlie    ***/
+        /****   for xharlie
     		'mysql' => array(
     			'driver'    => 'mysql',
     			'host'      => 'localhost',
@@ -86,7 +86,7 @@ return array(
     			'collation' => 'utf8_general_ci',
     			'prefix'    => '',
     		),
-
+         ***/
 
 		'pgsql' => array(
 			'driver'   => 'pgsql',
